@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="160dp"
+        android:layout_height="142dp"
+        android:scaleType="fitXY"
+        android:src="@mipmap/ic_homepage_blank" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30px"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
+        android:layout_marginTop="30px"
+        android:gravity="center"
+        android:lineSpacingExtra="5dp"
+        android:text="还未给学生点赞，评价学生的行为习惯哦~"
+        android:textColor="#4A4A4A"
+        android:textSize="15sp" />
+</LinearLayout>

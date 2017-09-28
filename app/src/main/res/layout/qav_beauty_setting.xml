@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/qav_beauty_setting"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:background="#30000000"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:visibility="gone">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/str_qav_beauty"
+        android:textColor="@color/btn_red" />
+
+    <SeekBar
+        android:id="@+id/qav_beauty_progress"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:maxHeight="3dp"
+        android:minHeight="3dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:progressDrawable="@drawable/qav_beauty_seekbar"
+        android:thumb="@drawable/seekbar_spot" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/str_qav_white"
+        android:textColor="@color/btn_red" />
+
+    <SeekBar
+        android:id="@+id/qav_white_progress"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:maxHeight="3dp"
+        android:minHeight="3dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:progressDrawable="@drawable/qav_beauty_seekbar"
+        android:thumb="@drawable/seekbar_spot" />
+
+    <TextView
+        android:id="@+id/qav_beauty_setting_finish"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/icon_beauty_confirm_btn"
+        android:gravity="center"
+        android:text="提交"
+        android:textColor="@color/colorTextWhite"
+        android:textSize="14sp" />
+
+</LinearLayout>

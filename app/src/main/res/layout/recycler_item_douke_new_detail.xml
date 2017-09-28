@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/tv_title"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#FFFFFF"
+    android:lineSpacingExtra="4dp"
+    android:paddingBottom="16dp"
+    android:paddingLeft="15dp"
+    android:paddingRight="13dp"
+    android:paddingTop="16dp"
+    android:textColor="#707070"
+    android:textSize="15sp"
+    tools:text="义务教育数学课程标义务教育数学课程标义务教育数学课程标" />

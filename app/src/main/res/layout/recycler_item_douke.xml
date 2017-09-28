@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:padding="12dp">
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lineSpacingMultiplier="1.2"
+            android:maxLines="2"
+            android:textColor="@color/text_color_standard"
+            android:textSize="17sp"
+            tools:text="孩子的未来，如何引导？知名教育专家为您详细解答！最后还有大家期待的问答孩子的未来，如何引导？知名教育专家为您详细解答！最后还有大家期待的问答" />
+
+        <RelativeLayout
+            android:id="@+id/ll_authorInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_title"
+            android:layout_marginTop="10dp">
+
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/iv_authorPhoto"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                fresco:actualImageScaleType="focusCrop"
+                fresco:placeholderImage="@mipmap/icon_default_photo_teacher"
+                fresco:placeholderImageScaleType="focusCrop"
+                fresco:roundAsCircle="true" />
+
+            <TextView
+                android:id="@+id/tv_authorName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_toEndOf="@+id/iv_authorPhoto"
+                android:layout_toRightOf="@+id/iv_authorPhoto"
+                android:textColor="@color/text_color_standard"
+                android:textSize="14sp"
+                tools:text="李荣浩" />
+
+            <TextView
+                android:id="@+id/tv_authorDesc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_toEndOf="@+id/tv_authorName"
+                android:layout_toRightOf="@+id/tv_authorName"
+                android:ellipsize="end"
+                android:lines="1"
+                android:textColor="#5F5F5F"
+                android:textSize="12sp"
+                tools:text="北大教师，十年教育经验，有很丰富北大教师，十年教育经验，有很丰富" />
+        </RelativeLayout>
+
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/iv_picture"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ll_authorInfo"
+            android:layout_marginTop="10dp"
+            fresco:placeholderImage="@mipmap/ic_douke"
+            fresco:placeholderImageScaleType="centerCrop"
+            fresco:viewAspectRatio="2.08" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:background="#EFEFEF" />
+</LinearLayout>

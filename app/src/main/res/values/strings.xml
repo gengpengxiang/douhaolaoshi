@@ -1,0 +1,223 @@
+<resources>
+    <string name="app_name">逗号老师</string>
+    <string name="bottom_tab_0">班级</string>
+    <string name="bottom_tab_1">逗课</string>
+    <string name="bottom_tab_2">我的</string>
+
+    <string name="dialog_waiting">加载中</string>
+
+    <string name="toast_home_exit_system">再按一次退出</string>
+
+    <string name="custome_service_phonenumber">15201635868</string>
+    <string name="invite_parents_content">邀请使用逗号教育app，下载链接：http://t.cn/RXxyYu7</string>
+    <string name="invite_teachers_content">邀请使用逗号老师app，下载链接：http://t.cn/RXxy9cI；附赠体验账户：18988888888，验证码：123456</string>
+
+    <string name="str_setting_slogan">一串快乐的教育</string>
+    <string name="str_setting_desc">逗号老师云集了国内权威的教育领域专家名师，是教师发展的社区型资源平台，同时提供了学生发展激励与数据管理工具支持教师实施创新性教学。\n我们致力于让学习更科学更快乐。</string>
+
+    <string name="errcode_success">发送成功</string>
+    <string name="errcode_cancel">发送取消</string>
+    <string name="errcode_deny">发送被拒绝</string>
+    <string name="errcode_unsupported">不支持错误</string>
+    <string name="errcode_unknown">发送返回</string>
+
+    <string name="str_report_protocol">《<u>订阅服务协议</u>》</string>
+
+    <string name="dialog_confirm">确定</string>
+    <string name="dialog_confirm_2">我知道了</string>
+    <string name="dialog_network_go">继续</string>
+    <string name="dialog_network_cancel">取消</string>
+    <string name="dialog_update_cancel">忽略</string>
+    <string name="dialog_network_title">当前非wifi网络，继续观看会消耗手机流量。</string>
+
+    <string name="all_image">所有图片</string>
+    <string name="take_picture">拍摄照片</string>
+    <string name="preview">预览</string>
+    <string name="preview_num">预览(%1$s)</string>
+    <string name="choose">选择</string>
+    <string name="done">完成</string>
+    <string name="use">使用</string>
+    <string name="done_num">完成(%1$s/%2$s)</string>
+    <string name="num_postfix">%1$s张</string>
+    <string name="message_max_num">你最多可以选择%1$s张图片</string>
+    <string name="save_ing">保存图片中…</string>
+    <string name="mixture_textview_default_text">暂未获取到相关内容</string>
+
+    <string name="text_ack_msg">已读</string>
+    <string name="text_delivered_msg">送达</string>
+    <string name="button_pushtotalk">按住说话</string>
+    <string name="button_send">发送</string>
+    <string name="attach_picture">图片</string>
+    <string name="attach_take_pic">拍照</string>
+    <string name="move_up_to_cancel">手指上滑，取消发送</string>
+    <string name="release_to_cancel">松开手指，取消发送</string>
+    <string name="send_fail">发送消息失败,</string>
+    <string name="resend">重发</string>
+    <string name="confirm_resend">确认重发该信息？</string>
+    <string name="connect_failuer_toast">请检查网络或稍候重试</string>
+    <string name="ok">确定</string>
+    <string name="cancel">取消</string>
+    <string name="prompt">提示</string>
+    <string name="location_recv">[%1$s的位置]</string>
+    <string name="location_prefix">[我的位置]</string>
+    <string name="picture">[图片]</string>
+    <string name="video">[视频]</string>
+    <string name="file">[文件]</string>
+    <string name="voice_prefix">[语音]</string>
+    <string name="voice_call">[语音通话]</string>
+    <string name="video_call">[视频通话]</string>
+    <string name="dynamic_expression">[动态表情]</string>
+    <string name="search_header">搜</string>
+    <string name="recoding_fail">录音失败，请重试！</string>
+    <string name="session">消息</string>
+    <string name="address_book">通讯录</string>
+    <string name="search">搜索</string>
+    <string name="downwaiting">正在下载文件请稍后</string>
+    <string name="unable_to_connect">不能连接到服务器</string>
+    <string name="not_download">未下载:</string>
+    <string name="is_down_please_wait">正在下载视频请稍候</string>
+    <string name="all_members">所有成员</string>
+
+    <string name="unable_to_get_loaction">无法获取到您的位置信息!</string>
+    <string name="sd_card_does_not_exist">SD卡不存在，不能拍照</string>
+    <string name="cant_find_pictures">找不到图片</string>
+    <string name="File_does_not_exist">文件不存在</string>
+    <string name="The_file_is_not_greater_than_10_m">文件不能大于10M</string>
+    <string name="Whether_to_empty_all_chats">是否清空所有聊天记录</string>
+    <string name="Send_voice_need_sdcard_support">发送语音需要sdcard支持</string>
+    <string name="Recording_without_permission">无录音权限</string>
+    <string name="The_recording_time_is_too_short">录音时间太短</string>
+    <string name="send_failure_please">发送失败，请检测服务器是否连接</string>
+    <string name="Move_into_blacklist_success">移入黑名单成功</string>
+    <string name="Move_into_blacklist_failure">移入黑名单失败</string>
+    <string name="you_are_group">你被群创建者从此群中移除</string>
+    <string name="the_current_group_destroyed">当前群聊已被群创建者解散</string>
+    <string name="the_current_chat_room_destroyed">当前聊天室已被创建者解散</string>
+    <string name="Cant_chat_with_yourself">不能和自己聊天</string>
+    <string name="Is_moved_into_blacklist">正在移入黑名单……</string>
+    <string name="can_not_connect_chat_server_connection">连接不到聊天服务器</string>
+    <string name="the_current_network">当前网络不可用，请检查网络设置</string>
+    <string name="Download_the_pictures">下载图片: 0%</string>
+    <string name="Download_the_pictures_new">下载图片:</string>
+    <string name="Failed_to_download_file">下载文件失败:</string>
+    <string name="Have_downloaded">已下载</string>
+    <string name="Did_not_download">未下载</string>
+    <string name="Is_download_voice_click_later">正在下载语音，稍后点击</string>
+    <string name="search_new">搜</string>
+    <string name="were_mentioned">[有人@我]</string>
+
+
+    <string name="no_more_messages">没有更多的消息了</string>
+    <string name="gorup_not_found">找不到这个群组</string>
+    <string name="error_send_invalid_content">你发送了不合法的消息内容</string>
+    <string name="error_send_not_in_the_group">你已经不在此群了</string>
+    <string name="quiting_the_chat_room">正在退出聊天室……</string>
+
+
+    <!-- login re fragment-->
+    <string name="title_living">是否回到上次直播</string>
+
+
+    <string name="btn_take_photo">拍照</string>
+    <string name="btn_pic_photo">从手机相册选择</string>
+    <string name="btn_return_home">返回首页</string>
+    <string name="btn_cancel">取消</string>
+    <string name="btn_sure">确定</string>
+    <string name="btn_role_hd">高清(960*540,25fps)</string>
+    <string name="btn_role_sd">标清(640*368,20fps)</string>
+    <string name="btn_role_ld">流畅(640*368,15fps)</string>
+
+
+    <!-- live fragment-->
+    <string name="dialog_members_tips">邀请互动连线（最多可与三个成员进行互动直播）</string>
+
+    <!-- live play -->
+    <string name="send">发送</string>
+    <string name="live_end_tips">直播结束啦</string>
+    <string name="live_time_tips">直播时长</string>
+    <string name="live_members_tips">观看人数</string>
+    <string name="live_admires_tips">获赞数量</string>
+
+    <string name="live_report_tips">请选择您的举报原因</string>
+    <string name="live_report_dirty">垃圾营销</string>
+    <string name="live_report_false">不实信息</string>
+    <string name="live_report_virus">有害信息</string>
+    <string name="live_report_illegal">违法信息</string>
+    <string name="live_report_yellow">淫秽信息</string>
+
+    <string name="live_host_leave">主播可能暂时离开</string>
+
+    <string name="live_btn_record">录制</string>
+    <string name="live_btn_push">开启推流</string>
+    <string name="live_btn_stop_push">关闭推流</string>
+    <string name="live_btn_stop_record">停录</string>
+
+    <!-- pushstream -->
+
+    <!-- msgadapter -->
+    <item name="tag_first" type="id"></item>
+    <item name="tag_second" type="id"></item>
+
+
+    <!-- profile fragment-->
+
+    <string name="tip_force_offline">您的帐号已在其它地方登陆</string>
+    <string name="str_video_sd">清晰</string>
+    <string name="str_video_ld">流畅</string>
+    <string name="str_video_qulity">观看模式</string>
+
+    <!-- fragment publish -->
+    <string name="publish_wait_uploading">请等待封面上传完成</string>
+    <string name="publish_upload_success">上传封面成功</string>
+    <string name="publish_upload_cover_failed">上传封面失败</string>
+    <string name="text_publish">开始直播</string>
+    <string name="text_live_preview">发布直播</string>
+    <string name="text_live_title_input">输入直播标题</string>
+    <string name="text_live_default_title">我的直播我做主</string>
+    <string name="text_live_add_title_tips">给你的直播设置一个满意的封面</string>
+    <string name="tip_no_permission">权限不足</string>
+
+    <string name="host_sign">我的签名就是把我的世界直播给你们</string>
+    <string name="host_phone">iPhone6S Plus</string>
+    <string name="host_funs">粉丝数:9090</string>
+    <string name="host_admire">赞:11.3w</string>
+
+
+    <string name="ping_ing">测速中</string>
+    <string name="ping_progress">测速进度</string>
+    <string name="ping_start">开始测速</string>
+    <string name="ping_no_server">获取测速列表失败，请稍后重试</string>
+    <string name="ping_time">平均时延</string>
+    <string name="ping_miss">丢包率</string>
+    <string name="ping_cancel">取消</string>
+    <string name="ping_TEL">电信</string>
+    <string name="ping_CMCC">移动</string>
+    <string name="ping_CNC">联通</string>
+    <string name="ping_SH">上海</string>
+    <string name="ping_SZ">深圳</string>
+    <string name="ping_CD">成都</string>
+    <string name="ping_TJ">天津</string>
+    <string name="ping_NJ">南京</string>
+    <string name="ping_HZ">杭州</string>
+    <string name="ping_GZ">广州</string>
+    <string name="str_push_title">推流地址</string>
+    <string name="str_push_copy">复制地址</string>
+    <string name="str_push_share">分享</string>
+    <string name="str_link_refuse_tips">已拒绝您的跨房连麦邀请!</string>
+    <string name="str_qav_beauty">美颜</string>
+    <string name="str_qav_white">美白</string>
+    <string name="str_btn_link">跨房连麦</string>
+    <string name="str_dt_change_role">分辨率</string>
+    <string name="str_dt_hd">高清</string>
+    <string name="str_dt_sd">标清</string>
+    <string name="str_dt_ld">流畅</string>
+    <string name="str_dt_filter">滤镜</string>
+    <string name="str_dt_voice">变声</string>
+    <string name="str_link_limit">已达到跨房连麦上限</string>
+
+    <string name="str_tips_title">提示</string>
+    <string name="str_offline_msg">您的帐号已在其它地方登陆</string>
+    <string name="str_room_discuss">主播已离开房间，是否退出?</string>
+
+    <string name="str_tips_force_exit">管理员已将房间解散或将您踢出房间!</string>
+</resources>

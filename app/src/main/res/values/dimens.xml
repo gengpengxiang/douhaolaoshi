@@ -1,0 +1,65 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+
+    <dimen name="text_size">16sp</dimen>
+    <!--h8-->
+    <dimen name="h8">16sp</dimen>
+    <!--h10-->
+    <dimen name="h10">18sp</dimen>
+    <!--h11-->
+
+    <dimen name="h12">20sp</dimen>
+
+    <!-- 飘星 -->
+    <dimen name="heart_anim_bezier_x_rand">50.0dp</dimen>
+    <dimen name="heart_anim_length">400.0dp</dimen>
+    <dimen name="heart_anim_length_rand">350.0dp</dimen>
+
+    <dimen name="small_area_margin_top">130dp</dimen>
+    <dimen name="small_area_height">110dp</dimen>
+    <dimen name="small_area_width">60dp</dimen>
+    <dimen name="small_area_marginright">10dp</dimen>
+    <dimen name="small_area_marginbetween">10dp</dimen>
+
+    <!-- AVSDK *****************************************************-->
+
+    <!-- 视频聊天中小窗口移动时的阈值 -->
+
+    <!-- AVSDK ***********************************************************************-->
+
+    <dimen name="alert_width">290dp</dimen>
+    <dimen name="common_circle_width">3dp</dimen>
+    <dimen name="progress_circle_radius">34dp</dimen>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="status_bar_height">25dp</dimen>
+
+    <dimen name="text_size_large">21sp</dimen>
+    <dimen name="text_size_title">18sp</dimen>
+    <dimen name="text_size_title_sub">13sp</dimen>
+    <dimen name="text_size_menu">16sp</dimen>
+    <dimen name="text_size_standard">14sp</dimen>
+    <dimen name="text_size_small">12sp</dimen>
+    <dimen name="header_height">135dp</dimen>
+
+    <dimen name="titlebar_height">48dp</dimen>
+    <dimen name="btn_radius">2dp</dimen>
+    <dimen name="bar_height">48dp</dimen>
+    <dimen name="btn_height">32dp</dimen>
+    <dimen name="margin_text">8dp</dimen>
+    <dimen name="margin_layout">16dp</dimen>
+    <dimen name="big_image_size">74dp</dimen>
+    <dimen name="min_button_width">52dp</dimen>
+
+    <dimen name="middle_text_size">17sp</dimen>
+    <dimen name="small_text_size">15sp</dimen>
+    <dimen name="mini_text_size">13sp</dimen>
+
+    <dimen name="height_top_bar">50dp</dimen>
+    <dimen name="padding_search_bar">5dp</dimen>
+    <dimen name="size_avatar">48dp</dimen>
+    <dimen name="margin_chat_activity">5dp</dimen>
+    <dimen name="chat_nick_margin_left">12dp</dimen>
+    <dimen name="chat_nick_text_size">13sp</dimen>
+</resources>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_header_toolbar" />
+
+    <ScrollView
+        android:id="@+id/scrollview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#EFEFEF"
+        android:fillViewport="true"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/ll_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/img_schoolBg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                fresco:actualImageResource="@mipmap/bg_user_banner"
+                fresco:actualImageScaleType="focusCrop"
+                fresco:viewAspectRatio="2.72" />
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="-40dp">
+
+                <com.facebook.drawee.view.SimpleDraweeView
+                    android:id="@+id/iv_userPhoto"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    fresco:actualImageScaleType="focusCrop"
+                    fresco:placeholderImage="@mipmap/icon_default_photo_teacher"
+                    fresco:placeholderImageScaleType="focusCrop"
+                    fresco:roundAsCircle="true"
+                    fresco:roundingBorderColor="@color/colorPrimary"
+                    fresco:roundingBorderWidth="2dp" />
+
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_alignBottom="@+id/iv_userPhoto"
+                    android:layout_alignEnd="@+id/iv_userPhoto"
+                    android:layout_alignRight="@+id/iv_userPhoto"
+                    android:src="@mipmap/ic_avatarpicture" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:layout_marginTop="40dp">
+
+                <ImageView
+                    android:id="@+id/iv_nickname"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="3dp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/ic_nichen" />
+
+                <EditText
+                    android:id="@+id/edt_nickname"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="3dp"
+                    android:layout_toRightOf="@+id/iv_nickname"
+                    android:background="@null"
+                    android:gravity="center_vertical"
+                    android:hint="请输入您的昵称"
+                    android:maxLength="10"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="12dp"
+                    android:textColor="@color/text_color_standard"
+                    android:textColorHint="@color/text_gray"
+                    android:textSize="16sp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_alignParentBottom="true"
+                    android:background="#CFCFCF" />
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/tv_complete"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/selector_btn_commend"
+                android:clickable="true"
+                android:gravity="center"
+                android:text="完成"
+                android:textColor="#FFF"
+                android:textSize="17sp" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

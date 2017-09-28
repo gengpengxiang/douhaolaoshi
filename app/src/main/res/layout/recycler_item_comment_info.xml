@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/itemContainer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#FFF"
+    android:paddingBottom="54px">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#EFEFEF" />
+
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/iv_userPhoto"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="48px"
+        android:layout_marginRight="48px"
+        android:layout_marginTop="42px"
+        fresco:actualImageScaleType="focusCrop"
+        fresco:placeholderImage="@mipmap/icon_default_photo_teacher"
+        fresco:placeholderImageScaleType="focusCrop"
+        fresco:roundAsCircle="true" />
+
+    <TextView
+        android:id="@+id/tv_commentName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="42px"
+        android:layout_toLeftOf="@+id/tv_commentTime"
+        android:layout_toRightOf="@+id/iv_userPhoto"
+        android:ellipsize="end"
+        android:lines="1"
+        android:text="张嘉怡爸爸"
+        android:textColor="#000000"
+        android:textSize="17sp" />
+
+    <TextView
+        android:id="@+id/tv_commentTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="48px"
+        android:layout_marginTop="42px"
+        android:lines="1"
+        android:text="3小时前"
+        android:textColor="#797979"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/tv_commentContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_commentName"
+        android:layout_marginRight="48px"
+        android:layout_marginTop="5dp"
+        android:layout_toRightOf="@+id/iv_userPhoto"
+        android:textColor="#797979"
+        android:textSize="15sp"
+        tools:text="@string/str_setting_desc" />
+</RelativeLayout>

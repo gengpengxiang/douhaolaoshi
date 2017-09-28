@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFF">
+
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/iv_picture"
+            android:layout_width="120dp"
+            android:layout_height="80dp"
+            android:layout_marginBottom="12dp"
+            android:layout_marginLeft="14dp"
+            android:layout_marginRight="12dp"
+            android:layout_marginTop="12dp"
+            fresco:actualImageScaleType="fitXY"
+            fresco:placeholderImage="@drawable/bg_live_default_picture"
+            fresco:placeholderImageScaleType="centerCrop" />
+
+        <TextView
+            android:id="@+id/tv_liveTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/iv_picture"
+            android:layout_marginRight="12dp"
+            android:layout_toEndOf="@+id/iv_picture"
+            android:layout_toRightOf="@+id/iv_picture"
+            android:ellipsize="end"
+            android:lineSpacingExtra="3dp"
+            android:maxLines="2"
+            android:textColor="#4A4A4A"
+            android:textSize="15sp"
+            tools:text="和大家聊聊《三国演义》和大家聊聊《三国演义》和大家聊聊《三国演义》" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_liveTitle"
+            android:layout_marginRight="12dp"
+            android:layout_marginTop="10dp"
+            android:layout_toRightOf="@+id/iv_picture"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/iv_authorPhoto"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                fresco:actualImageScaleType="focusCrop"
+                fresco:placeholderImage="@mipmap/icon_default_photo_teacher"
+                fresco:placeholderImageScaleType="focusCrop"
+                fresco:roundAsCircle="true" />
+
+            <TextView
+                android:id="@+id/tv_authorName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="6dp"
+                android:singleLine="true"
+                android:textColor="#797979"
+                android:textSize="14sp"
+                tools:text="王勇田" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#F8F8F8">
+
+        <ImageView
+            android:id="@+id/iv_iconLive"
+            android:layout_width="16dp"
+            android:layout_height="11dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="12dp"
+            android:layout_marginTop="16dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_live_on" />
+
+        <TextView
+            android:id="@+id/tv_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:singleLine="true"
+            android:textColor="#FE5433"
+            android:textSize="14sp"
+            tools:text="免费" />
+
+        <TextView
+            android:id="@+id/tv_liveTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/tv_price"
+            android:layout_toRightOf="@+id/iv_iconLive"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textColor="#4A4A4A"
+            android:textSize="14sp"
+            tools:text="开始时间：8:00  2017/8/2" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#EFEFEF" />
+</LinearLayout>

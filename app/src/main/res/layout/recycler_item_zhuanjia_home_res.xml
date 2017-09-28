@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#FFFFFF"
+    android:paddingBottom="12dp"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="12dp">
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/iv_authorPhoto"
+        android:layout_width="86dp"
+        android:layout_height="108dp"
+        android:layout_centerHorizontal="true"
+        fresco:actualImageScaleType="focusCrop"
+        fresco:placeholderImage="@drawable/shape_bg_zhuanjia"
+        fresco:placeholderImageScaleType="focusCrop"
+        fresco:roundedCornerRadius="5dp" />
+
+    <TextView
+        android:id="@+id/tv_authorName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/iv_authorPhoto"
+        android:layout_alignRight="@+id/iv_authorPhoto"
+        android:layout_below="@+id/iv_authorPhoto"
+        android:layout_marginTop="4dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:minLines="2"
+        android:textColor="#4A4A4A"
+        android:textSize="12sp"
+        tools:text="北大教学课件北大教学课件北大教学课件" />
+
+    <TextView
+        android:id="@+id/tv_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/tv_authorName"
+        android:layout_below="@+id/tv_authorName"
+        android:layout_marginTop="5dp"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:singleLine="true"
+        android:textColor="#FE5433"
+        android:textSize="14sp"
+        tools:text="免费" />
+</RelativeLayout>

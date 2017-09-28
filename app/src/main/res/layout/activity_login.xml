@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_header_toolbar" />
+
+    <ScrollView
+        android:id="@+id/scrollview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/ll_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="135dp"
+                    android:layout_height="150dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="40dp"
+                    android:scaleType="centerCrop"
+                    android:src="@mipmap/icon_login" />
+
+                <RelativeLayout
+                    android:layout_width="240dp"
+                    android:layout_height="45dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="45dp"
+                    android:background="@drawable/shape_login_edt">
+
+                    <EditText
+                        android:id="@+id/edt_phoneNumber"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@null"
+                        android:gravity="center_vertical"
+                        android:hint="请输入手机号"
+                        android:inputType="number"
+                        android:maxLength="11"
+                        android:paddingLeft="15dp"
+                        android:paddingRight="15dp"
+                        android:textColorHint="@color/text_gray"
+                        android:textSize="@dimen/text_size_standard" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="240dp"
+                    android:layout_height="45dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="15dp"
+                    android:background="@drawable/shape_login_edt">
+
+                    <EditText
+                        android:id="@+id/edt_verificationCode"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_toLeftOf="@+id/tv_getCode"
+                        android:background="@null"
+                        android:gravity="center_vertical"
+                        android:hint="短信登录码"
+                        android:inputType="number"
+                        android:maxLength="6"
+                        android:paddingLeft="15dp"
+                        android:paddingRight="15dp"
+                        android:textColorHint="@color/text_gray"
+                        android:textSize="@dimen/text_size_standard" />
+
+                    <TextView
+                        android:id="@+id/tv_getCode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentRight="true"
+                        android:gravity="center"
+                        android:paddingLeft="15dp"
+                        android:paddingRight="15dp"
+                        android:text="获取短信登录码"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="@dimen/text_size_standard" />
+                </RelativeLayout>
+
+                <com.facebook.drawee.view.SimpleDraweeView
+                    android:id="@+id/btn_login"
+                    android:layout_width="240dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="45dp"
+                    fresco:placeholderImage="@mipmap/btn_login"
+                    fresco:placeholderImageScaleType="focusCrop"
+                    fresco:viewAspectRatio="5.69" />
+
+                <TextView
+                    android:id="@+id/tv_withProblem"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="5dp"
+                    android:text="遇到问题？"
+                    android:textColor="@color/text_blue"
+                    android:textSize="@dimen/text_size_standard" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_douhaoProtocol"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="75px"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="注册表示您同意逗号"
+                    android:textColor="#888888"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3px"
+                    android:text="用户协议"
+                    android:textColor="#196ED2"
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#FFFFFF">
+
+    <RelativeLayout
+        android:id="@+id/rl_photo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true">
+
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/iv_authorPhoto"
+            android:layout_width="40dp"
+            android:layout_height="50dp"
+            android:layout_marginBottom="12dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="12dp"
+            fresco:actualImageScaleType="focusCrop"
+            fresco:placeholderImage="@drawable/shape_bg_zhuanjia"
+            fresco:placeholderImageScaleType="focusCrop"
+            fresco:roundedCornerRadius="5dp" />
+
+        <TextView
+            android:id="@+id/tv_newTeacher"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/iv_authorPhoto"
+            android:layout_alignRight="@+id/iv_authorPhoto"
+            android:layout_alignTop="@+id/iv_authorPhoto"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="-6dp"
+            android:layout_marginRight="-6dp"
+            android:layout_marginTop="-7dp"
+            android:background="@drawable/shape_bg_text_teacher_news"
+            android:paddingBottom="2dp"
+            android:paddingLeft="3dp"
+            android:paddingRight="3dp"
+            android:paddingTop="2dp"
+            android:text="New"
+            android:textColor="#FFFFFF"
+            android:textSize="8sp" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignBottom="@+id/rl_photo"
+        android:layout_alignTop="@+id/rl_photo"
+        android:layout_toLeftOf="@+id/rl_photo"
+        android:layout_toStartOf="@+id/rl_photo"
+        android:orientation="vertical"
+        android:paddingBottom="12dp"
+        android:paddingLeft="13dp"
+        android:paddingTop="12dp">
+
+        <TextView
+            android:id="@+id/tv_authorName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:singleLine="true"
+            android:textColor="#4A4A4A"
+            android:textSize="16sp"
+            tools:text="尚俊杰" />
+
+        <TextView
+            android:id="@+id/tv_authorDesc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:singleLine="true"
+            android:textColor="#838383"
+            android:textSize="12sp"
+            tools:text="北京大学教育学院副院长" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="2px"
+        android:layout_height="match_parent"
+        android:layout_alignBottom="@+id/rl_photo"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/rl_photo"
+        android:background="#EFEFEF" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2px"
+        android:layout_below="@+id/rl_photo"
+        android:background="#EFEFEF" />
+</RelativeLayout>

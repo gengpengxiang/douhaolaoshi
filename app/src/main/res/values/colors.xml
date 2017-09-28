@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#FE5433</color>
+    <color name="colorPrimaryDark">#FF93240E</color>
+
+    <color name="colorTextWhite">#FFFFFF</color>
+    <color name="colorGray2">#DCDCDC</color>
+    <color name="colorGray3">#C8C8C8</color>
+    <color name="colorGray4">#787878</color>
+    <color name="white">#FFFFFF</color>
+    <color name="btn_red">#FE5433</color>
+    <color name="btn_live">#5F6164</color>
+    <color name="btn_live_press">#2F3134</color>
+    <color name="colorRed">#FF3333</color>
+    <color name="black">#000000</color>
+    <color name="text_black">#4A4A4A</color>
+    <color name="text_gray1">#777777</color>
+    <color name="transparent">#00000000</color>
+    <color name="colorTextBlack">#000000</color>
+    <color name="colorGray1">#F0F0F0</color>
+
+    <color name="colorSendName">#9966cc</color>
+    <color name="colorSendName1">#FF3163</color>
+    <color name="colorSendName2">#973365</color>
+    <color name="colorSendName3">#006599</color>
+    <color name="colorSendName4">#D07E44</color>
+    <color name="colorSendName5">#97BC87</color>
+    <color name="colorSendName6">#FFAE1F</color>
+    <color name="colorSendName7">#FF437D</color>
+
+    <color name="dialog_btn_pressed_color">#efefef</color>
+
+    <color name="white_fff">#FFF</color>
+    <color name="colorPrimaryClick">#93240E</color>
+
+    <color name="navigationBarColor">#f46444</color>
+    <color name="colorPrimaryDarkTrans">#CCf57257</color>
+
+    <color name="line_gray">#CBCCCD</color>
+
+    <color name="text_white">#FFFFFF</color>
+    <color name="text_gray">#737373</color>
+
+    <color name="text_blue">#0073ff</color>
+
+    <color name="bg_gray">#EFEFEF</color>
+
+    <color name="text_color_standard">#4A4A4A</color>
+    <color name="text_color_small">#838383</color>
+    <color name="line_gray_3">#D8D8D8</color>
+
+    <color name="text_tab_selected">#FE5433</color>
+    <color name="text_tab_unselected">#979797</color>
+    <color name="text_tab_unselected_2">#474747</color>
+    <color name="float_transparent">#00000000</color>
+    <color name="sweet_dialog_bg_color">#FFFFFF</color>
+    <color name="button_text_color">#FFFFFF</color>
+    <color name="blue_btn_bg_color">#AEDEF4</color>
+    <color name="blue_btn_bg_pressed_color">#96BFD2</color>
+    <color name="success_stroke_color">#A5DC86</color>
+    <color name="white_70">#ADFFFFFF</color>
+    <color name="black_3">#333333</color>
+    <color name="green">#43c117</color>
+    <color name="green_70">#AD43c117</color>
+    <color name="bar_grey_90">#dd393a3e</color>
+    <color name="grey">#999999</color>
+    <color name="divider_color">#dcdcdc</color>
+    <color name="content_grey">#353535</color>
+    <color name="image_overlay">#20000000</color>
+    <color name="image_overlay2">#80000000</color>
+
+    <!--special color-->
+
+    <color name="common_bg">#fcfcfc</color>
+    <color name="common_bg_2">#EFEFEF</color>
+    <color name="divider_list">#d4d4d4</color>
+    <color name="top_bar_normal_bg">#00acff</color>
+    <color name="error_item_color">#F6EBE6</color>
+    <color name="btn_gray_normal">#c0c0c0</color>
+    <color name="btn_gray_pressed_status">#b5b5b6</color>
+    <color name="btn_blue_normal">#1e90ff</color>
+    <color name="btn_blue_pressed">#0066FF</color>
+    <color name="gray_normal">#666667</color>
+    <color name="list_itease_secondary_color">#888888</color>
+    <color name="holo_blue_bright">#ff00ddff</color>
+    <color name="holo_green_light">#ff99cc00</color>
+    <color name="holo_orange_light">#ffffbb33</color>
+    <color name="holo_red_light">#ffff4444</color>
+    <color name="emojicon_tab_selected">#D9D9D9</color>
+    <color name="emojicon_tab_nomal">#ffffff</color>
+</resources>

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#FFFFFF"
+    android:orientation="vertical">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:background="#EFEFEF" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:layout_marginLeft="14dp"
+        android:layout_marginTop="12dp"
+        android:text="更多推荐话题"
+        android:textColor="#000000"
+        android:textSize="15sp" />
+
+    <LinearLayout
+        android:id="@+id/ll_subMore1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="14dp"
+            android:layout_marginRight="14dp"
+            android:background="#D6D6D6" />
+
+        <TextView
+            android:id="@+id/tv_subjectName1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="14dp"
+            android:layout_marginRight="14dp"
+            android:layout_marginTop="12dp"
+            android:ellipsize="end"
+            android:lineSpacingExtra="3dp"
+            android:maxLines="2"
+            android:textColor="#4A4A4A"
+            android:textSize="16sp"
+            tools:text="游戏怎么如何能够在课堂上使用，但是又不会导致课堂效率的低下呢？" />
+
+        <TextView
+            android:id="@+id/tv_subjectReplyCount1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="7dp"
+            android:layout_marginLeft="14dp"
+            android:layout_marginRight="14dp"
+            android:layout_marginTop="4dp"
+            android:singleLine="true"
+            android:textColor="#707070"
+            android:textSize="14sp"
+            tools:text="18 条回复" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_subMore2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="14dp"
+            android:layout_marginRight="14dp"
+            android:background="#D6D6D6" />
+
+        <TextView
+            android:id="@+id/tv_subjectName2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="14dp"
+            android:layout_marginRight="14dp"
+            android:layout_marginTop="12dp"
+            android:ellipsize="end"
+            android:lineSpacingExtra="3dp"
+            android:maxLines="2"
+            android:textColor="#4A4A4A"
+            android:textSize="16sp"
+            tools:text="游戏怎么如何能够在课堂上使用，但是又不会导致课堂效率的低下呢？" />
+
+        <TextView
+            android:id="@+id/tv_subjectReplyCount2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="7dp"
+            android:layout_marginLeft="14dp"
+            android:layout_marginRight="14dp"
+            android:layout_marginTop="4dp"
+            android:singleLine="true"
+            android:textColor="#707070"
+            android:textSize="14sp"
+            tools:text="18 条回复" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#EFEFEF" />
+
+    <TextView
+        android:id="@+id/tv_allReply"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:paddingBottom="14dp"
+        android:paddingTop="12dp"
+        android:singleLine="true"
+        android:text="进入黑板报查看全部话题"
+        android:textColor="#9B9B9B"
+        android:textSize="16sp" />
+</LinearLayout>

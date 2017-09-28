@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_header_toolbar" />
+
+    <ScrollView
+        android:id="@+id/scrollview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/ll_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:layout_width="135dp"
+                android:layout_height="150dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="50dp"
+                fresco:actualImageScaleType="focusCrop"
+                fresco:placeholderImage="@mipmap/icon_login"
+                fresco:placeholderImageScaleType="focusCrop" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="18dp"
+                android:layout_marginRight="18dp"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:lines="1"
+                android:text="@string/str_setting_slogan"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/text_size_menu" />
+
+            <com.bj.eduteacher.widget.JustifyTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="18dp"
+                android:layout_marginRight="18dp"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:lineSpacingExtra="5dp"
+                android:text="@string/str_setting_desc"
+                android:textColor="@color/text_gray"
+                android:textSize="@dimen/text_size_standard" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="18dp"
+                android:layout_marginRight="18dp"
+                android:layout_marginTop="30dp"
+                android:gravity="center"
+                android:lineSpacingExtra="5dp"
+                android:text="客服微信：pkugame"
+                android:textColor="@color/text_gray"
+                android:textSize="@dimen/text_size_standard" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="18dp"
+                android:layout_marginRight="18dp"
+                android:layout_marginTop="7dp"
+                android:gravity="center"
+                android:lineSpacingExtra="5dp"
+                android:text="客服电话：15201635868"
+                android:textColor="@color/text_gray"
+                android:textSize="@dimen/text_size_standard" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

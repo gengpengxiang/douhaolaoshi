@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#FFFFFF"
+    android:padding="14dp">
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/iv_userReplyPhoto1"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        fresco:actualImageScaleType="focusCrop"
+        fresco:placeholderImage="@mipmap/icon_default_photo_teacher"
+        fresco:placeholderImageScaleType="focusCrop"
+        fresco:roundAsCircle="true" />
+
+    <TextView
+        android:id="@+id/tv_userReplyName1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_toEndOf="@+id/iv_userReplyPhoto1"
+        android:layout_toRightOf="@+id/iv_userReplyPhoto1"
+        android:text="182****2704"
+        android:textColor="#2E2E2E"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/tv_userReplyTime1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/iv_userReplyPhoto1"
+        android:layout_marginLeft="10dp"
+        android:layout_toEndOf="@+id/iv_userReplyPhoto1"
+        android:layout_toRightOf="@+id/iv_userReplyPhoto1"
+        android:text="2017.7.18 23:00"
+        android:textColor="#4A4A4A"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/tv_userReplyContent1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/iv_userReplyPhoto1"
+        android:layout_marginTop="6dp"
+        android:lineSpacingExtra="3dp"
+        android:text="我们在课堂上的办法就是能够将这里添加尽力啊，能够将孩子们的积极性跳动起来，保持纪律，维持规则，分享一个最鲜活的例子。"
+        android:textColor="#5F5F5F"
+        android:textSize="14sp" />
+</RelativeLayout>

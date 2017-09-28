@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/live_report_tips"
+        android:textColor="@color/colorTextBlack"
+        android:textSize="@dimen/h12" />
+
+    <TextView
+        android:id="@+id/btn_dirty"
+        android:layout_width="205dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/button_pressed"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="@string/live_report_dirty"
+        android:textColor="@color/btn_red"
+        android:textSize="@dimen/h10" />
+
+    <TextView
+        android:id="@+id/btn_false"
+        android:layout_width="205dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/button_pressed"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="@string/live_report_false"
+        android:textColor="@color/btn_red"
+        android:textSize="@dimen/h10" />
+
+    <TextView
+        android:id="@+id/btn_virus"
+        android:layout_width="205dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/button_pressed"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="@string/live_report_virus"
+        android:textColor="@color/btn_red"
+        android:textSize="@dimen/h10" />
+
+    <TextView
+        android:id="@+id/btn_illegal"
+        android:layout_width="205dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/button_pressed"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="@string/live_report_illegal"
+        android:textColor="@color/btn_red"
+        android:textSize="@dimen/h10" />
+
+    <TextView
+        android:id="@+id/btn_yellow"
+        android:layout_width="205dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/button_pressed"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="@string/live_report_yellow"
+        android:textColor="@color/btn_red"
+        android:textSize="@dimen/h10" />
+
+    <TextView
+        android:id="@+id/btn_cancel"
+        android:layout_width="205dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/button2_default"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="@string/btn_cancel"
+        android:textColor="@color/colorTextWhite"
+        android:textSize="@dimen/h10" />
+</LinearLayout>

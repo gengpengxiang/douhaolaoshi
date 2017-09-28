@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_header_toolbar" />
+
+    <LinearLayout
+        android:id="@+id/ll_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/mTabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabBackground="@color/white_fff"
+            app:tabContentStart="10dp"
+            app:tabIndicatorColor="#FE5433"
+            app:tabMode="scrollable"
+            app:tabPaddingEnd="16dp"
+            app:tabPaddingStart="16dp"
+            app:tabSelectedTextColor="#FE5433"
+            app:tabTextAppearance="@style/TeacherClassesTabLayoutText"
+            app:tabTextColor="#707070" />
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/mViewPager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="#FFF"
+            android:visibility="gone" />
+
+        <FrameLayout
+            android:id="@+id/mFrameLayout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="#FFF"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_errorContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="160dp"
+            android:layout_height="142dp"
+            android:scaleType="fitXY"
+            android:src="@mipmap/ic_homepage_blank" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="120px"
+            android:layout_marginTop="30px"
+            android:text="很可惜，您的班级数据获取失败"
+            android:textColor="#4A4A4A"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/tv_reload"
+            android:layout_width="680px"
+            android:layout_height="120px"
+            android:background="@drawable/selector_btn_commend"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="重试"
+            android:textColor="#FFF"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_withoutLogin"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="160dp"
+            android:layout_height="142dp"
+            android:scaleType="fitXY"
+            android:src="@mipmap/ic_homepage_blank" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="120px"
+            android:layout_marginTop="30px"
+            android:text="暂时无法查看班级"
+            android:textColor="#4A4A4A"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/tv_login"
+            android:layout_width="680px"
+            android:layout_height="120px"
+            android:background="@drawable/selector_btn_commend"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="登录后即可查看班级"
+            android:textColor="#FFF"
+            android:textSize="15sp" />
+    </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/sv_noClassLinked"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:overScrollMode="never"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/ll_noClassLinked"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#EFEFEF"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="90px"
+                android:text="您还未绑定班级，快去申请建立班级吧"
+                android:textColor="#FE5433"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_apply"
+                android:layout_width="match_parent"
+                android:layout_height="120px"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="50dp"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:background="@drawable/selector_btn_apply_class"
+                android:clickable="true"
+                android:gravity="center"
+                android:text="申请建立班级"
+                android:textColor="#FFF"
+                android:textSize="17sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:gravity="center"
+                android:text="tips：建立班级后，您就可以做以下事情啦"
+                android:textColor="#5F5F5F"
+                android:textSize="15sp" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFFFFF"
+                android:scaleType="fitCenter"
+                android:src="@drawable/teacher_example" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

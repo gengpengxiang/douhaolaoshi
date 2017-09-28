@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:hyphenate="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/common_bg_2"
+    android:orientation="vertical">
+
+    <com.bj.eduteacher.zzeaseui.widget.EaseTitleBar
+        android:id="@+id/title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        hyphenate:titleBarBackground="#FE5433"
+        hyphenate:titleBarTitle="@string/session" />
+
+    <FrameLayout
+        android:id="@+id/fl_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <FrameLayout
+            android:id="@+id/fl_empty_item"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
+        <com.andview.refreshview.XRefreshView
+            android:id="@+id/mXRefreshView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.bj.eduteacher.zzeaseui.widget.EaseConversationList
+                android:id="@+id/list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:cacheColorHint="#00000000"
+                android:divider="@null"
+                android:listSelector="#00000000"
+                hyphenate:cvsListPrimaryTextSize="16sp" />
+        </com.andview.refreshview.XRefreshView>
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_withoutLogin"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="160dp"
+            android:layout_height="142dp"
+            android:scaleType="fitXY"
+            android:src="@mipmap/ic_homepage_blank" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="120px"
+            android:layout_marginTop="30px"
+            android:text="暂时无法查看消息"
+            android:textColor="#4A4A4A"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/tv_login"
+            android:layout_width="680px"
+            android:layout_height="120px"
+            android:background="@drawable/selector_btn_commend"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="登录后即可查看消息"
+            android:textColor="#FFF"
+            android:textSize="15sp" />
+    </LinearLayout>
+</LinearLayout>

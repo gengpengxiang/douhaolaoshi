@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/zoomView"
+    android:layout_width="match_parent"
+    android:layout_height="135dp"
+    android:orientation="vertical"
+    android:tag="header">
+
+    <ImageView
+        android:id="@+id/iv_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/ic_zhuanjia_detail_bg"
+        android:scaleType="centerCrop"
+        android:tag="zoom" />
+</RelativeLayout>

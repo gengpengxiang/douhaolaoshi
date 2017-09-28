@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_header_toolbar" />
+
+    <com.andview.refreshview.XRefreshView
+        android:id="@+id/mXRefreshView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/bg_gray">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/mRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:overScrollMode="never"
+            android:scrollbars="none" />
+    </com.andview.refreshview.XRefreshView>
+
+    <TextView
+        android:id="@+id/tv_addReason"
+        android:layout_width="match_parent"
+        android:layout_height="150px"
+        android:background="@drawable/selector_btn_commend"
+        android:clickable="true"
+        android:gravity="center"
+        android:text="+添加理由"
+        android:textColor="@color/text_white"
+        android:textSize="20sp" />
+</LinearLayout>

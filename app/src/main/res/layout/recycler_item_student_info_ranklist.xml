@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#FFF2F2F2" />
+
+    <RelativeLayout
+        android:id="@+id/itemContainer"
+        android:layout_width="match_parent"
+        android:layout_height="210px"
+        android:background="#FFF"
+        android:orientation="horizontal"
+        android:paddingLeft="48px"
+        android:paddingRight="48px">
+
+        <TextView
+            android:id="@+id/tv_studentRankNum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:minEms="1"
+            android:textColor="@color/text_color_standard"
+            android:textSize="15sp"
+            tools:text="50" />
+
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/img_kidPhoto"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="30px"
+            android:layout_marginRight="30px"
+            android:layout_toRightOf="@+id/tv_studentRankNum"
+            fresco:actualImageScaleType="focusCrop"
+            fresco:placeholderImage="@mipmap/icon_default_photo"
+            fresco:placeholderImageScaleType="focusCrop"
+            fresco:roundAsCircle="true" />
+
+        <LinearLayout
+            android:id="@+id/ll_studentName"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginRight="50px"
+            android:layout_toRightOf="@+id/img_kidPhoto"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_studentName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:lines="1"
+                android:maxEms="4"
+                android:maxLength="4"
+                android:minEms="3"
+                android:textColor="@color/text_color_standard"
+                android:textSize="15sp"
+                tools:text="张小衡张小张" />
+
+            <TextView
+                android:id="@+id/tv_studentGrade"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12px"
+                android:textColor="@color/text_color_standard"
+                android:textSize="13sp"
+                tools:text="Lv.举人" />
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/tv_className"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="30px"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:lines="1"
+            android:maxEms="5"
+            android:minEms="5"
+            android:textColor="@color/text_color_small"
+            android:textSize="12sp"
+            tools:text="三年级1班" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toLeftOf="@+id/tv_className"
+            android:layout_toRightOf="@+id/ll_studentName">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:text="徽章"
+                    android:textColor="@color/text_color_small"
+                    android:textSize="@dimen/text_size_standard" />
+
+                <TextView
+                    android:id="@+id/tv_studentBadge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20px"
+                    android:gravity="center_horizontal"
+                    android:hint="0"
+                    android:textColor="@color/text_color_small"
+                    android:textSize="@dimen/text_size_standard"
+                    tools:text="899" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:text="专项"
+                    android:textColor="@color/text_color_small"
+                    android:textSize="@dimen/text_size_standard" />
+
+                <TextView
+                    android:id="@+id/tv_studentBadgePro"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20px"
+                    android:gravity="center_horizontal"
+                    android:hint="0"
+                    android:textColor="@color/text_color_small"
+                    android:textSize="@dimen/text_size_standard"
+                    tools:text="100" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:text="点赞"
+                    android:textColor="@color/text_color_small"
+                    android:textSize="@dimen/text_size_standard" />
+
+                <TextView
+                    android:id="@+id/tv_studentScore"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20px"
+                    android:gravity="center_horizontal"
+                    android:hint="0"
+                    android:textColor="@color/text_color_small"
+                    android:textSize="@dimen/text_size_standard"
+                    tools:text="100" />
+            </LinearLayout>
+        </LinearLayout>
+    </RelativeLayout>
+</LinearLayout>

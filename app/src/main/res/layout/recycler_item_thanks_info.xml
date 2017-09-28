@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white_fff"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/img_kidPhoto"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginBottom="30px"
+            android:layout_marginLeft="42px"
+            android:layout_marginStart="42px"
+            android:layout_marginTop="30px"
+            fresco:actualImageScaleType="focusCrop"
+            fresco:placeholderImage="@mipmap/icon_default_photo"
+            fresco:placeholderImageScaleType="focusCrop"
+            fresco:roundAsCircle="true" />
+
+        <TextView
+            android:id="@+id/tv_user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30px"
+            android:layout_marginStart="30px"
+            android:layout_marginTop="35px"
+            android:layout_toEndOf="@+id/img_kidPhoto"
+            android:layout_toRightOf="@+id/img_kidPhoto"
+            android:ellipsize="end"
+            android:hint="逗号博士"
+            android:maxLength="4"
+            android:textColor="#4A4A4A"
+            android:textColorHint="#4A4A4A"
+            android:textSize="15sp"
+            tools:text="张老师张老师张老师张老师张老师" />
+
+        <TextView
+            android:id="@+id/tv_news_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/tv_user_name"
+            android:layout_below="@+id/tv_user_name"
+            android:layout_marginTop="3px"
+            android:textColor="#9B9B9B"
+            android:textSize="13sp"
+            tools:text="2016.7.12" />
+
+        <TextView
+            android:id="@+id/tv_thanks_teacher"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="109px"
+            android:layout_marginStart="109px"
+            android:layout_toEndOf="@+id/tv_news_time"
+            android:layout_toRightOf="@+id/tv_news_time"
+            android:clickable="false"
+            android:gravity="center"
+            android:textColor="#4A4A4A"
+            android:textSize="15sp"
+            tools:text="感谢了张力" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#EFEFEF" />
+</LinearLayout>

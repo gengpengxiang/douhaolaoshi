@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/iv_authorPhoto"
+        android:layout_width="80dp"
+        android:layout_height="100dp"
+        android:layout_marginLeft="10dp"
+        app:actualImageScaleType="focusCrop"
+        app:placeholderImage="@drawable/shape_bg_zhuanjia"
+        app:placeholderImageScaleType="focusCrop"
+        app:roundedCornerRadius="5dp" />
+
+    <TextView
+        android:id="@+id/tv_authorName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/tv_authorTitle"
+        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@+id/iv_authorPhoto"
+        android:singleLine="true"
+        android:textColor="#4A4A4A"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        tools:text="尚俊杰" />
+
+    <TextView
+        android:id="@+id/tv_authorTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/iv_authorPhoto"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_toRightOf="@+id/iv_authorPhoto"
+        android:singleLine="true"
+        android:textColor="#4A4A4A"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        tools:text="北京大学教育学院副院长" />
+
+    <TextView
+        android:id="@+id/tv_shareZhuanjia"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/tv_authorName"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/selector_bg_text_commend"
+        android:clickable="true"
+        android:paddingBottom="3dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="3dp"
+        android:text="推荐给好友"
+        android:textColor="@drawable/selector_text_color_share_zhuanjia"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/tv_authorDesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/iv_authorPhoto"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:ellipsize="end"
+        android:lineSpacingExtra="3dp"
+        android:maxLines="4"
+        android:textColor="#4A4A4A"
+        android:textSize="14sp"
+        tools:text="北京大学教育学院副院长、教育技术系系主任、中国教育技术协会教育游戏专业委员会理事长。10年来，一直专注于游戏化学习与未来教育的研究，涉及的研究主题涉及教育游戏。北京大学教育学院副院长、教育技术系系主任、中国教育技术协会教育游戏专业委员会理事长。10年来，一直专注于游戏化学习与未来教育的研究，涉及的研究主题涉及教育游戏。" />
+</RelativeLayout>
