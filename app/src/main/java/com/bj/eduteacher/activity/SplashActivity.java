@@ -45,20 +45,20 @@ public class SplashActivity extends BaseActivity {
         registWx();
 
         // test
-        // test();
+        test();
 
-        if (isShowGuide()) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    Intent intent = new Intent(SplashActivity.this, GuideActivity.class);
-                    startActivity(intent);
-                    SplashActivity.this.finish();
-                }
-            }, 1500);
-        } else {
-            intentToHomePage();
-        }
+//        if (isShowGuide()) {
+//            new Handler().postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    Intent intent = new Intent(SplashActivity.this, GuideActivity.class);
+//                    startActivity(intent);
+//                    SplashActivity.this.finish();
+//                }
+//            }, 1500);
+//        } else {
+//            intentToHomePage();
+//        }
     }
 
     private void test() {
