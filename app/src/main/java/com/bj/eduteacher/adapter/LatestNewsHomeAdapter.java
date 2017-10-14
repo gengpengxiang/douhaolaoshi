@@ -132,6 +132,8 @@ public class LatestNewsHomeAdapter extends BaseRecyclerAdapter<RecyclerView.View
                 }
                 holder.tvBadgeName.setText(itemInfo.getNewsTitle());
             }
+        } else {
+            
         }
     }
 

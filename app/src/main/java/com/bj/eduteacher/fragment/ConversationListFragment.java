@@ -15,7 +15,9 @@ import com.bj.eduteacher.activity.ChatActivity;
 import com.bj.eduteacher.api.Constant;
 import com.bj.eduteacher.api.LmsDataService;
 import com.bj.eduteacher.api.MLProperties;
+import com.bj.eduteacher.manager.IntentManager;
 import com.bj.eduteacher.utils.PreferencesUtils;
+import com.bj.eduteacher.utils.StringUtils;
 import com.bj.eduteacher.utils.T;
 import com.bj.eduteacher.zzeaseui.model.EaseConversation;
 import com.bj.eduteacher.zzeaseui.ui.EaseConversationListFragment;
@@ -56,13 +58,19 @@ public class ConversationListFragment extends EaseConversationListFragment {
         super.initView();
         titleBar.getLeftLayout().setClickable(false);
         mXRefreshView.restoreLastRefreshTime(lastRefreshTime);
-        userPhone = PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_USER_ID);
         View errorView = (LinearLayout) View.inflate(getActivity(), R.layout.em_chat_neterror_item, null);
         errorItemContainer.addView(errorView);
         errorText = (TextView) errorView.findViewById(R.id.tv_connect_errormsg);
-        
+
         View emptyView = (LinearLayout) View.inflate(getActivity(), R.layout.em_chat_empty_item, null);
         emptyItemContainer.addView(emptyView);
+
+        tvLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                IntentManager.toLoginActivity(getActivity(), IntentManager.LOGIN_SUCC_ACTION_MAINACTIVITY);
+            }
+        });
     }
 
     @Override
@@ -116,7 +124,9 @@ public class ConversationListFragment extends EaseConversationListFragment {
     protected void onConversationRefresh() {
         super.onConversationRefresh();
         pageIndex = 1;
-        getConversationDataFromAPI(pageIndex);
+        if (!StringUtils.isEmpty(userPhone)) {
+            getConversationDataFromAPI(pageIndex);
+        }
     }
 
     private void getConversationDataFromAPI(final int pageIndex) {
@@ -175,6 +185,14 @@ public class ConversationListFragment extends EaseConversationListFragment {
     @Override
     public void onResume() {
         super.onResume();
+        userPhone = PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_USER_ID, "");
+        if (StringUtils.isEmpty(userPhone)) {
+            flContent.setVisibility(View.GONE);
+            llWithoutLogin.setVisibility(View.VISIBLE);
+        } else {
+            flContent.setVisibility(View.VISIBLE);
+            llWithoutLogin.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -182,6 +200,16 @@ public class ConversationListFragment extends EaseConversationListFragment {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
             MobclickAgent.onPageStart("chatList");
+            if (getActivity() != null) {
+                userPhone = PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_USER_ID, "");
+                if (StringUtils.isEmpty(userPhone)) {
+                    flContent.setVisibility(View.GONE);
+                    llWithoutLogin.setVisibility(View.VISIBLE);
+                } else {
+                    flContent.setVisibility(View.VISIBLE);
+                    llWithoutLogin.setVisibility(View.GONE);
+                }
+            }
         } else {
             MobclickAgent.onPageEnd("chatList");
         }

@@ -17,6 +17,7 @@ import com.bj.eduteacher.entity.ArticleInfo;
 import com.bj.eduteacher.utils.LL;
 import com.bj.eduteacher.utils.PreferencesUtils;
 import com.bj.eduteacher.utils.T;
+import com.bj.eduteacher.widget.manager.SaveGridLayoutManager;
 import com.shizhefei.fragment.LazyFragment;
 
 import java.util.ArrayList;
@@ -71,7 +72,7 @@ public class DoukeNewItemFragment extends LazyFragment {
         mRecyclerView = (RecyclerView) findViewById(R.id.mRecyclerView);
 
         mRecyclerView.setHasFixedSize(true);
-        layoutManager = new GridLayoutManager(getActivity(), 3);
+        layoutManager = new SaveGridLayoutManager(getActivity(), 3);
         mAdapter = new DoukeNewAdapter(mDataList);
         mAdapter.setOnMyItemClickListener(new DoukeNewAdapter.OnMyItemClickListener() {
             @Override
@@ -111,7 +112,7 @@ public class DoukeNewItemFragment extends LazyFragment {
     }
 
     private void initData() {
-        teacherPhoneNumber = PreferencesUtils.getString(getApplicationContext(), MLProperties.PREFER_KEY_USER_ID);
+        teacherPhoneNumber = PreferencesUtils.getString(getApplicationContext(), MLProperties.PREFER_KEY_USER_ID, "");
 
         mXRefreshView.startRefresh();
     }
@@ -134,7 +135,14 @@ public class DoukeNewItemFragment extends LazyFragment {
                     }
                     if (pageSize > 0) {
                         // 如果下一个年级的数量小于3，则补齐一行
-                        pageSize = pageSize < 3 ? 3 : pageSize;
+                        if (pageSize < 3) {
+                            pageSize = 3;
+                        } else {
+                            int last = pageSize % 3;
+                            if (last > 0) {
+                                pageSize = pageSize + (3 - last);
+                            }
+                        }
                         continue;
                     } else {
                         // 如果最后不满一行3个的话就去掉最后一行
@@ -239,7 +247,15 @@ public class DoukeNewItemFragment extends LazyFragment {
 
                     if (pageSize > 0) {
                         // 如果下一个年级的数量小于3，则补齐一行
-                        pageSize = pageSize < 3 ? 3 : pageSize;
+                        if (pageSize < 3) {
+                            pageSize = 3;
+                        } else {
+                            int last = pageSize % 3;
+                            if (last > 0) {
+                                pageSize = pageSize + (3 - last);
+                            }
+                        }
+                        // pageSize = pageSize < 3 ? 3 : pageSize;
                         currNJOffset = 0;
                         // currentPage = 1;
                         continue;

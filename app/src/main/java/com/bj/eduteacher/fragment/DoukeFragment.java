@@ -41,9 +41,11 @@ import com.bj.eduteacher.dialog.TipsAlertDialog3;
 import com.bj.eduteacher.entity.ArticleInfo;
 import com.bj.eduteacher.entity.OrderInfo;
 import com.bj.eduteacher.entity.TradeInfo;
+import com.bj.eduteacher.manager.IntentManager;
 import com.bj.eduteacher.model.CurLiveInfo;
 import com.bj.eduteacher.model.MySelfInfo;
 import com.bj.eduteacher.tool.Constants;
+import com.bj.eduteacher.tool.ShowNameUtil;
 import com.bj.eduteacher.utils.FrescoImageLoader;
 import com.bj.eduteacher.utils.LL;
 import com.bj.eduteacher.utils.NetUtils;
@@ -52,6 +54,7 @@ import com.bj.eduteacher.utils.StringUtils;
 import com.bj.eduteacher.utils.T;
 import com.bj.eduteacher.view.OnRecyclerItemClickListener;
 import com.bj.eduteacher.widget.dialog.RadioGroupDialog;
+import com.bj.eduteacher.widget.manager.SaveGridLayoutManager;
 import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
@@ -82,6 +85,7 @@ import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by zz379 on 2017/4/7.
+ * 首页
  */
 
 public class DoukeFragment extends BaseFragment {
@@ -99,7 +103,7 @@ public class DoukeFragment extends BaseFragment {
     @BindView(R.id.header_img_notificationdot)
     ImageView imgHeaderRightNotificationdot;
 
-    private String teacherPhoneNumber;
+    private String teacherPhoneNumber, phoneNumberBack;
     private boolean unReadMsg = false;
 
     private DoukeListAdapter mAdapter;
@@ -107,7 +111,6 @@ public class DoukeFragment extends BaseFragment {
     public static long lastRefreshTime;
     private List<ArticleInfo> mDataList = new ArrayList<>();
     private List<ArticleInfo> mBannerList = new ArrayList<>();
-    private String kidId;
     private final CompositeDisposable disposables = new CompositeDisposable();
 
     private Banner banner;
@@ -133,13 +136,13 @@ public class DoukeFragment extends BaseFragment {
 
         initToolbar();
         initView();
+        initData();
         return view;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        initData();
     }
 
     @Override
@@ -172,9 +175,10 @@ public class DoukeFragment extends BaseFragment {
     }
 
     private void initView() {
+        teacherPhoneNumber = PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_USER_ID, "");
         // 下拉刷新控件
         mRecyclerView.setHasFixedSize(true);
-        layoutManager = new GridLayoutManager(getActivity(), 6);
+        layoutManager = new SaveGridLayoutManager(getActivity(), 6);
         mAdapter = new DoukeListAdapter(mDataList);
         // 添加header
         banner = (Banner) mAdapter.setHeaderView(R.layout.recycler_header_banner, mRecyclerView);
@@ -260,6 +264,12 @@ public class DoukeFragment extends BaseFragment {
             String buyType = item.getCommentNumber();
 
             if (!StringUtils.isEmpty(price) && !"0".equals(price) && "0".equals(buyType)) {
+                // 如果资源不是免费，需要先登录
+                if (StringUtils.isEmpty(teacherPhoneNumber)) {
+                    IntentManager.toLoginActivity(getActivity(), IntentManager.LOGIN_SUCC_ACTION_MAINACTIVITY);
+                    return;
+                }
+
                 MobclickAgent.onEvent(getActivity(), "doc_buy");
                 initPopViewPayDetail(item.getArticleID(), item.getAgreeNumber());
             } else {
@@ -303,6 +313,12 @@ public class DoukeFragment extends BaseFragment {
                 T.showShort(getActivity(), "页面不存在");
             }
         } else if (item.getShowType() == ArticleInfo.SHOW_TYPE_LIVE) {
+            // 观看直播需要先进行登录
+            if (StringUtils.isEmpty(teacherPhoneNumber)) {
+                IntentManager.toLoginActivity(getActivity(), IntentManager.LOGIN_SUCC_ACTION_MAINACTIVITY);
+                return;
+            }
+
             if (item.getAuthDesc().equals(MySelfInfo.getInstance().getId())) {
                 returnBackRoom();
             } else {
@@ -315,7 +331,16 @@ public class DoukeFragment extends BaseFragment {
                     MySelfInfo.getInstance().setIdStatus(Constants.MEMBER);
                     MySelfInfo.getInstance().setJoinRoomWay(false);
                     CurLiveInfo.setHostID(item.getAuthDesc());
-                    CurLiveInfo.setHostName(item.getAuthor());
+                    String phone;
+                    if (!StringUtils.isEmpty(item.getAuthDesc())) {
+                        phone = item.getAuthDesc().substring(3);
+                        if (!StringUtils.isEmpty(phone) && phone.length() > 10) {
+                            phone = phone.replaceAll("(\\d{3})\\d{4}(\\d{4})", "$1****$2");
+                        }
+                    } else {
+                        phone = "";
+                    }
+                    CurLiveInfo.setHostName(ShowNameUtil.getFirstNotNullParams(item.getNickname(), item.getAuthor(), phone));
                     CurLiveInfo.setHostAvator(item.getAuthImg());
                     CurLiveInfo.setRoomNum(Integer.valueOf(item.getArticleID()));
                     CurLiveInfo.setTitle(item.getTitle());
@@ -428,9 +453,6 @@ public class DoukeFragment extends BaseFragment {
     }
 
     private void initData() {
-        kidId = PreferencesUtils.getString(getActivity(), MLProperties.BUNDLE_KEY_KID_ID);
-        teacherPhoneNumber = PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_USER_ID);
-
         currentPage = 1;
         mDataList.clear();
 
@@ -732,7 +754,17 @@ public class DoukeFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        startGetUnReadMessageNumber();  // 开始轮询获取消息
+        phoneNumberBack = PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_USER_ID, "");
+        if (!phoneNumberBack.equals(teacherPhoneNumber)) {
+            // 前后两次手机号不同的时候刷新数据
+            teacherPhoneNumber = phoneNumberBack;
+            initData();
+        }
+        if (!StringUtils.isEmpty(teacherPhoneNumber)) {
+            unReadMsg = false;
+            imgHeaderRightNotificationdot.setVisibility(View.GONE);
+            startGetUnReadMessageNumber();  // 开始轮询获取消息
+        }
         // 查询订单
         if (!StringUtils.isEmpty(currTradeID)) {
             queryTheTradeStateFromAPI(currTradeID);
@@ -743,12 +775,27 @@ public class DoukeFragment extends BaseFragment {
     protected void onVisible() {
         super.onVisible();
         MobclickAgent.onPageStart("douke");
+        if (getActivity() != null) {
+            phoneNumberBack = PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_USER_ID, "");
+            if (!phoneNumberBack.equals(teacherPhoneNumber)) {
+                // 前后两次手机号不同的时候刷新数据
+                teacherPhoneNumber = phoneNumberBack;
+                initData();
+            }
+        }
     }
 
     @Override
     protected void onInVisible() {
         super.onInVisible();
         MobclickAgent.onPageEnd("douke");
+    }
+
+    public void cleanNotice() {
+        // 退出账号的时候 停止轮询
+        disposables.clear();
+        unReadMsg = false;
+        imgHeaderRightNotificationdot.setVisibility(View.GONE);
     }
 
     @Override
@@ -760,6 +807,10 @@ public class DoukeFragment extends BaseFragment {
 
     @OnClick(R.id.header_ll_right)
     void actionHeaderRightClick() {
+        if (StringUtils.isEmpty(teacherPhoneNumber)) {
+            IntentManager.toLoginActivity(getActivity(), IntentManager.LOGIN_SUCC_ACTION_MAINACTIVITY);
+            return;
+        }
         // 所有消息置为已读
         unReadMsg = false;
         imgHeaderRightNotificationdot.setVisibility(View.GONE);
@@ -772,6 +823,7 @@ public class DoukeFragment extends BaseFragment {
      * 轮询查找未读消息
      */
     private void startGetUnReadMessageNumber() {
+        LL.i("DoukeFragment -- onNext()................");
         final LmsDataService service = new LmsDataService();
         Observable.create(new ObservableOnSubscribe<Integer>() {
             @Override
@@ -811,7 +863,11 @@ public class DoukeFragment extends BaseFragment {
 
                     @Override
                     public void onNext(Integer integer) {
-                        LL.i("DoukeFragment -- onNext()................");
+                        if (StringUtils.isEmpty(teacherPhoneNumber)) {
+                            unReadMsg = false;
+                            imgHeaderRightNotificationdot.setVisibility(View.GONE);
+                            return;
+                        }
                         if (integer > 0) {
                             unReadMsg = true;
                             imgHeaderRightNotificationdot.setVisibility(View.VISIBLE);
@@ -963,7 +1019,7 @@ public class DoukeFragment extends BaseFragment {
                 .subscribe(new Observer<OrderInfo>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-                        showLoadingDialog();
+                        // showLoadingDialog();
                     }
 
                     @Override
@@ -1005,7 +1061,7 @@ public class DoukeFragment extends BaseFragment {
                 .subscribe(new Observer<OrderInfo>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-                        showLoadingDialog();
+                        // showLoadingDialog();
                     }
 
                     @Override
@@ -1091,7 +1147,7 @@ public class DoukeFragment extends BaseFragment {
                             showAlertDialog("支付失败", "支付遇到问题，请重试");
                         }
                         // 刷新页面
-                        showLoadingDialog();
+                        // showLoadingDialog();
                         getRefreshDataList();
                     }
 
@@ -1128,10 +1184,6 @@ public class DoukeFragment extends BaseFragment {
 
     public void setBottomTabListener(ChangeBottomTabListener bottomTabListener) {
         this.bottomTabListener = bottomTabListener;
-    }
-
-    public interface ChangeBottomTabListener {
-        public void onTabChange(int position);
     }
 
 }

@@ -44,7 +44,7 @@ public class StringUtils {
         Matcher m = p.matcher(code);
         return m.matches();
     }
-
+    
     /**
      * 检查邮箱格式是否正确
      *

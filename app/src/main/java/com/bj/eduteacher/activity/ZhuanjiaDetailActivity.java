@@ -38,6 +38,7 @@ import com.bj.eduteacher.dialog.TipsAlertDialog3;
 import com.bj.eduteacher.entity.ArticleInfo;
 import com.bj.eduteacher.entity.OrderInfo;
 import com.bj.eduteacher.entity.TradeInfo;
+import com.bj.eduteacher.manager.IntentManager;
 import com.bj.eduteacher.utils.LL;
 import com.bj.eduteacher.utils.NetUtils;
 import com.bj.eduteacher.utils.PreferencesUtils;
@@ -80,6 +81,7 @@ import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by zz379 on 2017/7/30.
+ * 专家详情页面
  */
 
 public class ZhuanjiaDetailActivity extends BaseActivity {
@@ -170,6 +172,12 @@ public class ZhuanjiaDetailActivity extends BaseActivity {
                 String price = item.getAgreeNumber();
                 String buyType = item.getCommentNumber();
                 if (!"0".equals(price) && "0".equals(buyType)) {
+                    // 购买资源前需要登录
+                    if (StringUtils.isEmpty(teacherPhoneNumber)) {
+                        IntentManager.toLoginActivity(ZhuanjiaDetailActivity.this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
+                        return;
+                    }
+
                     MobclickAgent.onEvent(ZhuanjiaDetailActivity.this, "doc_buy");
                     initPopViewPayDetail(item.getArticleID(), item.getAgreeNumber());
                 } else {
@@ -208,6 +216,12 @@ public class ZhuanjiaDetailActivity extends BaseActivity {
                     intent.putExtra("SubContent", item.getContent());
                     startActivity(intent);
                 } else if ("Invite".equals(tag)) {
+                    // 购买资源前需要登录
+                    if (StringUtils.isEmpty(teacherPhoneNumber)) {
+                        IntentManager.toLoginActivity(ZhuanjiaDetailActivity.this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
+                        return;
+                    }
+
                     inviteFriendsAnswer(item);
                 } else if ("ViewReply".equals(tag)) {
                     // 查看全部回复
@@ -386,7 +400,7 @@ public class ZhuanjiaDetailActivity extends BaseActivity {
     }
 
     private void initData() {
-        teacherPhoneNumber = PreferencesUtils.getString(ZhuanjiaDetailActivity.this, MLProperties.PREFER_KEY_USER_ID);
+        teacherPhoneNumber = PreferencesUtils.getString(ZhuanjiaDetailActivity.this, MLProperties.PREFER_KEY_USER_ID, "");
         userPhotoPath = PreferencesUtils.getString(ZhuanjiaDetailActivity.this, MLProperties.BUNDLE_KEY_TEACHER_IMG);
 
         currentPage = 1;
@@ -865,6 +879,9 @@ public class ZhuanjiaDetailActivity extends BaseActivity {
         super.onResume();
         MobclickAgent.onPageStart("zhuanjia_detail");
         MobclickAgent.onResume(this);
+        teacherPhoneNumber = PreferencesUtils.getString(ZhuanjiaDetailActivity.this, MLProperties.PREFER_KEY_USER_ID, "");
+        userPhotoPath = PreferencesUtils.getString(ZhuanjiaDetailActivity.this, MLProperties.BUNDLE_KEY_TEACHER_IMG);
+
         if (!StringUtils.isEmpty(currTradeID)) {
             queryTheTradeStateFromAPI(currTradeID);
         } else {

@@ -36,6 +36,8 @@ public class MLProperties {
     public static final String BUNDLE_KEY_KID_PINGYU = "KidPingYu";
 
     public static final String BUNDLE_KEY_TEACHER_IMG = "TeacherImg";
+    public static final String BUNDLE_KEY_TEACHER_NICK = "TeacherNickname";
+
     public static final String BUNDLE_KEY_SCHOOL_RANK_TYPE_ID = "TypeID";
     public static final String BUNDLE_KEY_DOUKE_URL = "DouKeURL";
     public static final String BUNDLE_KEY_DOUKE_ID = "DouKeID";

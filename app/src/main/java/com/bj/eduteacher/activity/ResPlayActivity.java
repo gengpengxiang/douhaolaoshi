@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
@@ -18,9 +17,15 @@ import com.bj.eduteacher.BaseActivity;
 import com.bj.eduteacher.R;
 import com.bj.eduteacher.api.LmsDataService;
 import com.bj.eduteacher.api.MLProperties;
+import com.bj.eduteacher.entity.ArticleInfo;
+import com.bj.eduteacher.entity.BaseDataInfo;
+import com.bj.eduteacher.manager.IntentManager;
 import com.bj.eduteacher.utils.NetUtils;
+import com.bj.eduteacher.utils.PreferencesUtils;
+import com.bj.eduteacher.utils.StringUtils;
 import com.bj.eduteacher.utils.T;
 import com.bj.eduteacher.view.MyJCView;
+import com.umeng.analytics.MobclickAgent;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -30,8 +35,10 @@ import fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -39,6 +46,10 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 public class ResPlayActivity extends BaseActivity {
+
+    private static final String ARTICLE_AGREE_TYPE_YES = "add";
+    private static final String ARTICLE_AGREE_TYPE_NO = "del";
+    private static final String ARTICLE_AGREE_TYPE_SEARCH = "status";
 
     @BindView(R.id.tv_readNumber)
     TextView tvReadNumber;
@@ -56,8 +67,11 @@ public class ResPlayActivity extends BaseActivity {
     private String resID;
     private String resUrl;
     private String resName;
+    private LmsDataService service;
+    private String teacherPhoneNumber;
 
     @Override
+
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // 设置状态栏颜色
@@ -66,23 +80,11 @@ public class ResPlayActivity extends BaseActivity {
         }
         setContentView(R.layout.layout_jc_player);
         ButterKnife.bind(this);
+        service = new LmsDataService();
 
         initView();
         initData();
 
-        test();
-    }
-
-    private void test() {
-        (new Handler()).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                llBottomBar.setVisibility(View.VISIBLE);
-                tvReadNumber.setText("12" + "次阅读");
-                tvAgreeNumber.setText("20");
-                tvCommentNumber.setText("43");
-            }
-        }, 2000);
     }
 
     private void initView() {
@@ -106,19 +108,39 @@ public class ResPlayActivity extends BaseActivity {
     }
 
     private void initData() {
+        if (!NetUtils.isConnected(this)) {
+            T.showShort(this, "无法连接到网络，请检查您的网络设置");
+            hideLoadingDialog();
+            return;
+        }
         // 增加阅读数量
         getResPreviewNumber();
     }
 
-    @OnClick(R.id.ll_agreeNumber)
-    void clickAgree() {
-        T.showShort(this, "点赞！");
+    @Override
+    protected void onResume() {
+        super.onResume();
+        teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
+        if (!StringUtils.isEmpty(teacherPhoneNumber)) {
+            // 查询是否点赞
+            getArticleAgreeNumber(ARTICLE_AGREE_TYPE_SEARCH);
+        }
+
+        if (mPlayer.currentState != JCVideoPlayer.CURRENT_STATE_PLAYING && mPlayer.currentState != JCVideoPlayer.CURRENT_STATE_ERROR) {
+            mPlayer.startButton.performClick();
+        }
     }
 
     @OnClick(R.id.ll_commentNumber)
     void clickComment() {
+        // 点赞评论需要登录
+        if (StringUtils.isEmpty(teacherPhoneNumber)) {
+            IntentManager.toLoginActivity(this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
+            return;
+        }
+
         Intent intent = new Intent(this, ResCommentActivity.class);
-        intent.putExtra(MLProperties.BUNDLE_KEY_DOUKE_ID, "0");
+        intent.putExtra(MLProperties.BUNDLE_KEY_DOUKE_ID, resID);
         startActivity(intent);
     }
 
@@ -137,21 +159,152 @@ public class ResPlayActivity extends BaseActivity {
     }
 
     private void getResPreviewNumber() {
-        if (!NetUtils.isConnected(this)) {
-            T.showShort(this, "无法连接到网络，请检查您的网络设置");
-            hideLoadingDialog();
-            return;
-        }
-        Observable.create(new ObservableOnSubscribe<String>() {
+        Observable.create(new ObservableOnSubscribe<String[]>() {
             @Override
-            public void subscribe(@NonNull ObservableEmitter<String> e) throws Exception {
-                LmsDataService service = new LmsDataService();
-                service.addResourcePreviewNumber(resID);
+            public void subscribe(@NonNull ObservableEmitter<String[]> e) throws Exception {
+                String[] result = service.addResourcePreviewNumber(resID);
+                e.onNext(result);
                 e.onComplete();
             }
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe();
+                .subscribe(new Observer<String[]>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull String[] result) {
+                        // 获取点赞数量和评论数量
+                        getResNumbers();
+                        if ("1".equals(result[0])) {
+
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    private void getResNumbers() {
+        Observable.create(new ObservableOnSubscribe<ArticleInfo>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<ArticleInfo> e) throws Exception {
+                ArticleInfo dataInfo = service.getResInfoByID(resID);
+                e.onNext(dataInfo);
+                e.onComplete();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<ArticleInfo>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull ArticleInfo articleInfo) {
+                        hideLoadingDialog();
+                        llBottomBar.setVisibility(View.VISIBLE);
+                        tvAgreeNumber.setText(articleInfo.getAgreeNumber());
+                        tvCommentNumber.setText(articleInfo.getCommentNumber());
+                        tvReadNumber.setText(articleInfo.getReadNumber() + "次阅读");
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        hideLoadingDialog();
+                        llBottomBar.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    boolean isAgree = false;
+
+    @OnClick(R.id.ll_agreeNumber)
+    void clickAgree() {
+        MobclickAgent.onEvent(this, "article_like");
+        // 点赞评论需要登录
+        if (StringUtils.isEmpty(teacherPhoneNumber)) {
+            IntentManager.toLoginActivity(this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
+            return;
+        }
+
+        if (isAgree) {
+            getArticleAgreeNumber(ARTICLE_AGREE_TYPE_NO);
+        } else {
+            getArticleAgreeNumber(ARTICLE_AGREE_TYPE_YES);
+        }
+    }
+
+    private void getArticleAgreeNumber(final String type) {
+        Observable.create(new ObservableOnSubscribe<BaseDataInfo>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<BaseDataInfo> e) throws Exception {
+                LmsDataService mService = new LmsDataService();
+                BaseDataInfo dataInfo = mService.getResourceAgreeStatus(resID, teacherPhoneNumber, type);
+                e.onNext(dataInfo);
+                e.onComplete();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<BaseDataInfo>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(BaseDataInfo info) {
+                        if (info == null || StringUtils.isEmpty(info.getRet())) {
+                            return;
+                        }
+
+                        if (info.getRet().equals("3")) {
+                            if (info.getData().equals("1")) {
+                                ivAgree.setImageResource(R.mipmap.ic_liked);
+                                isAgree = true;
+                            } else {
+                                ivAgree.setImageResource(R.mipmap.ic_like);
+                                isAgree = false;
+                            }
+                        } else if (info.getRet().equals("2")) {
+                            ivAgree.setImageResource(R.mipmap.ic_like);
+                            isAgree = false;
+                        } else if (info.getRet().equals("1")) {
+                            ivAgree.setImageResource(R.mipmap.ic_liked);
+                            isAgree = true;
+                        } else {
+
+                        }
+                        // 获取res 各种数据
+                        getResNumbers();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+
     }
 
     @Override

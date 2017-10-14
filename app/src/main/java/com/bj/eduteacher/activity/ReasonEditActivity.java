@@ -128,7 +128,7 @@ public class ReasonEditActivity extends BaseActivity {
     }
 
     private void initData() {
-        teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID);
+        teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
         // 获取缓存的点赞理由
         String commendReasons = PreferencesUtils.getString(this, "CommendReason");
         if (StringUtils.isEmpty(commendReasons) || commendReasons.equals("[]")) {

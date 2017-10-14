@@ -29,6 +29,8 @@ public class ArticleInfo {
     private String postTime;
     private String finishTime;
 
+    private String nickname;
+
     private String readNumber;
     private String agreeNumber;
     private String commentNumber;
@@ -39,6 +41,14 @@ public class ArticleInfo {
     private List<ArticleInfo> replyList;
 
     private String previewType; // 1是文档、2是视频
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
 
     public String getPreviewType() {
         return previewType;

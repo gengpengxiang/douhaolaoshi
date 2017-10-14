@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.andview.refreshview.recyclerview.BaseRecyclerAdapter;
 import com.bj.eduteacher.R;
 import com.bj.eduteacher.entity.ArticleInfo;
+import com.bj.eduteacher.tool.ShowNameUtil;
 import com.bj.eduteacher.utils.StringUtils;
 import com.bj.eduteacher.zzautolayout.utils.AutoUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -54,8 +55,11 @@ public class SubjectDetailAdapter extends BaseRecyclerAdapter<RecyclerView.ViewH
         if (!StringUtils.isEmpty(phone) && phone.length() > 10) {
             phone = phone.replaceAll("(\\d{3})\\d{4}(\\d{4})", "$1****$2");
         }
-        String name = StringUtils.isEmpty(itemInfo.getAuthor()) ? phone : itemInfo.getAuthor();
-        holder.tvCommentName.setText(name);
+        String name = itemInfo.getAuthor();
+        String nick = itemInfo.getNickname();
+
+        ShowNameUtil.showNameLogic(holder.tvCommentName, nick, name, phone);
+
         holder.tvCommentTime.setText(itemInfo.getPostTime());
         holder.tvCommentContent.setText(itemInfo.getContent());
     }

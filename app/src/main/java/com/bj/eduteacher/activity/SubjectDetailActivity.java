@@ -26,6 +26,7 @@ import com.bj.eduteacher.adapter.SubjectDetailAdapter;
 import com.bj.eduteacher.api.LmsDataService;
 import com.bj.eduteacher.api.MLProperties;
 import com.bj.eduteacher.entity.ArticleInfo;
+import com.bj.eduteacher.manager.IntentManager;
 import com.bj.eduteacher.utils.KeyBoardUtils;
 import com.bj.eduteacher.utils.LL;
 import com.bj.eduteacher.utils.PreferencesUtils;
@@ -108,7 +109,6 @@ public class SubjectDetailActivity extends BaseActivity {
     }
 
     private void initToolBar() {
-        userPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID);
         subjectID = getIntent().getStringExtra("SubId");
         viewType = getIntent().getStringExtra("Type");
         subTitle = getIntent().getStringExtra("SubTitle");
@@ -187,6 +187,10 @@ public class SubjectDetailActivity extends BaseActivity {
                 .subscribe(new Consumer<Object>() {
                     @Override
                     public void accept(@NonNull Object o) throws Exception {
+                        if (StringUtils.isEmpty(userPhoneNumber)) {
+                            IntentManager.toLoginActivity(SubjectDetailActivity.this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
+                            return;
+                        }
                         inviteFriendsAnswer(subTitle);
                     }
                 });
@@ -200,7 +204,9 @@ public class SubjectDetailActivity extends BaseActivity {
         }
     }
 
+
     private void initData() {
+        userPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
         userPhotoPath = PreferencesUtils.getString(this, MLProperties.BUNDLE_KEY_TEACHER_IMG);
 
         currentPage = 1;
@@ -245,6 +251,12 @@ public class SubjectDetailActivity extends BaseActivity {
 
     @OnClick(R.id.tv_send)
     void actionSendClick() {
+        // 评论之前需要先进行登录
+        if (StringUtils.isEmpty(userPhoneNumber)) {
+            IntentManager.toLoginActivity(this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
+            return;
+        }
+
         String content = edtContent.getText().toString().trim();
         if (StringUtils.isEmpty(content)) {
             T.showShort(this, "评论内容不能为空！");
@@ -345,6 +357,7 @@ public class SubjectDetailActivity extends BaseActivity {
         super.onResume();
         MobclickAgent.onPageStart("subjectDetail");
         MobclickAgent.onResume(this);
+        userPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
     }
 
     @Override

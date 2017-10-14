@@ -50,6 +50,7 @@ import com.bj.eduteacher.entity.ArticleInfo;
 import com.bj.eduteacher.entity.BaseDataInfo;
 import com.bj.eduteacher.entity.BitmapCallBack;
 import com.bj.eduteacher.glide.ProgressTarget;
+import com.bj.eduteacher.manager.IntentManager;
 import com.bj.eduteacher.utils.LL;
 import com.bj.eduteacher.utils.NetUtils;
 import com.bj.eduteacher.utils.PreferencesUtils;
@@ -139,7 +140,7 @@ public class DoukeDetailActivity extends BaseActivity {
         setContentView(R.layout.activity_douke_detail);
         ButterKnife.bind(this);
         api = WXAPIFactory.createWXAPI(this, MLProperties.APP_DOUHAO_TEACHER_ID);
-        userPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID);
+        userPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
         newsID = getIntent().getStringExtra(MLProperties.BUNDLE_KEY_DOUKE_ID);
         contentUrl = getIntent().getStringExtra(MLProperties.BUNDLE_KEY_DOUKE_URL);
         LL.i("文章地址：" + contentUrl + "\n文章ID：" + newsID);
@@ -357,6 +358,8 @@ public class DoukeDetailActivity extends BaseActivity {
         super.onResume();
         MobclickAgent.onPageStart("article");
         MobclickAgent.onResume(this);
+        userPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
+        getArticleAgreeNumber(ARTICLE_AGREE_TYPE_SEARCH);
         getArticleCommentNumber();
     }
 
@@ -442,6 +445,12 @@ public class DoukeDetailActivity extends BaseActivity {
 
     @OnClick(R.id.ll_agreeNumber)
     void clickAgree() {
+        // 点赞评论需要登录
+        if (StringUtils.isEmpty(userPhoneNumber)) {
+            IntentManager.toLoginActivity(this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
+            return;
+        }
+
         MobclickAgent.onEvent(this, "article_like");
         if (isAgree) {
             getArticleAgreeNumber(ARTICLE_AGREE_TYPE_NO);
@@ -452,6 +461,12 @@ public class DoukeDetailActivity extends BaseActivity {
 
     @OnClick(R.id.ll_commentNumber)
     void clickComment() {
+        // 点赞评论需要登录
+        if (StringUtils.isEmpty(userPhoneNumber)) {
+            IntentManager.toLoginActivity(this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
+            return;
+        }
+
         Intent intent = new Intent(DoukeDetailActivity.this, DoukeCommentActivity.class);
         intent.putExtra(MLProperties.BUNDLE_KEY_DOUKE_ID, newsID);
         startActivity(intent);

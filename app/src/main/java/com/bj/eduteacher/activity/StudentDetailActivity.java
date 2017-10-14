@@ -197,7 +197,7 @@ public class StudentDetailActivity extends BaseActivity implements View.OnClickL
     }
 
     private void initData() {
-        userPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID);
+        userPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
         schoolImg = PreferencesUtils.getString(this, MLProperties.BUNDLE_KEY_SCHOOL_IMG, "");
 
         Bundle args = getIntent().getExtras();

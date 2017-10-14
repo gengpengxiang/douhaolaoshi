@@ -35,7 +35,7 @@
             android:background="@drawable/shape_bg_edt_add_reason"
             android:gravity="left"
             android:hint="请输入您的昵称"
-            android:maxLength="10"
+            android:maxLength="8"
             android:maxLines="1"
             android:paddingBottom="10dp"
             android:paddingLeft="13dp"

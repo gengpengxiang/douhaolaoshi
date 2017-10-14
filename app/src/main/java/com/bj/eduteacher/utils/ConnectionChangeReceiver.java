@@ -49,7 +49,7 @@ public class ConnectionChangeReceiver extends BroadcastReceiver {
             for (int i = 0; i < networks.length; i++) {
                 //获取ConnectivityManager对象对应的NetworkInfo对象
                 NetworkInfo networkInfo = connMgr.getNetworkInfo(networks[i]);
-                if (networkInfo.getState() == NetworkInfo.State.DISCONNECTED)
+                if (networkInfo != null && networkInfo.getState() == NetworkInfo.State.DISCONNECTED)
                     sb.append(networkInfo.getTypeName() + " connect is " + networkInfo.isConnected());
             }
             // Toast.makeText(context, "" + sb, Toast.LENGTH_SHORT).show();

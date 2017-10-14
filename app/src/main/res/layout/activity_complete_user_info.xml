@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:fresco="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+              xmlns:fresco="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
 
-    <include layout="@layout/layout_header_toolbar" />
+    <include layout="@layout/layout_header_toolbar"/>
 
     <ScrollView
         android:id="@+id/scrollview"
@@ -14,6 +14,7 @@
         android:layout_height="match_parent"
         android:background="#EFEFEF"
         android:fillViewport="true"
+        android:overScrollMode="never"
         android:scrollbars="none">
 
         <LinearLayout
@@ -28,7 +29,7 @@
                 android:layout_height="wrap_content"
                 fresco:actualImageResource="@mipmap/bg_user_banner"
                 fresco:actualImageScaleType="focusCrop"
-                fresco:viewAspectRatio="2.72" />
+                fresco:viewAspectRatio="2.72"/>
 
             <RelativeLayout
                 android:layout_width="wrap_content"
@@ -45,7 +46,7 @@
                     fresco:placeholderImageScaleType="focusCrop"
                     fresco:roundAsCircle="true"
                     fresco:roundingBorderColor="@color/colorPrimary"
-                    fresco:roundingBorderWidth="2dp" />
+                    fresco:roundingBorderWidth="2dp"/>
 
                 <ImageView
                     android:layout_width="28dp"
@@ -53,7 +54,7 @@
                     android:layout_alignBottom="@+id/iv_userPhoto"
                     android:layout_alignEnd="@+id/iv_userPhoto"
                     android:layout_alignRight="@+id/iv_userPhoto"
-                    android:src="@mipmap/ic_avatarpicture" />
+                    android:src="@mipmap/ic_avatarpicture"/>
             </RelativeLayout>
 
             <RelativeLayout
@@ -71,7 +72,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="3dp"
                     android:scaleType="fitXY"
-                    android:src="@drawable/ic_nichen" />
+                    android:src="@drawable/ic_nichen"/>
 
                 <EditText
                     android:id="@+id/edt_nickname"
@@ -82,18 +83,18 @@
                     android:background="@null"
                     android:gravity="center_vertical"
                     android:hint="请输入您的昵称"
-                    android:maxLength="10"
+                    android:maxLength="8"
                     android:paddingLeft="10dp"
                     android:paddingRight="12dp"
                     android:textColor="@color/text_color_standard"
                     android:textColorHint="@color/text_gray"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"/>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_alignParentBottom="true"
-                    android:background="#CFCFCF" />
+                    android:background="#CFCFCF"/>
             </RelativeLayout>
 
             <TextView
@@ -108,7 +109,17 @@
                 android:gravity="center"
                 android:text="完成"
                 android:textColor="#FFF"
-                android:textSize="17sp" />
+                android:textSize="17sp"/>
+
+            <TextView
+                android:id="@+id/tv_withProblem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="遇到问题？"
+                android:textColor="@color/text_blue"
+                android:textSize="@dimen/text_size_standard"
+                android:visibility="invisible"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

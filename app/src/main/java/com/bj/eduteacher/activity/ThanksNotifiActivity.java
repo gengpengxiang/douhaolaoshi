@@ -70,7 +70,7 @@ public class ThanksNotifiActivity extends BaseActivity {
     }
 
     private void initView() {
-        teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID);
+        teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
         // 初始化下拉刷新控件
         mRecyclerView.setHasFixedSize(true);
         // look as listview

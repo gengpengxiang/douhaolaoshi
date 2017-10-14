@@ -27,6 +27,7 @@ import com.bj.eduteacher.dialog.TipsAlertDialog3;
 import com.bj.eduteacher.entity.ArticleInfo;
 import com.bj.eduteacher.entity.OrderInfo;
 import com.bj.eduteacher.entity.TradeInfo;
+import com.bj.eduteacher.manager.IntentManager;
 import com.bj.eduteacher.utils.LL;
 import com.bj.eduteacher.utils.NetUtils;
 import com.bj.eduteacher.utils.PreferencesUtils;
@@ -93,7 +94,6 @@ public class DoukeNewDetailActivity extends BaseActivity {
 
         initToolBar();
         initView();
-        initData();
     }
 
     private void initToolBar() {
@@ -120,6 +120,11 @@ public class DoukeNewDetailActivity extends BaseActivity {
                 String price = item.getAgreeNumber();
                 String buyType = item.getCommentNumber();
                 if (!"0".equals(price) && "0".equals(buyType)) {
+                    // 购买资源之前需要先进行登录
+                    if (StringUtils.isEmpty(teacherPhoneNumber)) {
+                        IntentManager.toLoginActivity(DoukeNewDetailActivity.this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
+                        return;
+                    }
                     MobclickAgent.onEvent(DoukeNewDetailActivity.this, "doc_buy");
                     initPopViewPayDetail(item.getArticleID(), item.getAgreeNumber());
                 } else {
@@ -168,7 +173,7 @@ public class DoukeNewDetailActivity extends BaseActivity {
     }
 
     private void initData() {
-        teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID);
+        teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
 
         currentPage = 1;
         getMasterDataFromAPI();
@@ -416,6 +421,7 @@ public class DoukeNewDetailActivity extends BaseActivity {
         super.onResume();
         MobclickAgent.onPageStart("douke_new");
         MobclickAgent.onResume(this);
+        initData();
         if (!StringUtils.isEmpty(currTradeID)) {
             queryTheTradeStateFromAPI(currTradeID);
         } else {

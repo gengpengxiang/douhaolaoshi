@@ -1,5 +1,6 @@
 package com.bj.eduteacher.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -32,7 +33,8 @@ public class SplashActivity extends BaseActivity {
 
     private IWXAPI api;
     private LoginHelper loginHelper;
-    private String userPhoneNumber;
+
+    private Handler mHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,26 +46,44 @@ public class SplashActivity extends BaseActivity {
         initView();
         registWx();
 
-        // test
-        test();
-
-//        if (isShowGuide()) {
-//            new Handler().postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    Intent intent = new Intent(SplashActivity.this, GuideActivity.class);
-//                    startActivity(intent);
-//                    SplashActivity.this.finish();
-//                }
-//            }, 1500);
-//        } else {
-//            intentToHomePage();
-//        }
+        initData();
     }
 
-    private void test() {
-        Intent intent = new Intent(this, CompleteUserInfoActivity.class);
-        startActivity(intent);
+    private void initData() {
+        // 首先判断是否要进入导航页
+        if (isShowGuide()) {
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Intent intent = new Intent(SplashActivity.this, GuideActivity.class);
+                    startActivity(intent);
+                    SplashActivity.this.finish();
+                }
+            }, 1500);
+        } else {
+            // 判断登录时间，看是否需要重新登录
+            long lastLoginTime = PreferencesUtils.getLong(SplashActivity.this, MLProperties.PREFER_KEY_LOGIN_Time, 0);
+            if (lastLoginTime == 0 || isLoginAgain(lastLoginTime)) {
+                LL.i("登录超时，需要重新登录");
+                // 清空所有Preferences数据
+                cleanAllPreferencesData();
+                // 跳转到首页
+                intentToMainActivity();
+            } else {
+                intentToHomePage();
+            }
+        }
+    }
+
+    private void cleanAllPreferencesData() {
+        // 清除所有app内的数据
+        PreferencesUtils.cleanAllData(this);
+        // 清除直播设置数据
+        getSharedPreferences("data", Context.MODE_PRIVATE).edit().clear().commit();
+        // 清除直播个人数据
+        getSharedPreferences(Constants.USER_INFO, Context.MODE_PRIVATE).edit().clear().commit();
+        // 清除环信数据
+        getSharedPreferences("EM_SP_AT_MESSAGE", Context.MODE_PRIVATE).edit().clear().commit();
     }
 
     @Override
@@ -77,7 +97,6 @@ public class SplashActivity extends BaseActivity {
     }
 
     private void initView() {
-        //可以将一下代码加到你的MainActivity中，或者在任意一个需要调用分享功能的activity当中
         ImageView imgSplash = (ImageView) this.findViewById(R.id.img_splash);
         Animation animation = new AlphaAnimation(0, 1.0f);
         animation.setDuration(1500);
@@ -95,7 +114,7 @@ public class SplashActivity extends BaseActivity {
         String oldVersion = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_VERSION_CODE, "");
         String currVersion = AppUtils.getVersionName(this);
         if (StringUtils.isEmpty(oldVersion) || !oldVersion.equals(currVersion)) {
-            // 保存当前版本号
+            // 保存当前版本号 
             PreferencesUtils.putString(this, MLProperties.PREFER_KEY_VERSION_CODE, currVersion);
             return true;
         } else {
@@ -107,40 +126,32 @@ public class SplashActivity extends BaseActivity {
      * 跳转到首页
      */
     private void intentToHomePage() {
-        userPhoneNumber = PreferencesUtils.getString(SplashActivity.this, MLProperties.PREFER_KEY_USER_ID, "");
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                int loginStatus = PreferencesUtils.getInt(SplashActivity.this, MLProperties.PREFER_KEY_LOGIN_STATUS);
-                if (loginStatus != 1 || StringUtils.isEmpty(userPhoneNumber)) {
-                    Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
-                    startActivity(intent);
-                    SplashActivity.this.finish();
-                    return;
+        String userPhoneNumber = PreferencesUtils.getString(SplashActivity.this, MLProperties.PREFER_KEY_USER_ID, "");
+        int loginStatus = PreferencesUtils.getInt(SplashActivity.this, MLProperties.PREFER_KEY_LOGIN_STATUS);
+        if (loginStatus != 1 || StringUtils.isEmpty(userPhoneNumber)) {
+            cleanAllPreferencesData();
+            intentToMainActivity();
+            return;
+        }
+        // 判断腾讯云互动直播的相关信息是否需要重新登录
+        final String sxbSig = getSharedPreferences(Constants.USER_INFO, 0).getString(Constants.USER_SIG, "");
+        final String sxbUserID = PreferencesUtils.getString(SplashActivity.this, MLProperties.PREFER_KEY_USER_SXB_User, "");
+        LL.i("sxbSig：" + sxbSig);
+        if (StringUtils.isEmpty(sxbSig) || StringUtils.isEmpty(sxbUserID)) {
+            cleanAllPreferencesData();
+            intentToMainActivity();
+            return;
+        } else {
+            // 开一个子线程，登录直播功能
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    loginHelper.iLiveLogin(sxbUserID, sxbSig);
                 }
-                // 判断登录时间
-                long lastLoginTime = PreferencesUtils.getLong(SplashActivity.this, MLProperties.PREFER_KEY_LOGIN_Time, 0);
-                if (lastLoginTime == 0 || !checkLoginTimeSpan(lastLoginTime)) {
-                    Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
-                    startActivity(intent);
-                    SplashActivity.this.finish();
-                    return;
-                }
-                // 判断腾讯云互动直播的相关信息是否需要重新登录
-                String sxbSig = getSharedPreferences(Constants.USER_INFO, 0).getString(Constants.USER_SIG, "");
-                String sxbUserID = PreferencesUtils.getString(SplashActivity.this, MLProperties.PREFER_KEY_USER_SXB_User, "");
-                LL.i("sxbSig：" + sxbSig);
-                if (StringUtils.isEmpty(sxbSig) || StringUtils.isEmpty(sxbUserID)) {
-                    Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
-                    startActivity(intent);
-                    SplashActivity.this.finish();
-                    return;
-                }
-
-                // 环信登录状态被取消
-                login2Ease(userPhoneNumber);
-            }
-        }, 1500);
+            }).start();
+        }
+        // 环信登录状态被取消
+        login2Ease(userPhoneNumber);
     }
 
     private void login2Ease(String userPhoneNumber) {
@@ -153,9 +164,7 @@ public class SplashActivity extends BaseActivity {
                 EMClient.getInstance().chatManager().loadAllConversations();
                 Log.d("way", "登录聊天服务器成功！");
 
-                Intent intent = new Intent(SplashActivity.this, MainActivity.class);
-                startActivity(intent);
-                SplashActivity.this.finish();
+                intentToMainActivity();
             }
 
             @Override
@@ -167,20 +176,33 @@ public class SplashActivity extends BaseActivity {
             public void onError(int code, String message) {
                 Log.d("way", "登录聊天服务器失败！");
                 // 跳转到登录页面
-                Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
-                startActivity(intent);
-                SplashActivity.this.finish();
+                intentToMainActivity();
             }
         });
     }
 
-    private boolean checkLoginTimeSpan(long lastLoginTime) {
+    /**
+     * 1500毫秒后跳转到首页
+     */
+    private void intentToMainActivity() {
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+                startActivity(intent);
+                SplashActivity.this.finish();
+            }
+        }, 1500);
+    }
+
+    private boolean isLoginAgain(long lastLoginTime) {
         long currTime = System.currentTimeMillis();
         int span = (int) (currTime - lastLoginTime) / 1000 / 60 / 60 / 24;
 
-        if (span <= MLConfig.KEEP_LOGIN_TIME_LENGTH) {
+        if (span >= MLConfig.KEEP_LOGIN_TIME_LENGTH) {
             return true;
         }
+
         return false;
     }
 

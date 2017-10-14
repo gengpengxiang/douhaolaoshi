@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,6 +36,7 @@ import com.bj.eduteacher.utils.LL;
 import com.bj.eduteacher.utils.PreferencesUtils;
 import com.bj.eduteacher.utils.StringUtils;
 import com.bj.eduteacher.utils.T;
+import com.bj.eduteacher.widget.manager.SaveLinearLayoutManager;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.umeng.analytics.MobclickAgent;
 
@@ -117,7 +117,7 @@ public class ClassDetailFragment extends BaseFragment2 {
         Bundle args = getArguments();
         classId = args.getString(MLConfig.KEY_CLASS_ID);
         className = args.getString(MLConfig.KEY_CLASS_NAME);
-        userPhoneNumber = PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_USER_ID);
+        userPhoneNumber = PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_USER_ID, "");
     }
 
     @Nullable
@@ -152,7 +152,7 @@ public class ClassDetailFragment extends BaseFragment2 {
         mRecyclerView.setHasFixedSize(true);
 
         // look as listview
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setLayoutManager(new SaveLinearLayoutManager(getActivity()));
         // set Adatper
         mAdapter = new LatestNewsHomeAdapter(mDataList);
         mAdapter.setOnMyItemClickListener(new LatestNewsHomeAdapter.OnMyItemClickListener() {
@@ -185,8 +185,6 @@ public class ClassDetailFragment extends BaseFragment2 {
             public void onRefresh(boolean isPull) {
                 LL.i("刷新数据");
                 currentPage = 1;
-                mXRefreshView.setAutoLoadMore(true);
-                mXRefreshView.setPullLoadEnable(true);
                 getData();
             }
 
@@ -515,7 +513,9 @@ public class ClassDetailFragment extends BaseFragment2 {
 
     private void loadData(List<ClassNewsInfo> list) {
         lastRefreshTime = mXRefreshView.getLastRefreshTime();
-        if (mXRefreshView.mPullRefreshing) {
+        if (currentPage == 1) {
+            mXRefreshView.setAutoLoadMore(true);
+            mXRefreshView.setPullLoadEnable(true);
             mDataList.clear();
             mXRefreshView.stopRefresh();
         }

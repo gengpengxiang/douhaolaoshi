@@ -32,7 +32,7 @@ import com.bj.eduteacher.api.MLProperties;
 import com.bj.eduteacher.dialog.UpdateAPPAlertDialog;
 import com.bj.eduteacher.entity.AppVersionInfo;
 import com.bj.eduteacher.entity.ClassInfo;
-import com.bj.eduteacher.manager.UMPushManager;
+import com.bj.eduteacher.manager.IntentManager;
 import com.bj.eduteacher.service.DownloadAppService;
 import com.bj.eduteacher.utils.AppUtils;
 import com.bj.eduteacher.utils.LL;
@@ -84,6 +84,8 @@ public class HomeFragment extends BaseFragment {
     ScrollView svNoClassLinked;
     @BindView(R.id.tv_apply)
     TextView tvApply;
+    @BindView(R.id.ll_withoutLogin)
+    LinearLayout llWithoutLogin;
 
     private LmsDataService mService;
     private FragmentManager fm;
@@ -96,8 +98,6 @@ public class HomeFragment extends BaseFragment {
     private int minTabSize;
 
     private final CompositeDisposable disposables = new CompositeDisposable();
-    // 是否已经绑定班级：1-已绑定、0-未绑定
-    private String classLinked;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -161,30 +161,6 @@ public class HomeFragment extends BaseFragment {
     }
 
     private void initDatas(boolean isCheck) {
-        // 保存这次登录的时间
-        PreferencesUtils.putLong(getActivity(), MLProperties.PREFER_KEY_LOGIN_Time, System.currentTimeMillis());
-        PreferencesUtils.putInt(getActivity(), MLProperties.PREFER_KEY_LOGIN_STATUS, 1);
-        classLinked = PreferencesUtils.getString(getActivity(), MLProperties.BUNDLE_KEY_CLASS_LINKED, "0");
-        teacherPhoneNumber = PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_USER_ID);
-        // 初始化友盟
-        UMPushManager manager = UMPushManager.getInstance();
-        manager.setPushAlias(teacherPhoneNumber);
-
-        // 获取教师关联班级数量
-        showLoadingDialog();
-        getTeacherLinkClass();
-        // 先清空上次缓存的理由
-        PreferencesUtils.putString(getActivity(), "CommendReason", "");
-        // 缓存点赞理由
-        getCommendReason();
-
-//        if ("1".equals(classLinked)) {
-//
-//        } else {
-//            // 显示没有关联班级的页面
-//            updatePage3();
-//        }
-
         // 检查新版本 如果是Wi-Fi环境下才进行检查
         if (NetUtils.isConnected(getActivity()) && NetUtils.isWifi(getActivity())) {
             new Handler().postDelayed(new Runnable() {
@@ -199,12 +175,55 @@ public class HomeFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        teacherPhoneNumber = PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_USER_ID, "");
+        if (StringUtils.isEmpty(teacherPhoneNumber)) {
+            updatePage4();
+        } else {
+            llWithoutLogin.setVisibility(View.GONE);
+            // 获取教师关联班级数量
+            if (teacherClassList.size() == 0) {
+                getTeacherLinkClass();
+            }
+            // 先清空上次缓存的理由
+            PreferencesUtils.putString(getActivity(), "CommendReason", "");
+            // 缓存点赞理由
+            getCommendReason();
+        }
     }
 
     @Override
     protected void onVisible() {
         super.onVisible();
         MobclickAgent.onPageStart("home");
+        LL.i("HomeFragment ------- " + this.toString() + "HashCode: ------------------ : " + this.hashCode());
+        if (getActivity() != null) {
+            teacherPhoneNumber = PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_USER_ID, "");
+            if (StringUtils.isEmpty(teacherPhoneNumber)) {
+                updatePage4();
+            } else {
+                llWithoutLogin.setVisibility(View.GONE);
+                // 获取教师关联班级数量
+                if (teacherClassList.size() == 0) {
+                    getTeacherLinkClass();
+                }
+                // 先清空上次缓存的理由
+                PreferencesUtils.putString(getActivity(), "CommendReason", "");
+                // 缓存点赞理由
+                getCommendReason();
+            }
+        }
+    }
+
+    public void resetDataByHand() {
+        teacherClassList.clear();
+        FragmentTransaction ft = fm.beginTransaction();
+        for (Fragment fragment : mTabs) {
+            ft.remove(fragment);
+        }
+        ft.commit();
+        ft = null;
+        fm.executePendingTransactions();
+        LL.i("清空HomeFragment的缓存数据：" + fm.getBackStackEntryCount());
     }
 
     @Override
@@ -222,6 +241,11 @@ public class HomeFragment extends BaseFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+    }
+
+    @OnClick(R.id.tv_login)
+    void clickLogin() {
+        IntentManager.toLoginActivity(getActivity(), IntentManager.LOGIN_SUCC_ACTION_MAINACTIVITY);
     }
 
     private void checkAppNewVersion() {
@@ -399,9 +423,21 @@ public class HomeFragment extends BaseFragment {
                 });
     }
 
+    private void updatePage4() {
+        llContent.setVisibility(View.GONE);
+        llErrorContent.setVisibility(View.GONE);
+        svNoClassLinked.setVisibility(View.GONE);
+        mSpinnerClass.setVisibility(View.GONE);
+        tvTitle.setVisibility(View.VISIBLE);
+        tvTitle.setText(R.string.bottom_tab_0);
+
+        llWithoutLogin.setVisibility(View.VISIBLE);
+    }
+
     private void updatePage3() {
         llContent.setVisibility(View.GONE);
         llErrorContent.setVisibility(View.GONE);
+        llWithoutLogin.setVisibility(View.GONE);
         svNoClassLinked.setVisibility(View.VISIBLE);
         mSpinnerClass.setVisibility(View.GONE);
         tvTitle.setVisibility(View.VISIBLE);
@@ -417,6 +453,7 @@ public class HomeFragment extends BaseFragment {
 
     private void updatePage2() {
         llContent.setVisibility(View.GONE);
+        llWithoutLogin.setVisibility(View.GONE);
         llErrorContent.setVisibility(View.VISIBLE);
         svNoClassLinked.setVisibility(View.GONE);
         mSpinnerClass.setVisibility(View.GONE);
@@ -428,6 +465,7 @@ public class HomeFragment extends BaseFragment {
         llContent.setVisibility(View.VISIBLE);
         llErrorContent.setVisibility(View.GONE);
         svNoClassLinked.setVisibility(View.GONE);
+        llWithoutLogin.setVisibility(View.GONE);
 
         teacherClassList.clear();
         mTabs.clear();
@@ -443,16 +481,19 @@ public class HomeFragment extends BaseFragment {
             mViewPager.setVisibility(View.VISIBLE);
             mFrameLayout.setVisibility(View.GONE);
         } else if (teacherClassList.size() <= minTabSize) {
+            mTabLayout.setVisibility(View.VISIBLE);
             mTabLayout.setTabMode(TabLayout.MODE_FIXED);
         } else {
+            mTabLayout.setVisibility(View.VISIBLE);
             mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
         }
 
         if (teacherClassList.size() < 9) {
             tvTitle.setVisibility(View.VISIBLE);
+            tvTitle.setText(R.string.bottom_tab_0);
             mViewPager.setVisibility(View.VISIBLE);
             mFrameLayout.setVisibility(View.GONE);
-            tvTitle.setText(R.string.bottom_tab_0);
+            mSpinnerClass.setVisibility(View.GONE);
 
             for (ClassInfo info : teacherClassList) {
                 mTabs.add(ClassDetailFragment.newInstance(info.getClassID(), info.getClassName(), true));
@@ -507,7 +548,7 @@ public class HomeFragment extends BaseFragment {
         llContent.setVisibility(View.VISIBLE);
         llErrorContent.setVisibility(View.GONE);
         svNoClassLinked.setVisibility(View.GONE);
-        showLoadingDialog();
+        // showLoadingDialog();
         getTeacherLinkClass();
     }
 }

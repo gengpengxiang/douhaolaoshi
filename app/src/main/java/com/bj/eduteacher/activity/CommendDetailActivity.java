@@ -170,7 +170,7 @@ public class CommendDetailActivity extends BaseActivity {
     }
 
     private void initData() {
-        userPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID);
+        userPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
 
         MyClassCommendTypeAsyncTask task = new MyClassCommendTypeAsyncTask();
         task.execute();

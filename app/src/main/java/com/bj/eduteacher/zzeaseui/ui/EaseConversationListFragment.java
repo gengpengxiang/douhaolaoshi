@@ -19,6 +19,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.andview.refreshview.XRefreshView;
 import com.bj.eduteacher.R;
@@ -51,6 +53,10 @@ public class EaseConversationListFragment extends EaseBaseFragment {
     protected XRefreshView mXRefreshView;
     protected View headerView;
 
+    protected FrameLayout flContent;
+    protected LinearLayout llWithoutLogin;
+    protected TextView tvLogin;
+
     protected boolean isConflict;
 
     protected EMConversationListener convListener = new EMConversationListener() {
@@ -76,6 +82,10 @@ public class EaseConversationListFragment extends EaseBaseFragment {
 
     @Override
     protected void initView() {
+        flContent = (FrameLayout) getView().findViewById(R.id.fl_content);
+        llWithoutLogin = (LinearLayout) getView().findViewById(R.id.ll_withoutLogin);
+        tvLogin = (TextView) getView().findViewById(R.id.tv_login);
+
         mXRefreshView = (XRefreshView) getView().findViewById(R.id.mXRefreshView);
         inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         emptyItemContainer = (FrameLayout) getView().findViewById(R.id.fl_empty_item);

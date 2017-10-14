@@ -19,14 +19,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.andview.refreshview.utils.LogUtils;
 import com.bj.eduteacher.BaseFragment;
 import com.bj.eduteacher.R;
 import com.bj.eduteacher.activity.LiveAllActivity;
-import com.bj.eduteacher.activity.LoginActivity;
-import com.bj.eduteacher.activity.MainActivity;
 import com.bj.eduteacher.activity.SettingActivity;
 import com.bj.eduteacher.api.LmsDataService;
 import com.bj.eduteacher.api.MLConfig;
@@ -39,11 +38,12 @@ import com.bj.eduteacher.dialog.UpdateNicknameDialog;
 import com.bj.eduteacher.entity.AppVersionInfo;
 import com.bj.eduteacher.entity.TeacherInfo;
 import com.bj.eduteacher.manager.UMPushManager;
+import com.bj.eduteacher.model.MySelfInfo;
 import com.bj.eduteacher.presenter.LoginHelper;
 import com.bj.eduteacher.presenter.viewinface.LogoutView;
 import com.bj.eduteacher.service.DownloadAppService;
+import com.bj.eduteacher.tool.Constants;
 import com.bj.eduteacher.utils.AppUtils;
-import com.bj.eduteacher.utils.DataCleanManager;
 import com.bj.eduteacher.utils.KeyBoardUtils;
 import com.bj.eduteacher.utils.LL;
 import com.bj.eduteacher.utils.PreferencesUtils;
@@ -51,8 +51,6 @@ import com.bj.eduteacher.utils.StringUtils;
 import com.bj.eduteacher.utils.T;
 import com.bj.eduteacher.zzimgselector.view.ImageSelectorActivity;
 import com.bj.eduteacher.zzokhttp.OkHttpUtils;
-import com.bumptech.glide.Glide;
-import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.hyphenate.chat.EMClient;
 import com.tbruyelle.rxpermissions2.RxPermissions;
@@ -103,12 +101,15 @@ public class UserFragment extends BaseFragment implements LogoutView {
     RelativeLayout rlClearClass;
     @BindView(R.id.tv_nickname)
     TextView tvNickname;
+    @BindView(R.id.sv_content)
+    ScrollView mScrollView;
 
     private String userPhotoPath;
     private String userName, userPhoneNumber, userSchoolName, userClassName;
     private String classCode;
     private String schoolID;
     private String schoolImg;
+    private String userNickname;
 
     private long currMillis = 0;
 
@@ -162,52 +163,44 @@ public class UserFragment extends BaseFragment implements LogoutView {
     private void initToolbar() {
         tvTitle.setVisibility(View.VISIBLE);
         tvTitle.setText(getString(R.string.bottom_tab_2));
+        // 头图
+        imgSchoolBg.setImageURI(Uri.parse("res:///" + R.mipmap.bg_user_banner));
+        // 版本信息
+        tvVersionName.setText("V" + AppUtils.getVersionName(getActivity()));
     }
 
     private void initView() {
         userPhotoPath = PreferencesUtils.getString(getActivity(), MLProperties.BUNDLE_KEY_TEACHER_IMG);
         userName = PreferencesUtils.getString(getActivity(), MLProperties.BUNDLE_KEY_CLASS_NAME);
-        userPhoneNumber = PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_USER_ID);
         userSchoolName = PreferencesUtils.getString(getActivity(), MLProperties.BUNDLE_KEY_SCHOOL_NAME, "");
         classCode = PreferencesUtils.getString(getActivity(), MLProperties.BUNDLE_KEY_KID_ID, "");
         schoolID = PreferencesUtils.getString(getActivity(), MLProperties.BUNDLE_KEY_SCHOOL_CODE, "");
         schoolImg = PreferencesUtils.getString(getActivity(), MLProperties.BUNDLE_KEY_SCHOOL_IMG, "");
         // 是否绑定班级
         classLinked = PreferencesUtils.getString(getActivity(), MLProperties.BUNDLE_KEY_CLASS_LINKED, "0");
+        userPhoneNumber = PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_USER_ID, "");
+        userNickname = PreferencesUtils.getString(getActivity(), MLProperties.BUNDLE_KEY_TEACHER_NICK, "");
+        if (!StringUtils.isEmpty(userNickname)) {
+            tvNickname.setText(userNickname);
+        }
         // 用户头像
         if (!StringUtils.isEmpty(userPhotoPath)) {
             imgUserPhoto.setImageURI(Uri.parse(userPhotoPath));
         }
         //  用户名称
-        if ("1".equals(classLinked)) {
-            if (StringUtils.isEmpty(userName)) {
-                GetTeacherInfoTask task = new GetTeacherInfoTask();
-                task.execute();
-            } else {
-                tvUserName.setText(userName);
-            }
+        if (StringUtils.isEmpty(userName)) {
+            tvUserName.setText("暂无");
         } else {
-            if (StringUtils.isEmpty(userName)) {
-                tvUserName.setText("暂无");
-            } else {
-                tvUserName.setText(userName);
-            }
+            tvUserName.setText(userName);
         }
         // 用户手机号
         tvUserPhoneNumber.setText(userPhoneNumber);
+
         // 学校名称
-        if ("1".equals(classLinked)) {
-            if (StringUtils.isEmpty(userSchoolName)) {
-                getTeacherInfo(userPhoneNumber);
-            } else {
-                tvSchoolName.setText(userSchoolName);
-            }
+        if (StringUtils.isEmpty(userSchoolName)) {
+            tvSchoolName.setText("未绑定学校");
         } else {
-            if (StringUtils.isEmpty(userSchoolName)) {
-                tvSchoolName.setText("未绑定学校");
-            } else {
-                tvSchoolName.setText(userSchoolName);
-            }
+            tvSchoolName.setText(userSchoolName);
         }
 
         if ("1".equals(classLinked)) {
@@ -215,11 +208,6 @@ public class UserFragment extends BaseFragment implements LogoutView {
         } else {
             rlClearClass.setVisibility(View.GONE);
         }
-
-        // 头图
-        imgSchoolBg.setImageURI(Uri.parse("res:///" + R.mipmap.bg_user_banner));
-        // 版本信息
-        tvVersionName.setText("V" + AppUtils.getVersionName(getActivity()));
     }
 
     @Override
@@ -292,8 +280,8 @@ public class UserFragment extends BaseFragment implements LogoutView {
                 KeyBoardUtils.closeKeybord(mContentEdt, getActivity());
                 // 上传昵称
                 if (!StringUtils.isEmpty(nickname)) {
-                    tvNickname.setText(nickname);
                     sweetAlertDialog.dismiss();
+                    updateUserNickname(nickname);
                 } else {
                     T.showShort(getActivity(), "昵称不能为空");
                 }
@@ -301,6 +289,50 @@ public class UserFragment extends BaseFragment implements LogoutView {
         });
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
+    }
+
+    private void updateUserNickname(final String nickname) {
+        Observable.create(new ObservableOnSubscribe<String[]>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<String[]> e) throws Exception {
+                LmsDataService mService = new LmsDataService();
+                String[] result = mService.updateUserNickName(userPhoneNumber, nickname);
+                e.onNext(result);
+                e.onComplete();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<String[]>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull String[] result) {
+                        if (StringUtils.isEmpty(result[0]) || result[0].equals("0")) {
+                            T.showShort(getActivity(), StringUtils.isEmpty(result[1]) ? "服务器开小差了，请待会重试" : result[1]);
+                        } else {
+                            T.showShort(getActivity(), "修改成功");
+                            userNickname = nickname;
+                            PreferencesUtils.putString(getActivity(), MLProperties.BUNDLE_KEY_TEACHER_NICK, nickname);
+                            MySelfInfo.getInstance().setNickName(nickname);
+                            MySelfInfo.getInstance().writeToCache(mContext);
+                            tvNickname.setText(nickname);
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        hideLoadingDialog();
+                        T.showShort(getActivity(), "服务器开小差了，请稍后重试！");
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     @OnClick(R.id.rl_ilive)
@@ -565,36 +597,40 @@ public class UserFragment extends BaseFragment implements LogoutView {
     void clickLogout() {
         MobclickAgent.onEvent(getActivity(), "mine_loginOut");
 
-        // 保存这次登录的时间
-        PreferencesUtils.putLong(getActivity(), MLProperties.PREFER_KEY_LOGIN_Time, System.currentTimeMillis());
-        PreferencesUtils.putInt(getActivity(), MLProperties.PREFER_KEY_LOGIN_STATUS, 0);
-        PreferencesUtils.putString(getActivity(), MLProperties.BUNDLE_KEY_TEACHER_IMG, "");
-        PreferencesUtils.putString(getActivity(), MLProperties.BUNDLE_KEY_CLASS_NAME, "");
-
         // 删除手机号和设备的关联关系
         UMPushManager.getInstance().removePushAlias(userPhoneNumber);
         UMPushManager.getInstance().removeAllTag(schoolID);
         // 清空缓存
-        cleanCache();
+        cleanAllPreferencesData();
         // 退出环信
         EMClient.getInstance().logout(true);
         // 推出腾讯
         logoutHelper.standardLogout("sxb" + userPhoneNumber);
     }
 
-    private void cleanCache() {
-        // Fresco 清空缓存
-        Fresco.getImagePipeline().clearCaches();
-        Glide.get(getActivity().getApplicationContext()).clearMemory();
-        // Glide 清空缓存
-        Observable.create(new ObservableOnSubscribe<String>() {
-            @Override
-            public void subscribe(@NonNull ObservableEmitter<String> e) throws Exception {
-                Glide.get(getActivity().getApplicationContext()).clearDiskCache();
-            }
-        }).subscribeOn(Schedulers.io()).subscribe();
-        // 清空所有缓存
-        DataCleanManager.clearAllCache(getActivity().getApplicationContext());
+    @Override
+    public void logoutSucc() {
+        // 跳转到首页
+        bottomTabListener.onTabChange(0);
+        mScrollView.scrollTo(0, 0);
+    }
+
+    @Override
+    public void logoutFail() {
+        // 跳转到首页
+        bottomTabListener.onTabChange(0);
+        mScrollView.scrollTo(0, 0);
+    }
+
+    private void cleanAllPreferencesData() {
+        // 清除所有app内的数据
+        PreferencesUtils.cleanAllData(getActivity());
+        // 清除直播设置数据
+        getActivity().getSharedPreferences("data", Context.MODE_PRIVATE).edit().clear().apply();
+        // 清除直播个人数据
+        getActivity().getSharedPreferences(Constants.USER_INFO, Context.MODE_PRIVATE).edit().clear().apply();
+        // 清除环信数据
+        getActivity().getSharedPreferences("EM_SP_AT_MESSAGE", Context.MODE_PRIVATE).edit().clear().apply();
     }
 
     private void actionSelectKidPhoto() {
@@ -621,26 +657,6 @@ public class UserFragment extends BaseFragment implements LogoutView {
                 }
             }
         }
-    }
-
-    @Override
-    public void logoutSucc() {
-        Intent intent = new Intent(getActivity(), LoginActivity.class);
-        startActivity(intent);
-        getActivity().finish();
-        getActivity().overridePendingTransition(R.anim.right_left_in, R.anim.right_left_out);
-
-        ((MainActivity) getActivity()).finishSelf();
-    }
-
-    @Override
-    public void logoutFail() {
-        Intent intent = new Intent(getActivity(), LoginActivity.class);
-        startActivity(intent);
-        getActivity().finish();
-        getActivity().overridePendingTransition(R.anim.right_left_in, R.anim.right_left_out);
-
-        ((MainActivity) getActivity()).finishSelf();
     }
 
     private class MyCheckNewVersionTask extends AsyncTask<String, Integer, AppVersionInfo> {
@@ -850,6 +866,7 @@ public class UserFragment extends BaseFragment implements LogoutView {
     @Override
     protected void onVisible() {
         super.onVisible();
+        initView();
         MobclickAgent.onPageStart("mine");
     }
 
@@ -862,5 +879,13 @@ public class UserFragment extends BaseFragment implements LogoutView {
     @Override
     public void onPause() {
         super.onPause();
+    }
+
+    /********* 在fragment中切换tab *********/
+
+    private ChangeBottomTabListener bottomTabListener;
+
+    public void setBottomTabListener(ChangeBottomTabListener bottomTabListener) {
+        this.bottomTabListener = bottomTabListener;
     }
 }

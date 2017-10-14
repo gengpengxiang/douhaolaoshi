@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -27,20 +28,23 @@ import com.bj.eduteacher.R;
 import com.bj.eduteacher.api.LmsDataService;
 import com.bj.eduteacher.api.MLConfig;
 import com.bj.eduteacher.api.MLProperties;
+import com.bj.eduteacher.fragment.ChangeBottomTabListener;
 import com.bj.eduteacher.fragment.ConversationListFragment;
 import com.bj.eduteacher.fragment.DoukeFragment;
 import com.bj.eduteacher.fragment.DoukeNewFragment;
 import com.bj.eduteacher.fragment.HomeFragment;
 import com.bj.eduteacher.fragment.UserFragment;
+import com.bj.eduteacher.manager.IntentManager;
 import com.bj.eduteacher.manager.UMPushManager;
 import com.bj.eduteacher.model.CurLiveInfo;
 import com.bj.eduteacher.model.MySelfInfo;
-import com.bj.eduteacher.presenter.LoginHelper;
 import com.bj.eduteacher.presenter.UserServerHelper;
 import com.bj.eduteacher.tool.Constants;
+import com.bj.eduteacher.tool.ShowNameUtil;
 import com.bj.eduteacher.utils.DensityUtils;
 import com.bj.eduteacher.utils.IMMLeaks;
 import com.bj.eduteacher.utils.KeyBoardUtils;
+import com.bj.eduteacher.utils.LL;
 import com.bj.eduteacher.utils.LeakedUtils;
 import com.bj.eduteacher.utils.PreferencesUtils;
 import com.bj.eduteacher.utils.StringUtils;
@@ -72,7 +76,7 @@ import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class MainActivity extends BaseActivity implements DoukeFragment.ChangeBottomTabListener {
+public class MainActivity extends BaseActivity implements ChangeBottomTabListener {
 
     private static final int TAB_NUMBER = 5;
 
@@ -98,7 +102,15 @@ public class MainActivity extends BaseActivity implements DoukeFragment.ChangeBo
     private int currentPageIndex = 0;
     private PopupWindow popupWindow;
     private boolean living;
-    private LoginHelper loginHelper;
+    private String teacherPhoneNumber;
+
+    private MyFragmentPagerAdapter mAdapter;
+
+    private DoukeFragment doukeFragment;
+    private DoukeNewFragment doukeNewFragment;
+    private HomeFragment homeFragment;
+    private ConversationListFragment conversationListFragment;
+    private UserFragment userFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,68 +131,74 @@ public class MainActivity extends BaseActivity implements DoukeFragment.ChangeBo
 
         initView();
         initDonation();
-        initData();
 
         // 检查上次是否是异常推出直播
         checkLiveException();
-
-        loginHelper = new LoginHelper(this);
-        String sxbSig = getSharedPreferences(Constants.USER_INFO, 0).getString(Constants.USER_SIG, "");
-        String sxbUserID = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_SXB_User, "");
-        loginHelper.iLiveLogin(sxbUserID, sxbSig);
-
     }
 
     private void initView() {
         currentPageIndex = getIntent().getIntExtra(MLProperties.BUNDLE_KEY_MAIN_PAGEINDEX, currentPageIndex);
 
         mTabFragments = new Fragment[TAB_NUMBER];
-        DoukeFragment doukeFragment = new DoukeFragment();
-        doukeFragment.setBottomTabListener(this);
-        mTabFragments[0] = doukeFragment;
-        mTabFragments[1] = new DoukeNewFragment();
-        mTabFragments[2] = new HomeFragment();
-        mTabFragments[3] = new ConversationListFragment();
-        mTabFragments[4] = new UserFragment();
-        mViewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
-            @Override
-            public Fragment getItem(int position) {
-                return mTabFragments[position];
-            }
 
-            @Override
-            public int getCount() {
-                return TAB_NUMBER;
-            }
-        });
+        doukeFragment = new DoukeFragment();
+        doukeFragment.setBottomTabListener(this);
+        doukeNewFragment = new DoukeNewFragment();
+        homeFragment = new HomeFragment();
+        conversationListFragment = new ConversationListFragment();
+        userFragment = new UserFragment();
+        userFragment.setBottomTabListener(this);
+
+        mTabFragments[0] = doukeFragment;
+        mTabFragments[1] = doukeNewFragment;
+        mTabFragments[2] = homeFragment;
+        mTabFragments[3] = conversationListFragment;
+        mTabFragments[4] = userFragment;
+
+        mAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager());
+        mViewPager.setAdapter(mAdapter);
 
         mViewPager.setCurrentItem(currentPageIndex);
         mViewPager.setOffscreenPageLimit(4);
+        actionTabItemSelect(currentPageIndex);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+        initData();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (!MainActivity.this.isFinishing()) {
+                    RxPermissions rxPermissions = new RxPermissions(MainActivity.this);
+                    rxPermissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            Manifest.permission.READ_PHONE_STATE)
+                            .subscribe();
+                }
+            }
+        }, 1000);
     }
 
     private void initData() {
+        teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
+        updateUnreadLabel();
+        EMClient.getInstance().chatManager().addMessageListener(messageListener);
         // 添加标签
         String schoolID = PreferencesUtils.getString(this, MLProperties.BUNDLE_KEY_SCHOOL_CODE, "");
         if (!StringUtils.isEmpty(schoolID)) {
             UMPushManager.getInstance().addTag(schoolID);
         }
-
-        actionTabItemSelect(currentPageIndex);
         // 获取捐助功能是否显示
         getDonationStatus();
 
-        String userName = PreferencesUtils.getString(this, MLProperties.BUNDLE_KEY_CLASS_NAME);
-        // 设置昵称
-        TIMFriendshipManager.getInstance().setNickName(userName, new TIMCallBack() {
-            @Override
-            public void onError(int i, String s) {
-            }
-
-            @Override
-            public void onSuccess() {
-
-            }
-        });
+        if (!StringUtils.isEmpty(teacherPhoneNumber)) {
+            // 初始化友盟
+            UMPushManager manager = UMPushManager.getInstance();
+            manager.setPushAlias(teacherPhoneNumber);
+        }
     }
 
     @Override
@@ -214,6 +232,10 @@ public class MainActivity extends BaseActivity implements DoukeFragment.ChangeBo
 
     @OnClick(R.id.ll_tab5)
     void clickTab5() {
+        if (StringUtils.isEmpty(teacherPhoneNumber)) {
+            IntentManager.toLoginActivity(this, IntentManager.LOGIN_SUCC_ACTION_MAINACTIVITY);
+            return;
+        }
         actionTabItemSelect(4);
     }
 
@@ -264,32 +286,11 @@ public class MainActivity extends BaseActivity implements DoukeFragment.ChangeBo
 
     @Override
     protected void onDestroy() {
-        loginHelper.onDestory();
         LeakedUtils.fixTextLineCacheLeak();
         IMMLeaks.fixFocusedViewLeak(getApplication());
 
         if (instance != null) instance = null;
         super.onDestroy();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        MobclickAgent.onResume(this);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (!MainActivity.this.isFinishing()) {
-                    RxPermissions rxPermissions = new RxPermissions(MainActivity.this);
-                    rxPermissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                            Manifest.permission.READ_PHONE_STATE)
-                            .subscribe();
-                }
-            }
-        }, 1000);
-
-        updateUnreadLabel();
-        EMClient.getInstance().chatManager().addMessageListener(messageListener);
     }
 
     @Override
@@ -399,6 +400,10 @@ public class MainActivity extends BaseActivity implements DoukeFragment.ChangeBo
         popView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (StringUtils.isEmpty(teacherPhoneNumber)) {
+                    IntentManager.toLoginActivity(MainActivity.this, IntentManager.LOGIN_SUCC_ACTION_MAINACTIVITY);
+                    return;
+                }
                 Intent intent = new Intent(MainActivity.this, DonationActivity.class);
                 startActivity(intent);
             }
@@ -470,7 +475,13 @@ public class MainActivity extends BaseActivity implements DoukeFragment.ChangeBo
 
     @Override
     public void onTabChange(int position) {
+        teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
         actionTabItemSelect(position);
+        if (StringUtils.isEmpty(teacherPhoneNumber)) {
+            // 退出登录的时候需要手动刷新Homefragment的数据
+            doukeFragment.cleanNotice();
+            homeFragment.resetDataByHand();
+        }
     }
 
     private void checkLiveException() {
@@ -517,5 +528,52 @@ public class MainActivity extends BaseActivity implements DoukeFragment.ChangeBo
                 UserServerHelper.getInstance().reportMe(MySelfInfo.getInstance().getIdStatus(), 1);//通知server 我下线了
             }
         }).start();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        LL.i("MainActivity -- onNewIntent()");
+        // 设置昵称
+        String userName = PreferencesUtils.getString(this, MLProperties.BUNDLE_KEY_CLASS_NAME);
+        String nickname = PreferencesUtils.getString(this, MLProperties.BUNDLE_KEY_TEACHER_NICK);
+        String phone = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
+        if (!StringUtils.isEmpty(phone) && phone.length() > 10) {
+            phone = phone.replaceAll("(\\d{3})\\d{4}(\\d{4})", "$1****$2");
+        }
+        TIMFriendshipManager.getInstance().setNickName(ShowNameUtil.getFirstNotNullParams(nickname, userName, phone), new TIMCallBack() {
+            @Override
+            public void onError(int i, String s) {
+            }
+
+            @Override
+            public void onSuccess() {
+
+            }
+        });
+        super.onNewIntent(intent);
+    }
+
+    class MyFragmentPagerAdapter extends FragmentPagerAdapter {
+
+        public MyFragmentPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return mTabFragments[position];
+        }
+
+        @Override
+        public int getCount() {
+            return TAB_NUMBER;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            // 获取当前数据的hashCode  
+            int hashCode = mTabFragments[position].hashCode();
+            return hashCode;
+        }
     }
 }

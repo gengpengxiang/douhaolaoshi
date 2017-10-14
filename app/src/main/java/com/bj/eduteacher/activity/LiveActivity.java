@@ -813,7 +813,7 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
             //IM初始化
             if (id_status == Constants.HOST) {//主播方式加入房间成功
                 // mHostNameTv.setText(MySelfInfo.getInstance().getId());
-                String userPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID);
+                String userPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
                 String name = MySelfInfo.getInstance().getNickName();
                 if (StringUtils.isEmpty(name)) {
                     mHostNameTv.setText(userPhoneNumber);
@@ -851,7 +851,7 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
                 .getLaunchIntentForPackage(getBaseContext().getPackageName());
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(i);
-        overridePendingTransition(R.anim.right_left_in, R.anim.right_left_out);
+        overridePendingTransition(R.anim.act_right_left_in, R.anim.act_right_left_out);
         // this.finish();
     }
 
@@ -1176,7 +1176,11 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
         View popView = LayoutInflater.from(this).inflate(R.layout.alert_share_live, null);
         SimpleDraweeView ivLivePicture = (SimpleDraweeView) popView.findViewById(R.id.iv_livePicture);
         TextView tvLiveTitle = (TextView) popView.findViewById(R.id.tv_liveTitle);
-        ivLivePicture.setImageURI(HttpUtilService.BASE_RESOURCE_URL + CurLiveInfo.getCoverurl());
+        if (CurLiveInfo.getCoverurl().startsWith("http")) {
+            ivLivePicture.setImageURI(CurLiveInfo.getCoverurl());
+        } else {
+            ivLivePicture.setImageURI(HttpUtilService.BASE_RESOURCE_URL + CurLiveInfo.getCoverurl());
+        }
         tvLiveTitle.setText(CurLiveInfo.getTitle());
         ShareHelp.getInstance().showShareDialog(this, popView);
     }

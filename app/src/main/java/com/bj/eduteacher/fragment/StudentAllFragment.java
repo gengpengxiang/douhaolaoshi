@@ -150,7 +150,7 @@ public class StudentAllFragment extends BaseFragment {
 
     @Override
     protected void processLogic() {
-        userPhoneNumber = PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_USER_ID);
+        userPhoneNumber = PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_USER_ID, "");
         classId = getArguments().getString(MLConfig.KEY_CLASS_ID, "");
         orderby = getArguments().getString(MLConfig.KEY_CLASS_STUDENTS_ORDERBY, "");
         // 设置页面标题

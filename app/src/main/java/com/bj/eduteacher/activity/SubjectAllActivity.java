@@ -25,9 +25,11 @@ import com.bj.eduteacher.adapter.SubjectAllAdapter;
 import com.bj.eduteacher.api.LmsDataService;
 import com.bj.eduteacher.api.MLProperties;
 import com.bj.eduteacher.entity.ArticleInfo;
+import com.bj.eduteacher.manager.IntentManager;
 import com.bj.eduteacher.utils.LL;
 import com.bj.eduteacher.utils.PreferencesUtils;
 import com.bj.eduteacher.utils.ScreenUtils;
+import com.bj.eduteacher.utils.StringUtils;
 import com.bj.eduteacher.utils.T;
 import com.bj.eduteacher.utils.Util;
 import com.bj.eduteacher.widget.DecorationForDouke;
@@ -78,6 +80,7 @@ public class SubjectAllActivity extends BaseActivity {
     private String zhuanjiaID;
     private String userPhotoPath;
     private IWXAPI api;
+    private String teacherPhoneNumber;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -117,6 +120,12 @@ public class SubjectAllActivity extends BaseActivity {
                     intent.putExtra("SubContent", item.getContent());
                     startActivity(intent);
                 } else if ("Invite".equals(tag)) {
+                    // 购买资源前需要登录
+                    if (StringUtils.isEmpty(teacherPhoneNumber)) {
+                        IntentManager.toLoginActivity(SubjectAllActivity.this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
+                        return;
+                    }
+
                     inviteFriendsAnswer(item);
                 } else if ("ViewReply".equals(tag)) {
                     // 查看全部回复
@@ -160,6 +169,7 @@ public class SubjectAllActivity extends BaseActivity {
 
     private void initData() {
         zhuanjiaID = getIntent().getStringExtra("MasterCode");
+        teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
         userPhotoPath = PreferencesUtils.getString(SubjectAllActivity.this, MLProperties.BUNDLE_KEY_TEACHER_IMG);
 
         currentPage = 1;
@@ -239,6 +249,7 @@ public class SubjectAllActivity extends BaseActivity {
         super.onResume();
         MobclickAgent.onPageStart("zhuanjia_subject_all");
         MobclickAgent.onResume(this);
+        teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
     }
 
     @Override

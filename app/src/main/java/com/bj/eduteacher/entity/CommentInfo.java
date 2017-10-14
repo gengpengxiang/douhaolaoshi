@@ -7,11 +7,20 @@ package com.bj.eduteacher.entity;
 public class CommentInfo {
     private String commID;
     private String commCreaterName;
+    private String commCreaterNick;
     private String commCreaterDesc;
     private String commCreaterPhoto;
     private String commCreateTime;
     private String commContent;
     private String commCreatePhone;
+
+    public String getCommCreaterNick() {
+        return commCreaterNick;
+    }
+
+    public void setCommCreaterNick(String commCreaterNick) {
+        this.commCreaterNick = commCreaterNick;
+    }
 
     public CommentInfo() {
     }

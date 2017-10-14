@@ -30,14 +30,16 @@ import okhttp3.Response;
  */
 public class HttpUtilService {
 
-    //    public static final String BASE_URL = "http://douhao1p4.gamepku.com/";
-    public static final String BASE_URL = "http://testdouhao1p4.gamepku.com/";
+    private static final String TAG = "HTTP";
 
-    //    public static final String BASE_RESOURCE_URL = "http://douhao.gamepku.com/files/";
-    public static final String BASE_RESOURCE_URL = "http://testdouhao.gamepku.com/files/";
+    public static final String BASE_URL = "http://douhao1p4.gamepku.com/";
+//    public static final String BASE_URL = "http://testdouhao1p4.gamepku.com/";
 
-    //    public static final String BASE_FILES_UPLOAD_URL = "http://douhao.gamepku.com/";
-    public static final String BASE_FILES_UPLOAD_URL = "http://testdouhao.gamepku.com/";
+    public static final String BASE_RESOURCE_URL = "http://douhao.gamepku.com/files/";
+//    public static final String BASE_RESOURCE_URL = "http://testdouhao.gamepku.com/files/";
+
+    public static final String BASE_FILES_UPLOAD_URL = "http://douhao.gamepku.com/";
+//    public static final String BASE_FILES_UPLOAD_URL = "http://testdouhao.gamepku.com/";
 
     public static final String BASE_API_URL = BASE_URL + "index.php/";
     public static final String DOWNLOAD_PATH = Environment.getExternalStorageDirectory().getAbsolutePath()
@@ -73,7 +75,7 @@ public class HttpUtilService {
 
     public static String getJsonBycompletelyUrl(String parseUrl) throws Exception {
         String url = parseUrl;
-        LL.i("API接口地址: " + url);
+        LL.i(TAG, "API接口地址: " + url);
 //        Response response = OkHttpUtils.get().url(url).build().execute();
 
         Response response = OkHttpUtils.post().url(url)
@@ -85,13 +87,13 @@ public class HttpUtilService {
             throw new IOException("Unexpected code" + response);
         }
         String result = response.body().string();
-        LL.i("API_Result: " + result);
+        LL.i(TAG, "API_Result: " + result);
         return result;
     }
 
     public static String postParamsByUrl(String parseUrl, HashMap<String, String> params) throws Exception {
         String url = parseUrl;
-        LL.i("API接口地址: " + url);
+        LL.i(TAG, "API接口地址: " + url);
 
         PostFormBuilder builder = OkHttpUtils.post().url(url);
         Iterator iter = params.entrySet().iterator();
@@ -102,7 +104,7 @@ public class HttpUtilService {
             builder.addParams(key, value);
         }
         builder.addParams("appkey", MLConfig.HTTP_APP_KEY);
-        LL.i("API接口参数: " + params.toString());
+        LL.i(TAG, "API接口参数: " + params.toString());
 
         Response response = builder
                 .build()
@@ -112,13 +114,13 @@ public class HttpUtilService {
             throw new IOException("Unexpected code" + response);
         }
         String result = response.body().string();
-        LL.i("API返回结果: " + result);
+        LL.i(TAG, "API返回结果: " + result);
         return result;
     }
 
     public static String postContentByUrl(String parseUrl, String postContent) throws Exception {
         String url = BASE_API_URL + parseUrl;
-        LL.i("API接口地址: " + url);
+        LL.i(TAG, "API接口地址: " + url);
         OkHttpClient client = OkHttpUtils.getInstance().getOkHttpClient();
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/octet-stream")
                 , getData(postContent));
@@ -147,7 +149,7 @@ public class HttpUtilService {
         String uploadFilePath = BitmapUtils.compressImageUpload(filePath);
         File file = new File(uploadFilePath);
         String fileName = filePath.substring(filePath.lastIndexOf("/") + 1, filePath.length());
-        LL.i("API接口地址: " + url);
+        LL.i(TAG, "API接口地址: " + url);
         Response response = OkHttpUtils.post()
                 .addFile("userfile", fileName, file)
                 .url(url)
@@ -161,7 +163,7 @@ public class HttpUtilService {
         BitmapUtils.deleteCacheFile();
         (new File(filePath)).deleteOnExit();
         String result = response.body().string();
-        LL.i("API_Result: " + result);
+        LL.i(TAG, "API_Result: " + result);
         return result;
     }
 
@@ -170,7 +172,7 @@ public class HttpUtilService {
         String uploadFilePath = BitmapUtils.compressImageUpload(filePath);
         File file = new File(uploadFilePath);
         String fileName = filePath.substring(filePath.lastIndexOf("/") + 1, filePath.length());
-        LL.i("API接口地址: " + url);
+        LL.i(TAG, "API接口地址: " + url);
         Response response = OkHttpUtils.post()
                 .addFile("userfile", fileName, file)
                 .url(url)
@@ -184,7 +186,7 @@ public class HttpUtilService {
         // 上传成功后删除缓存文件
         BitmapUtils.deleteCacheFile();
         String result = response.body().string();
-        LL.i("API_Result: " + result);
+        LL.i(TAG, "API_Result: " + result);
         return result;
     }
 
@@ -206,7 +208,7 @@ public class HttpUtilService {
                 .execute(new FileCallBack(DOWNLOAD_PATH, fileName) {
                     @Override
                     public void inProgress(float progress, long total) {
-//                        LL.i("Download", "HttpUtilService -- DownloadFile() -- 下载中：" + progress);
+//                        LL.i(TAG,"Download", "HttpUtilService -- DownloadFile() -- 下载中：" + progress);
                     }
 
                     @Override

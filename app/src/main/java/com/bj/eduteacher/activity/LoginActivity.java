@@ -2,6 +2,7 @@ package com.bj.eduteacher.activity;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -13,6 +14,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -23,11 +25,10 @@ import com.bj.eduteacher.api.LmsDataService;
 import com.bj.eduteacher.api.MLConfig;
 import com.bj.eduteacher.api.MLProperties;
 import com.bj.eduteacher.dialog.HelpAlertDialog;
-import com.bj.eduteacher.entity.ClassInfo;
-import com.bj.eduteacher.entity.TeacherInfo;
-import com.bj.eduteacher.model.MySelfInfo;
+import com.bj.eduteacher.manager.IntentManager;
 import com.bj.eduteacher.presenter.LoginHelper;
 import com.bj.eduteacher.presenter.viewinface.LoginView;
+import com.bj.eduteacher.tool.Constants;
 import com.bj.eduteacher.utils.KeyBoardUtils;
 import com.bj.eduteacher.utils.LL;
 import com.bj.eduteacher.utils.PreferencesUtils;
@@ -39,18 +40,6 @@ import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.umeng.analytics.MobclickAgent;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.annotations.NonNull;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by he on 2016/12/19.
@@ -67,6 +56,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     private LinearLayout llDouhaoProtocol;
 
     private LoginHelper sxbLoginHelper;
+
+    private String loginSuccAction;
 
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
@@ -97,9 +88,19 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     }
 
     private void initToolBar() {
+        loginSuccAction = getIntent().getExtras().getString("LoginSuccAction", "0");
+        ImageView ivBack = (ImageView) this.findViewById(R.id.header_img_back);
+        ivBack.setVisibility(View.VISIBLE);
         TextView tvTitle = (TextView) this.findViewById(R.id.header_tv_title);
         tvTitle.setVisibility(View.VISIBLE);
         tvTitle.setText(R.string.app_name);
+        LinearLayout llLeft = (LinearLayout) this.findViewById(R.id.header_ll_left);
+        llLeft.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
     }
 
     private void initView() {
@@ -169,8 +170,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 actionLogin();
                 break;
             case R.id.tv_getCode:
-                actionGetCode();
                 MobclickAgent.onEvent(LoginActivity.this, "login_code");
+                actionGetCode();
                 break;
             case R.id.tv_withProblem:
                 KeyBoardUtils.closeKeybord(LoginActivity.this.getCurrentFocus().getWindowToken()
@@ -215,8 +216,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
             }
 
             // 判断手机号和验证码是否匹配
-            MyLoginTask myLoginTask = new MyLoginTask();
-            myLoginTask.execute(phoneNum, codeNum);
+            btnLogin.setClickable(false);
+            mProgressDialog.show();
+            sxbLoginHelper.pkuLogin(phoneNum, codeNum);
         }
     }
 
@@ -322,75 +324,32 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         }
     }
 
-    private class MyLoginTask extends AsyncTask<String, Integer, TeacherInfo> {
-
-        @Override
-        protected void onPreExecute() {
-            btnLogin.setClickable(false);
-            mProgressDialog.show();
-        }
-
-        @Override
-        protected TeacherInfo doInBackground(String... params) {
-            String phoneNumber = params[0];
-            String code = params[1];
-            LmsDataService mService = new LmsDataService();
-            TeacherInfo result;
-            try {
-                result = mService.loginFromAPI2(phoneNumber, code);
-            } catch (Exception e) {
-                e.printStackTrace();
-                LL.e(e);
-                result = new TeacherInfo();
-                result.setErrorCode("0");
-                result.setMessage("服务器开小差了，请待会重试");
-            }
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(TeacherInfo result) {
-            if (!StringUtils.isEmpty(result.getErrorCode()) && result.getErrorCode().equals("1")) {
-                // 保存该用户是否有直播的权限
-                PreferencesUtils.putString(LoginActivity.this, MLProperties.PREFER_KEY_USER_SXB_PERMISSIONS, result.getSxbPermissions());
-                PreferencesUtils.putString(LoginActivity.this, MLProperties.PREFER_KEY_USER_SXB_Title, result.getSxbTitle());
-                PreferencesUtils.putString(LoginActivity.this, MLProperties.PREFER_KEY_USER_SXB_Picture, result.getSxbPicture());
-                // 登录成功后，根据直播状态判断下一步的动作
-                checkSxbLiveStatus(result);
-            } else {
-                btnLogin.setClickable(true);
-                if (mProgressDialog != null && mProgressDialog.isShowing()) {
-                    mProgressDialog.dismiss();
-                }
-                T.showShort(LoginActivity.this, StringUtils.isEmpty(result.getMessage()) ? "登录失败" : result.getMessage());
-            }
-        }
-    }
-
-    /**
-     * 登录成功后，根据直播状态判断下一步的动作
-     *
-     * @param teacherInfo
-     */
-    private void checkSxbLiveStatus(TeacherInfo teacherInfo) {
-        // 如果 sxbstatus 为0，需要注册腾讯云的托管账号，为1，需要进行登录
-        if (!StringUtils.isEmpty(teacherInfo.getSxbStatus())
-                && "1".equals(teacherInfo.getSxbStatus())) {
-            sxbLoginHelper.standardLogin(teacherInfo.getSxbUser(), teacherInfo.getSxbUser());
-        } else {
-            String phoneNum = edtPhoneNumber.getText().toString().trim();
-            sxbLoginHelper.standardRegister("sxb" + phoneNum, "sxb" + phoneNum);
-        }
-    }
-
     @Override
     public void loginSucc() {
+        // 检查环信是否登录
         checkIsLoginEase();
     }
 
     @Override
+    public void completeInfo(String sxbStatus) {
+        // 需要去完善用户的信息
+        Intent intent = new Intent(this, CompleteUserInfoActivity.class);
+        intent.putExtra("SxbStatus", sxbStatus);
+        intent.putExtra("LoginSuccAction", loginSuccAction);
+        startActivity(intent);
+        LoginActivity.this.finish();
+    }
+
+    @Override
     public void loginFail(String module, int errCode, String errMsg) {
-        T.showShort(this, "网络连接异常，请稍后重试！");
+        if (!StringUtils.isEmpty(module)) {
+            T.showShort(this, errMsg);
+        } else {
+            T.showShort(this, "网络连接异常，请稍后重试！");
+        }
+        Log.i("way", "modole: " + module + "-- errCode: " + errCode + " -- errMsg: " + errMsg);
+        btnLogin.setClickable(true);
+        mProgressDialog.dismiss();
     }
 
     /**
@@ -435,8 +394,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 EMClient.getInstance().groupManager().loadAllGroups();
                 EMClient.getInstance().chatManager().loadAllConversations();
                 Log.d("way", userEaseID + "登录聊天服务器成功！");
-                // 登录成功
-                getTeacherInfo(userPhoneNumber);
+                // 登录成功, 跳转到首页
+                loginSuccess();
             }
 
             @Override
@@ -459,8 +418,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                             EMClient.getInstance().groupManager().loadAllGroups();
                             EMClient.getInstance().chatManager().loadAllConversations();
                             Log.d("way", "登录聊天服务器成功！");
-                            // 登录成功
-                            getTeacherInfo(userPhoneNumber);
+                            // 登录成功, 跳转到首页
+                            loginSuccess();
                         } else {
                             T.showShort(LoginActivity.this, "登录失败，请重新发送验证码" + " " + code);
                         }
@@ -470,122 +429,35 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         });
     }
 
-    private void getTeacherInfo(final String phoneNumber) {
-        Observable.create(new ObservableOnSubscribe<TeacherInfo>() {
-            @Override
-            public void subscribe(@NonNull ObservableEmitter<TeacherInfo> e) throws Exception {
-                LmsDataService mService = new LmsDataService();
-                TeacherInfo teacherInfo = mService.getTeacherInfoFromAPI2(phoneNumber);
-                e.onNext(teacherInfo);
-            }
-        }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<TeacherInfo>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(TeacherInfo teacherInfo) {
-                        PreferencesUtils.putString(LoginActivity.this, MLProperties.BUNDLE_KEY_CLASS_NAME, teacherInfo.getTeacherName());
-                        PreferencesUtils.putString(LoginActivity.this, MLProperties.PREFER_KEY_USER_ID, teacherInfo.getTeacherPhoneNumber());
-                        PreferencesUtils.putString(LoginActivity.this, MLProperties.BUNDLE_KEY_TEACHER_IMG, teacherInfo.getTeacherImg());
-                        PreferencesUtils.putString(LoginActivity.this, MLProperties.BUNDLE_KEY_SCHOOL_NAME, teacherInfo.getSchoolName());
-                        PreferencesUtils.putString(LoginActivity.this, MLProperties.BUNDLE_KEY_SCHOOL_CODE, teacherInfo.getSchoolCode());
-                        PreferencesUtils.putString(LoginActivity.this, MLProperties.BUNDLE_KEY_SCHOOL_IMG, teacherInfo.getSchoolImg());
-                        // 直播的相关信息
-                        PreferencesUtils.putString(LoginActivity.this, MLProperties.PREFER_KEY_USER_SXB_User, "sxb" + teacherInfo.getTeacherPhoneNumber());
-                        MySelfInfo.getInstance().setAvatar(teacherInfo.getTeacherImg());
-                        MySelfInfo.getInstance().setNickName(teacherInfo.getTeacherName());
-                        MySelfInfo.getInstance().writeToCache(LoginActivity.this);
-                        // 获取教师关联班级信息
-                        getTeacherLinkClass(phoneNumber);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        T.showShort(LoginActivity.this, "服务器开小差了，请待会重试");
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
-    private void getTeacherLinkClass(final String phoneNumber) {
-        Observable.create(new ObservableOnSubscribe<List<ClassInfo>>() {
-            @Override
-            public void subscribe(@NonNull ObservableEmitter<List<ClassInfo>> emitter) throws Exception {
-                LmsDataService mService = new LmsDataService();
-                List<ClassInfo> resultList;
-                try {
-                    resultList = mService.getTeacherLinksClassFromAPI(phoneNumber);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    ClassInfo item = new ClassInfo();
-                    item.setErrorCode("3");
-                    item.setMessage("服务器开小差了，请待会重试");
-                    resultList = new ArrayList<>();
-                    resultList.add(item);
-                }
-                emitter.onNext(resultList);
-            }
-        }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<List<ClassInfo>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(List<ClassInfo> classInfos) {
-                        btnLogin.setClickable(true);
-                        if (mProgressDialog != null && mProgressDialog.isShowing()) {
-                            mProgressDialog.dismiss();
-                        }
-                        if (classInfos.size() > 0) {
-                            // 跳转到学生信息页面
-                            PreferencesUtils.putString(LoginActivity.this, MLProperties.PREFER_KEY_USER_ID, edtPhoneNumber.getText().toString().trim());
-                            PreferencesUtils.putString(LoginActivity.this, MLProperties.BUNDLE_KEY_KID_ID, classInfos.get(0).getClassID());
-                            PreferencesUtils.putString(LoginActivity.this, MLProperties.BUNDLE_KEY_KID_NAME, classInfos.get(0).getClassName());
-                            // 教师是否关联班级
-                            PreferencesUtils.putString(LoginActivity.this, MLProperties.BUNDLE_KEY_CLASS_LINKED, "1");
-
-                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                            startActivity(intent);
-                            LoginActivity.this.finish();
-                        } else {
-                            // 跳转到关联页面
-                            // T.showShort(LoginActivity.this, "您还没有关联班级，请联系管理员进行关联");
-
-                            // 教师是否关联班级
-                            PreferencesUtils.putString(LoginActivity.this, MLProperties.BUNDLE_KEY_CLASS_LINKED, "0");
-
-                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                            startActivity(intent);
-                            LoginActivity.this.finish();
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+    /**
+     * 登录成功后跳转到首页
+     */
+    private void loginSuccess() {
+        PreferencesUtils.putLong(this, MLProperties.PREFER_KEY_LOGIN_Time, System.currentTimeMillis());
+        PreferencesUtils.putInt(this, MLProperties.PREFER_KEY_LOGIN_STATUS, 1);
+        if (loginSuccAction.equals(IntentManager.LOGIN_SUCC_ACTION_MAINACTIVITY)) {
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+        }
+        LoginActivity.this.finish();
     }
 
     @Override
     public void onBackPressed() {
+        cleanAllPreferencesData();
         this.finish();
+        overridePendingTransition(R.anim.act_alpha_in, R.anim.act_top_bottom_out);
+    }
+
+    private void cleanAllPreferencesData() {
+        // 清除所有app内的数据
+        PreferencesUtils.cleanAllData(this);
+        // 清除直播设置数据
+        getSharedPreferences("data", Context.MODE_PRIVATE).edit().clear().commit();
+        // 清除直播个人数据
+        getSharedPreferences(Constants.USER_INFO, Context.MODE_PRIVATE).edit().clear().commit();
+        // 清除环信数据
+        getSharedPreferences("EM_SP_AT_MESSAGE", Context.MODE_PRIVATE).edit().clear().commit();
     }
 
     @Override

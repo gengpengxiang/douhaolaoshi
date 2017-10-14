@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.andview.refreshview.recyclerview.BaseRecyclerAdapter;
 import com.bj.eduteacher.R;
 import com.bj.eduteacher.entity.ArticleInfo;
+import com.bj.eduteacher.tool.ShowNameUtil;
 import com.bj.eduteacher.utils.StringUtils;
 import com.bj.eduteacher.zzautolayout.utils.AutoUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -67,9 +68,11 @@ public class SubjectAllAdapter extends BaseRecyclerAdapter<RecyclerView.ViewHold
             if (!StringUtils.isEmpty(phone1) && phone1.length() > 10) {
                 phone1 = phone1.replaceAll("(\\d{3})\\d{4}(\\d{4})", "$1****$2");
             }
-            String name1 = StringUtils.isEmpty(topReplys.get(0).getAuthor()) ?
-                    phone1 : topReplys.get(0).getAuthor();
-            holder.tvUserReplyName1.setText(name1);
+            String name1 = topReplys.get(0).getAuthor();
+            String nick1 = topReplys.get(0).getNickname();
+
+            ShowNameUtil.showNameLogic(holder.tvUserReplyName1, nick1, name1, phone1);
+            
             holder.tvUserReplyTime1.setText(topReplys.get(0).getPostTime());
             holder.tvUserReplyContent1.setText(topReplys.get(0).getContent());
         } else {

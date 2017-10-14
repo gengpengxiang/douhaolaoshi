@@ -4,6 +4,8 @@ package com.bj.eduteacher.dialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
@@ -11,8 +13,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bj.eduteacher.R;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class UpdateNicknameDialog extends Dialog implements View.OnClickListener {
 
@@ -91,11 +97,43 @@ public class UpdateNicknameDialog extends Dialog implements View.OnClickListener
         mCancelButton.setOnClickListener(this);
         mCloseButton.setOnClickListener(this);
 
+        mContentEdt.setFilters(new InputFilter[]{emojiFilter, specialCharFilter, new InputFilter.LengthFilter(8)});
+
         setTitleText(mTitleText);
         setContentText(mContentText);
         setCancelText(mCancelText);
         setConfirmText(mConfirmText);
     }
+
+    InputFilter emojiFilter = new InputFilter() {
+        Pattern emoji = Pattern.compile("[\ud83c\udc00-\ud83c\udfff]|[\ud83d\udc00-\ud83d\udfff]|[\u2600-\u27ff]",
+                Pattern.UNICODE_CASE | Pattern.CASE_INSENSITIVE);
+
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+            Matcher emojiMatcher = emoji.matcher(source);
+            if (emojiMatcher.find()) {
+                Toast.makeText(getContext(), "不支持输入表情", Toast.LENGTH_SHORT).show();
+                return "";
+            }
+            return null;
+        }
+    };
+
+    InputFilter specialCharFilter = new InputFilter() {
+        String regEx = "[\\s~·`!！～@#￥$%^……&*（()）\\-——\\-_=+【\\[\\]】｛{}｝\\|、\\\\；;：:‘'“”\"，,《<。.》>、/？?]";
+        Pattern specialPattern = Pattern.compile(regEx, Pattern.UNICODE_CASE | Pattern.CASE_INSENSITIVE);
+
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+            Matcher specialMatcher = specialPattern.matcher(source);
+            if (specialMatcher.find()) {
+                Toast.makeText(getContext(), "仅支持输入中英字母、数字", Toast.LENGTH_SHORT).show();
+                return "";
+            }
+            return null;
+        }
+    };
 
     private void restore() {
         mConfirmButton.setVisibility(View.VISIBLE);

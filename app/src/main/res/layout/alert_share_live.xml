@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:fresco="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#FFFFFF">
+                xmlns:fresco="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#FFFFFF">
 
     <FrameLayout
         android:id="@+id/fl_top"
@@ -19,7 +19,7 @@
             android:layout_gravity="right|center_vertical"
             android:layout_marginRight="5dp"
             android:scaleType="fitXY"
-            android:src="@drawable/ic_close" />
+            android:src="@drawable/ic_close"/>
     </FrameLayout>
 
     <ScrollView
@@ -49,17 +49,17 @@
                 android:lines="1"
                 android:text="直播进行中"
                 android:textColor="#FFFFFFFF"
-                android:textSize="22sp" />
+                android:textSize="22sp"/>
 
             <com.facebook.drawee.view.SimpleDraweeView
                 android:id="@+id/iv_livePicture"
                 android:layout_width="240dp"
                 android:layout_height="160dp"
                 android:layout_marginTop="20dp"
-                fresco:actualImageScaleType="focusCrop"
+                fresco:actualImageScaleType="fitXY"
                 fresco:placeholderImage="@drawable/shape_bg_zhuanjia"
                 fresco:placeholderImageScaleType="focusCrop"
-                fresco:roundedCornerRadius="5dp" />
+                fresco:roundedCornerRadius="5dp"/>
 
             <TextView
                 android:id="@+id/tv_liveTitle"
@@ -73,14 +73,14 @@
                 android:maxLines="2"
                 android:textColor="#FFF"
                 android:textSize="17sp"
-                tools:text="小学生也能读懂原著三国演义精讲导读课精讲导读课精讲导读课" />
+                tools:text="小学生也能读懂原著三国演义精讲导读课精讲导读课精讲导读课"/>
 
             <ImageView
                 android:layout_width="69dp"
                 android:layout_height="69dp"
                 android:layout_marginTop="40dp"
                 android:scaleType="fitXY"
-                android:src="@drawable/ic_download_qrcode_teacher" />
+                android:src="@drawable/ic_download_qrcode_teacher"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -92,7 +92,7 @@
                 android:gravity="center_horizontal"
                 android:text="长按识别二维码，安装逗号老师app，看直播"
                 android:textColor="#FFFFFFFF"
-                android:textSize="15sp" />
+                android:textSize="15sp"/>
         </LinearLayout>
     </ScrollView>
 
@@ -113,7 +113,7 @@
             android:lines="1"
             android:text="点击右侧分享"
             android:textColor="#030303"
-            android:textSize="15sp" />
+            android:textSize="15sp"/>
 
         <ImageView
             android:id="@+id/iv_shareSession"
@@ -121,7 +121,7 @@
             android:layout_height="50dp"
             android:layout_toLeftOf="@+id/iv_shareTimeline"
             android:scaleType="fitXY"
-            android:src="@drawable/ic_wechat" />
+            android:src="@drawable/ic_wechat"/>
 
         <ImageView
             android:id="@+id/iv_shareTimeline"
@@ -130,6 +130,6 @@
             android:layout_alignParentRight="true"
             android:layout_marginLeft="24dp"
             android:scaleType="fitXY"
-            android:src="@drawable/ic_wechat_moments" />
+            android:src="@drawable/ic_wechat_moments"/>
     </RelativeLayout>
 </RelativeLayout>

@@ -33,10 +33,12 @@ import com.bj.eduteacher.dialog.TipsAlertDialog3;
 import com.bj.eduteacher.entity.ArticleInfo;
 import com.bj.eduteacher.entity.OrderInfo;
 import com.bj.eduteacher.entity.TradeInfo;
+import com.bj.eduteacher.manager.IntentManager;
 import com.bj.eduteacher.model.CurLiveInfo;
 import com.bj.eduteacher.model.MySelfInfo;
 import com.bj.eduteacher.presenter.UserServerHelper;
 import com.bj.eduteacher.tool.Constants;
+import com.bj.eduteacher.tool.ShowNameUtil;
 import com.bj.eduteacher.utils.LL;
 import com.bj.eduteacher.utils.PreferencesUtils;
 import com.bj.eduteacher.utils.StringUtils;
@@ -137,6 +139,10 @@ public class LiveAllActivity extends BaseActivity {
             public void onItemClick(RecyclerView.ViewHolder holder, int position) {
                 ArticleInfo item = mDataList.get(position);
                 if (item.getShowType() != ArticleInfo.SHOW_TYPE_DECORATION) {
+                    if (StringUtils.isEmpty(teacherPhoneNumber)) {
+                        IntentManager.toLoginActivity(LiveAllActivity.this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
+                        return;
+                    }
                     joinLive(item);
                 }
             }
@@ -188,7 +194,17 @@ public class LiveAllActivity extends BaseActivity {
                 MySelfInfo.getInstance().setIdStatus(Constants.MEMBER);
                 MySelfInfo.getInstance().setJoinRoomWay(false);
                 CurLiveInfo.setHostID(item.getAuthDesc());
-                CurLiveInfo.setHostName(item.getAuthor());
+
+                String phone;
+                if (!StringUtils.isEmpty(item.getAuthDesc())) {
+                    phone = item.getAuthDesc().substring(3);
+                    if (!StringUtils.isEmpty(phone) && phone.length() > 10) {
+                        phone = phone.replaceAll("(\\d{3})\\d{4}(\\d{4})", "$1****$2");
+                    }
+                } else {
+                    phone = "";
+                }
+                CurLiveInfo.setHostName(ShowNameUtil.getFirstNotNullParams(item.getNickname(), item.getAuthor(), phone));
                 CurLiveInfo.setHostAvator(item.getAuthImg());
                 CurLiveInfo.setRoomNum(Integer.valueOf(item.getArticleID()));
                 CurLiveInfo.setTitle(item.getTitle());
@@ -204,7 +220,7 @@ public class LiveAllActivity extends BaseActivity {
     }
 
     private void initData() {
-        teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID);
+        teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
         String sxbPermissions = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_SXB_PERMISSIONS, "0");
         if ("1".equals(sxbPermissions)) {
             tvStartLive.setVisibility(View.VISIBLE);
@@ -396,12 +412,13 @@ public class LiveAllActivity extends BaseActivity {
         super.onResume();
         MobclickAgent.onPageStart("live_all");
         MobclickAgent.onResume(this);
+        teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
         // 查询订单
         if (!StringUtils.isEmpty(currTradeID)) {
             queryTheTradeStateFromAPI(currTradeID);
             return;
         }
-        
+
         currNianjiPosition = 0;
         mXRefreshView.setPullLoadEnable(true);
         getDoukeRefreshList();

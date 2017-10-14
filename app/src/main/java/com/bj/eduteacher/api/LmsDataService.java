@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static com.bj.eduteacher.api.HttpUtilService.getJsonByPostUrl;
+
 /**
  * Created by he on 2016/11/24.
  */
@@ -104,7 +106,7 @@ public class LmsDataService {
         HashMap<String, String> params = new HashMap<>();
         params.put("teacherphone", phoneNumber);
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -120,6 +122,7 @@ public class LmsDataService {
 
             JSONObject dataObj = dataArray.optJSONObject(0);
             // 成功的情况下
+            teacherInfo.setTeacherNickname(dataObj.optString("nicheng", ""));
             teacherInfo.setTeacherName(dataObj.optString("name"));
             teacherInfo.setTeacherPhoneNumber(phoneNumber);
             teacherInfo.setTeacherImg(StringUtils.isEmpty(dataObj.optString("teacherimg")) ? "" : HttpUtilService.BASE_RESOURCE_URL + dataObj.optString("teacherimg"));
@@ -231,7 +234,7 @@ public class LmsDataService {
         params.put("yzm", code);
 
         LL.i("登录：" + parseUrl);
-        JSONObject resultObject = new JSONObject(HttpUtilService.getJsonByPostUrl(parseUrl, params));
+        JSONObject resultObject = new JSONObject(getJsonByPostUrl(parseUrl, params));
 
         String errorCode = resultObject.optString("ret");
         String errorMsg = resultObject.optString("msg");
@@ -304,7 +307,7 @@ public class LmsDataService {
         params.put("teacherphone", phoneNumber);
 
         LL.i("关联学生：" + parseUrl);
-        JSONObject resultObject = new JSONObject(HttpUtilService.getJsonByPostUrl(parseUrl, params));
+        JSONObject resultObject = new JSONObject(getJsonByPostUrl(parseUrl, params));
 
         if (resultObject.has("ret")) {
             String errorCode = resultObject.optString("ret").equals("1") ? "1" : "0";
@@ -455,7 +458,7 @@ public class LmsDataService {
         params.put("classcode", classId);
         params.put("teacherphone", teacherPhone);
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrlClassScore, params);
+        String result = getJsonByPostUrl(parseUrlClassScore, params);
 
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
@@ -506,7 +509,7 @@ public class LmsDataService {
             params.put("offset", String.valueOf((Integer.parseInt(pageIndex) - 1) * PAGE_SIZE));
             params.put("orderby", orderby);
 
-            String result = HttpUtilService.getJsonByPostUrl(parseUrlClassStudent, params);
+            String result = getJsonByPostUrl(parseUrlClassStudent, params);
             JSONObject resultObj = new JSONObject(result);
             String errorCode = resultObj.optString("ret");
             String errorMsg = resultObj.optString("msg");
@@ -540,7 +543,7 @@ public class LmsDataService {
             params.put("limit", String.valueOf(PAGE_SIZE));
             params.put("offset", String.valueOf((Integer.parseInt(pageIndex) - 1) * PAGE_SIZE));
 
-            String result = HttpUtilService.getJsonByPostUrl(parseUrlClassStudent, params);
+            String result = getJsonByPostUrl(parseUrlClassStudent, params);
             JSONObject resultObj = new JSONObject(result);
             String errorCode = resultObj.optString("ret");
             String errorMsg = resultObj.optString("msg");
@@ -578,7 +581,7 @@ public class LmsDataService {
         params.put("limit", String.valueOf(PAGE_SIZE));
         params.put("offset", String.valueOf((Integer.parseInt(pageIndex) - 1) * PAGE_SIZE));
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -623,7 +626,7 @@ public class LmsDataService {
         params.put("limit", String.valueOf(PAGE_SIZE));
         params.put("offset", String.valueOf((Integer.parseInt(pageIndex) - 1) * PAGE_SIZE));
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -663,7 +666,7 @@ public class LmsDataService {
         String parseUrl = "js/dzliyou";
         HashMap<String, String> params = new HashMap<>();
         params.put("teacherphone", teacherPhoneNumber);
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -680,7 +683,7 @@ public class LmsDataService {
         params.put("studentid", studentId);
         params.put("liyou", reasonId);
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -705,7 +708,7 @@ public class LmsDataService {
         HashMap<String, String> params = new HashMap<>();
         params.put("studentid", studentid);
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrlClassScore, params);
+        String result = getJsonByPostUrl(parseUrlClassScore, params);
 
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
@@ -736,7 +739,7 @@ public class LmsDataService {
         params.put("limit", "100");
         params.put("offset", "0");
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
 
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
@@ -780,7 +783,7 @@ public class LmsDataService {
         params.put("limit", String.valueOf(20));
         params.put("offset", String.valueOf((Integer.parseInt(pageIndex) - 1) * 20));
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -828,7 +831,7 @@ public class LmsDataService {
         params.put("limit", String.valueOf(15));
         params.put("offset", String.valueOf((Integer.parseInt(pageIndex) - 1) * 15));
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -871,7 +874,7 @@ public class LmsDataService {
         HashMap<String, String> params = new HashMap<>();
         params.put("teacherphone", teacherPhoneNumber);
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -899,7 +902,7 @@ public class LmsDataService {
         HashMap<String, String> params = new HashMap<>();
         params.put("classcode", classId);
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -956,7 +959,7 @@ public class LmsDataService {
         params.put("limit", String.valueOf(PAGE_SIZE));
         params.put("offset", String.valueOf((Integer.parseInt(pageIndex) - 1) * PAGE_SIZE));
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -1006,7 +1009,7 @@ public class LmsDataService {
         HashMap<String, String> params = new HashMap<>();
         params.put("classcode", classId);
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -1045,7 +1048,7 @@ public class LmsDataService {
         params.put("limit", String.valueOf(PAGE_SIZE));
         params.put("offset", String.valueOf((Integer.parseInt(pageIndex) - 1) * PAGE_SIZE));
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -1096,7 +1099,7 @@ public class LmsDataService {
         params.put("classcode", classId);
         params.put("teacherphone", teacherPhone);
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -1137,7 +1140,7 @@ public class LmsDataService {
         params.put("limit", String.valueOf(PAGE_SIZE));
         params.put("offset", String.valueOf((Integer.parseInt(pageIndex) - 1) * PAGE_SIZE));
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -1192,7 +1195,7 @@ public class LmsDataService {
         params.put("type", MLConfig.KEY_APP_TYPE);
         params.put("os", MLConfig.KEY_APP_OS);
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -1226,7 +1229,7 @@ public class LmsDataService {
         HashMap<String, String> params = new HashMap<>();
         params.put("schoolcode", schoolID);
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -1258,7 +1261,7 @@ public class LmsDataService {
         HashMap<String, String> params = new HashMap<>();
         params.put("schoolcode", schoolID);
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -1292,7 +1295,7 @@ public class LmsDataService {
         params.put("type", badgeTypeId);
         params.put("schoolcode", schoolID);
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -1338,7 +1341,7 @@ public class LmsDataService {
         params.put("limit", String.valueOf(PAGE_SIZE));
         params.put("offset", String.valueOf((pageIndex - 1) * PAGE_SIZE));
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -1385,7 +1388,7 @@ public class LmsDataService {
         params.put("newsid", newsID);
         params.put("userphone", userPhoneNumber);
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -1412,7 +1415,7 @@ public class LmsDataService {
         HashMap<String, String> params = new HashMap<>();
         params.put("newsid", newsID);
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret", "");
         String errorMsg = resultObj.optString("msg");
@@ -1454,7 +1457,7 @@ public class LmsDataService {
         params.put("userphone", userPhoneNumber);
         params.put("dianzanadd", type);
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -1476,7 +1479,7 @@ public class LmsDataService {
         params.put("limit", String.valueOf(PAGE_SIZE));
         params.put("offset", String.valueOf((pageIndex - 1) * PAGE_SIZE));
 
-        String resultStr = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String resultStr = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(resultStr);
 
         String errorCode = resultObj.optString("ret", "");
@@ -1526,7 +1529,7 @@ public class LmsDataService {
         HashMap<String, String> params = new HashMap<>();
         params.put("appversion", type);
 
-        String resultStr = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String resultStr = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(resultStr);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -1657,7 +1660,7 @@ public class LmsDataService {
         params.put("teacherphone", userPhone);
         params.put("dzliyou", reasonName);
 
-        String resultStr = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String resultStr = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(resultStr);
         result[0] = resultObj.optString("ret", "0");
         result[1] = resultObj.optString("msg", "");
@@ -1682,7 +1685,7 @@ public class LmsDataService {
         params.put("teacherphone", userPhone);
         params.put("dzliyou", reasonName);
 
-        String resultStr = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String resultStr = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(resultStr);
         result[0] = resultObj.optString("ret", "0");
         result[1] = resultObj.optString("msg", "");
@@ -1707,7 +1710,7 @@ public class LmsDataService {
         params.put("limit", String.valueOf(PAGE_SIZE));
         params.put("offset", String.valueOf((Integer.parseInt(pageIndex) - 1) * PAGE_SIZE));
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -1723,10 +1726,64 @@ public class LmsDataService {
 
                 item.setCommID(itemObj.optString("comment_id", ""));
                 item.setCommCreaterName(itemObj.optString("user_title", ""));
+                item.setCommCreaterNick(itemObj.optString("nicheng", ""));
                 item.setCommCreaterPhoto(HttpUtilService.BASE_RESOURCE_URL +
                         itemObj.optString("user_img", ""));
                 item.setCommCreateTime(itemObj.optString("createtime", ""));
                 item.setCommContent(itemObj.optString("content", ""));
+                item.setCommCreatePhone(itemObj.optString("userphone", ""));
+                dataList.add(item);
+
+                item = null;
+            }
+        }
+
+        return dataList;
+    }
+
+    /**
+     * 获取资源的评论列表
+     *
+     * @param newsID
+     * @param pageIndex
+     * @return
+     * @throws Exception
+     */
+    public List<CommentInfo> getResourceAllCommentFromAPI(String newsID, String pageIndex) throws Exception {
+        List<CommentInfo> dataList = new ArrayList<>();
+        String parseUrl = "ziyuan/index";
+        HashMap<String, String> params = new HashMap<>();
+        params.put("ziyuanid", newsID);
+        params.put("limit", String.valueOf(PAGE_SIZE));
+        params.put("offset", String.valueOf((Integer.parseInt(pageIndex) - 1) * PAGE_SIZE));
+
+        String result = getJsonByPostUrl(parseUrl, params);
+        JSONObject resultObj = new JSONObject(result);
+        String errorCode = resultObj.optString("ret");
+        String errorMsg = resultObj.optString("msg");
+        String data = resultObj.optString("data");
+
+        if (!StringUtils.isEmpty(errorCode) && errorCode.equals("1") &&
+                !StringUtils.isEmpty(data)) {
+            JSONArray newsArray = new JSONArray(data);
+            CommentInfo item;
+            String content, userReply;
+            for (int i = 0; i < newsArray.length(); i++) {
+                JSONObject itemObj = newsArray.optJSONObject(i);
+                item = new CommentInfo();
+
+                item.setCommID(itemObj.optString("comment_id", ""));
+                item.setCommCreaterName(itemObj.optString("user_title", ""));
+                item.setCommCreaterNick(itemObj.optString("nicheng", ""));
+                item.setCommCreaterPhoto(HttpUtilService.BASE_RESOURCE_URL +
+                        itemObj.optString("user_img", ""));
+                item.setCommCreateTime(itemObj.optString("createtime", ""));
+
+                content = itemObj.optString("content", "");
+                byte b[] = Base64.decode(content, Base64.DEFAULT);
+                userReply = new String(b, "utf-8");
+
+                item.setCommContent(userReply);
                 item.setCommCreatePhone(itemObj.optString("userphone", ""));
                 dataList.add(item);
 
@@ -1758,7 +1815,33 @@ public class LmsDataService {
         params.put("usertype", userType);
         params.put("content", content);
 
-        String resultStr = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String resultStr = getJsonByPostUrl(parseUrl, params);
+        JSONObject resultObj = new JSONObject(resultStr);
+        String errorCode = resultObj.optString("ret");
+        String errorMsg = resultObj.optString("msg");
+        String data = resultObj.optString("data");
+
+        result[0] = errorCode;
+        result[1] = errorMsg;
+        result[2] = data;
+
+        return result;
+    }
+
+    public String[] postResourceCommentFromAPI(String newsID, String userPhoneNumber,
+                                               String userType, String content) throws Exception {
+        String[] result = new String[3];
+
+        String userReply = Base64.encodeToString(content.getBytes(), Base64.DEFAULT);
+
+        String parseUrl = "ziyuan/setcomment";
+        HashMap<String, String> params = new HashMap<>();
+        params.put("ziyuanid", newsID);
+        params.put("userphone", userPhoneNumber);
+        params.put("usertype", userType);
+        params.put("content", userReply);
+
+        String resultStr = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(resultStr);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -1783,7 +1866,7 @@ public class LmsDataService {
         String parseUrl = "jsmaster/sylunbo";
         HashMap<String, String> params = new HashMap<>();
 
-        String resultStr = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String resultStr = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(resultStr);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -1835,7 +1918,7 @@ public class LmsDataService {
         params.put("limit", String.valueOf(pageSize));
         params.put("offset", String.valueOf((pageIndex - 1) * pageSize));
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -1877,7 +1960,7 @@ public class LmsDataService {
         params.put("limit", String.valueOf(pageSize));
         params.put("offset", String.valueOf((pageIndex - 1) * pageSize));
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -1914,7 +1997,7 @@ public class LmsDataService {
         String parseUrl = "jsmaster/masternum";
         HashMap<String, String> params = new HashMap<>();
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -1939,7 +2022,7 @@ public class LmsDataService {
         String parseUrl = "jsmaster/mingshinum";
         HashMap<String, String> params = new HashMap<>();
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -1966,7 +2049,7 @@ public class LmsDataService {
         HashMap<String, String> params = new HashMap<>();
         params.put("mastercode", masterID);
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -1997,7 +2080,7 @@ public class LmsDataService {
         HashMap<String, String> params = new HashMap<>();
         params.put("mastercode", masterID);
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -2028,7 +2111,7 @@ public class LmsDataService {
         HashMap<String, String> params = new HashMap<>();
         params.put("kthemeid", masterID);
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -2063,7 +2146,7 @@ public class LmsDataService {
         params.put("limit", String.valueOf(100));
         params.put("offset", String.valueOf((pageIndex - 1) * 100));
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -2114,7 +2197,7 @@ public class LmsDataService {
         params.put("limit", String.valueOf(100));
         params.put("offset", String.valueOf((pageIndex - 1) * 100));
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -2162,7 +2245,7 @@ public class LmsDataService {
         params.put("limit", "9");
         params.put("offset", "0");
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -2207,7 +2290,7 @@ public class LmsDataService {
         params.put("limit", String.valueOf(50));
         params.put("offset", String.valueOf((pageIndex - 1) * 50));
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -2251,7 +2334,7 @@ public class LmsDataService {
         params.put("limit", String.valueOf(PAGE_SIZE));
         params.put("offset", String.valueOf((pageIndex - 1) * PAGE_SIZE));
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -2302,7 +2385,7 @@ public class LmsDataService {
         params.put("limit", String.valueOf(PAGE_SIZE));
         params.put("offset", String.valueOf((pageIndex - 1) * PAGE_SIZE));
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -2371,7 +2454,7 @@ public class LmsDataService {
         params.put("limit", "2");
         params.put("offset", "0");
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -2401,6 +2484,7 @@ public class LmsDataService {
                 article.setAuthor(item.optString("name", ""));
                 article.setAuthImg(HttpUtilService.BASE_RESOURCE_URL + item.optString("img", ""));
                 article.setAuthDesc(item.optString("phone", ""));
+                article.setNickname(item.optString("nicheng", ""));
 
                 dataList.add(article);
                 article = null;
@@ -2426,7 +2510,7 @@ public class LmsDataService {
         params.put("limit", String.valueOf(PAGE_SIZE));
         params.put("offset", String.valueOf((pageIndex - 1) * PAGE_SIZE));
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -2454,6 +2538,7 @@ public class LmsDataService {
                 article.setAuthor(item.optString("name", ""));
                 article.setAuthImg(HttpUtilService.BASE_RESOURCE_URL + item.optString("img", ""));
                 article.setAuthDesc(item.optString("phone", ""));
+                article.setNickname(item.optString("nicheng", ""));
 
                 dataList.add(article);
                 article = null;
@@ -2481,7 +2566,7 @@ public class LmsDataService {
         params.put("phone", userPhoneNumber);
         params.put("replycontent", userReply);
 
-        String resultStr = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String resultStr = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(resultStr);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -2506,7 +2591,7 @@ public class LmsDataService {
         String parseUrl = "jsmaster/kthemexk";
         HashMap<String, String> params = new HashMap<>();
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -2529,12 +2614,93 @@ public class LmsDataService {
      * @param masterresid
      * @throws Exception
      */
-    public void addResourcePreviewNumber(String masterresid) throws Exception {
+    public String[] addResourcePreviewNumber(String masterresid) throws Exception {
+        String[] dataList = new String[3];
         String parseUrl = "jsmaster/resvnumadd";
         HashMap<String, String> params = new HashMap<>();
         params.put("masterresid", masterresid);
 
-        HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        JSONObject resultObj = new JSONObject(result);
+        String errorCode = resultObj.optString("ret");
+        String errorMsg = resultObj.optString("msg");
+        String data = resultObj.optString("data");
+
+        dataList[0] = errorCode;
+        dataList[1] = errorMsg;
+
+        if (!StringUtils.isEmpty(errorCode) && errorCode.equals("1") && !StringUtils.isEmpty(data)) {
+            JSONObject dataObj = new JSONObject(data);
+            String readNum = dataObj.optString("affected_rows", "0");
+            dataList[2] = readNum;
+        } else {
+            dataList[2] = "0";
+        }
+
+        return dataList;
+    }
+
+    /**
+     * 获取资源的点赞数量和评论数量
+     *
+     * @param resID
+     * @return
+     * @throws Exception
+     */
+    public ArticleInfo getResInfoByID(String resID) throws Exception {
+        ArticleInfo resInfo = new ArticleInfo();
+
+        String parseUrl = "ziyuan/getbyid";
+        HashMap<String, String> params = new HashMap<>();
+        params.put("ziyuanid", resID);
+
+        String result = getJsonByPostUrl(parseUrl, params);
+        JSONObject resultObj = new JSONObject(result);
+        String errorCode = resultObj.optString("ret");
+        String errorMsg = resultObj.optString("msg");
+        String data = resultObj.optString("data");
+
+        if (!StringUtils.isEmpty(errorCode) && errorCode.equals("1")
+                && !StringUtils.isEmpty(data)) {
+            JSONObject info = new JSONObject(data);
+            String likeNum = info.optString("dianzan", "0");
+            String commentNum = info.optString("comment_num", "0");
+            String readNum = info.optString("viewnum", "0");
+
+            resInfo.setReadNumber(StringUtils.isEmpty(readNum) ? "0" : readNum);
+            resInfo.setAgreeNumber(StringUtils.isEmpty(likeNum) ? "0" : likeNum);
+            resInfo.setCommentNumber(StringUtils.isEmpty(commentNum) ? "0" : commentNum);
+        }
+
+        return resInfo;
+    }
+
+    /**
+     * 获取资源点赞状态
+     *
+     * @return
+     * @throws Exception
+     */
+    public BaseDataInfo getResourceAgreeStatus(String newsID, String userPhoneNumber, String caozuo) throws Exception {
+        BaseDataInfo info = new BaseDataInfo();
+
+        String parseUrl = "ziyuan/dianzan";
+        HashMap<String, String> params = new HashMap<>();
+        params.put("ziyuanid", newsID);
+        params.put("userphone", userPhoneNumber);
+        params.put("caozuo", caozuo);
+
+        String result = getJsonByPostUrl(parseUrl, params);
+        JSONObject resultObj = new JSONObject(result);
+        String errorCode = resultObj.optString("ret");
+        String errorMsg = resultObj.optString("msg");
+        String data = resultObj.optString("data");
+
+        info.setRet(errorCode);
+        info.setMsg(errorMsg);
+        info.setData(data);
+
+        return info;
     }
 
     /**
@@ -2556,7 +2722,7 @@ public class LmsDataService {
         params.put("offset", String.valueOf(offset));
         params.put("limit", String.valueOf(pageSize));
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -2597,7 +2763,7 @@ public class LmsDataService {
         HashMap<String, String> params = new HashMap<>();
         params.put("phone", phone);
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -2632,7 +2798,7 @@ public class LmsDataService {
         params.put("limit", String.valueOf(limit));
         params.put("offset", String.valueOf(offset));
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");
@@ -2652,6 +2818,7 @@ public class LmsDataService {
 
                 info.setAuthDesc(item.optString("uid", ""));
                 info.setAuthor(item.optString("uid_name", ""));
+                info.setNickname(item.optString("uid_nicheng", ""));
                 info.setAuthImg(HttpUtilService.BASE_RESOURCE_URL + item.optString("uid_img", ""));
 
                 info.setPostTime(item.optString("create_time", "0"));
@@ -2688,7 +2855,28 @@ public class LmsDataService {
         params.put("roomid", String.valueOf(roomid));
         params.put("phone", phoneNumber);
 
-        String result = HttpUtilService.getJsonByPostUrl(parseUrl, params);
+        String result = getJsonByPostUrl(parseUrl, params);
+        JSONObject resultObj = new JSONObject(result);
+        String errorCode = resultObj.optString("ret");
+        String errorMsg = resultObj.optString("msg");
+        String data = resultObj.optString("data");
+
+        dataList[0] = errorCode;
+        dataList[1] = errorMsg;
+        dataList[2] = data;
+
+        return dataList;
+    }
+
+    public String[] updateUserNickName(String teacherPhoneNumber, String nickname) throws Exception {
+        String[] dataList = new String[3];
+
+        String parseUrl = "nicheng/index";
+        HashMap<String, String> params = new HashMap<>();
+        params.put("phone", teacherPhoneNumber);
+        params.put("nicheng", nickname);
+
+        String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
         String errorCode = resultObj.optString("ret");
         String errorMsg = resultObj.optString("msg");

@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.andview.refreshview.recyclerview.BaseRecyclerAdapter;
 import com.bj.eduteacher.R;
 import com.bj.eduteacher.entity.CommentInfo;
+import com.bj.eduteacher.tool.ShowNameUtil;
 import com.bj.eduteacher.utils.StringUtils;
 import com.bj.eduteacher.zzautolayout.utils.AutoUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -54,11 +55,13 @@ public class DoukeCommentAdapter extends BaseRecyclerAdapter<RecyclerView.ViewHo
             phone = phone.replaceAll("(\\d{3})\\d{4}(\\d{4})", "$1****$2");
         }
         String name = itemInfo.getCommCreaterName();
-        if (StringUtils.isEmpty(name) || "老师".equals(name)) {
-            holder.tvCommentName.setText(phone);
-        } else {
-            holder.tvCommentName.setText(name);
+        if (StringUtils.isEmpty(name) || "老师".equals(name) || "爸爸".equals(name) || "妈妈".equals(name)
+                || "家长".equals(name)) {
+            name = "";
         }
+        String nick = itemInfo.getCommCreaterNick();
+
+        ShowNameUtil.showNameLogic(holder.tvCommentName, nick, name, phone);
 
         holder.tvCommentTime.setText(itemInfo.getCommCreateTime());
         holder.ivUserPhoto.setImageURI(itemInfo.getCommCreaterPhoto());

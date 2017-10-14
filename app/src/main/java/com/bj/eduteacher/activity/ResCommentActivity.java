@@ -130,7 +130,7 @@ public class ResCommentActivity extends BaseActivity {
     }
 
     private void initData() {
-        userPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID);
+        userPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
         newsID = getIntent().getStringExtra(MLProperties.BUNDLE_KEY_DOUKE_ID);
 
         currentPage = 1;
@@ -163,10 +163,15 @@ public class ResCommentActivity extends BaseActivity {
 
     @OnClick(R.id.tv_send)
     void actionSendClick() {
-        tvSend.setEnabled(false);
         String content = edtContent.getText().toString().trim();
+        if (StringUtils.isEmpty(content)) {
+            T.showShort(this, "评论内容不能为空！");
+            return;
+        }
+
         edtContent.setText("");
         KeyBoardUtils.closeKeybord(this.getCurrentFocus().getWindowToken(), this);
+        tvSend.setEnabled(false);
         sendCommentContent(content);
     }
 
@@ -175,7 +180,7 @@ public class ResCommentActivity extends BaseActivity {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<CommentInfo>> e) throws Exception {
                 LmsDataService mService = new LmsDataService();
-                List<CommentInfo> dataList = mService.getDoukeAllCommentFromAPI(newsID, String.valueOf(currentPage));
+                List<CommentInfo> dataList = mService.getResourceAllCommentFromAPI(newsID, String.valueOf(currentPage));
                 e.onNext(dataList);
             }
         }).subscribeOn(Schedulers.io())
@@ -209,7 +214,7 @@ public class ResCommentActivity extends BaseActivity {
             @Override
             public void subscribe(@NonNull ObservableEmitter<String[]> e) throws Exception {
                 LmsDataService mService = new LmsDataService();
-                String[] result = mService.postDoukeCommentFromAPI(newsID, userPhoneNumber,
+                String[] result = mService.postResourceCommentFromAPI(newsID, userPhoneNumber,
                         MLConfig.KEY_DOUKE_COMMENT_JIAOSHI, content);
                 e.onNext(result);
             }

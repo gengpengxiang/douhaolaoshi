@@ -164,7 +164,7 @@ public class StudentGradeActivity extends BaseActivity {
     }
 
     private void initData() {
-        userPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID);
+        userPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
         classId = getIntent().getExtras().getString(MLConfig.KEY_CLASS_ID);
         gradeTypeID = getIntent().getExtras().getString(MLConfig.KEY_GRADE_ID);
         gradeName = getIntent().getExtras().getString(MLConfig.KEY_GRADE_NAME);

@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.andview.refreshview.recyclerview.BaseRecyclerAdapter;
 import com.bj.eduteacher.R;
 import com.bj.eduteacher.entity.ArticleInfo;
+import com.bj.eduteacher.tool.ShowNameUtil;
 import com.bj.eduteacher.utils.StringUtils;
 import com.bj.eduteacher.zzautolayout.utils.AutoUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -167,9 +168,11 @@ public class ZhuanjiaDetailAdapter extends BaseRecyclerAdapter<RecyclerView.View
             if (!StringUtils.isEmpty(phone1) && phone1.length() > 10) {
                 phone1 = phone1.replaceAll("(\\d{3})\\d{4}(\\d{4})", "$1****$2");
             }
-            String name1 = StringUtils.isEmpty(topReplys.get(0).getAuthor()) ?
-                    phone1 : topReplys.get(0).getAuthor();
-            holder.tvUserReplyName1.setText(name1);
+            String name1 = topReplys.get(0).getAuthor();
+            String nick1 = topReplys.get(0).getNickname();
+
+            ShowNameUtil.showNameLogic(holder.tvUserReplyName1, nick1, name1, phone1);
+            
             holder.tvUserReplyTime1.setText(topReplys.get(0).getPostTime());
             holder.tvUserReplyContent1.setText(topReplys.get(0).getContent());
 
@@ -178,9 +181,11 @@ public class ZhuanjiaDetailAdapter extends BaseRecyclerAdapter<RecyclerView.View
             if (!StringUtils.isEmpty(phone1) && phone1.length() > 10) {
                 phone2 = phone2.replaceAll("(\\d{3})\\d{4}(\\d{4})", "$1****$2");
             }
-            String name2 = StringUtils.isEmpty(topReplys.get(1).getAuthor()) ?
-                    phone2 : topReplys.get(1).getAuthor();
-            holder.tvUserReplyName2.setText(name2);
+            String name2 = topReplys.get(1).getAuthor();
+            String nick2 = topReplys.get(1).getNickname();
+
+            ShowNameUtil.showNameLogic(holder.tvUserReplyName2, nick2, name2, phone2);
+            
             holder.tvUserReplyTime2.setText(topReplys.get(1).getPostTime());
             holder.tvUserReplyContent2.setText(topReplys.get(1).getContent());
         } else if (topReplys != null && topReplys.size() == 1) {
@@ -192,9 +197,11 @@ public class ZhuanjiaDetailAdapter extends BaseRecyclerAdapter<RecyclerView.View
             if (!StringUtils.isEmpty(phone1) && phone1.length() > 10) {
                 phone1 = phone1.replaceAll("(\\d{3})\\d{4}(\\d{4})", "$1****$2");
             }
-            String name1 = StringUtils.isEmpty(topReplys.get(0).getAuthor()) ?
-                    phone1 : topReplys.get(0).getAuthor();
-            holder.tvUserReplyName1.setText(name1);
+            String name1 = topReplys.get(0).getAuthor();
+            String nick1 = topReplys.get(0).getNickname();
+
+            ShowNameUtil.showNameLogic(holder.tvUserReplyName1, nick1, name1, phone1);
+            
             holder.tvUserReplyTime1.setText(topReplys.get(0).getPostTime());
             holder.tvUserReplyContent1.setText(topReplys.get(0).getContent());
         } else {

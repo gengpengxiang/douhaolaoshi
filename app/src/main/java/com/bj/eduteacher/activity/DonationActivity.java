@@ -109,7 +109,7 @@ public class DonationActivity extends BaseActivity {
     private void initView() {
         userPhotoPath = PreferencesUtils.getString(this, MLProperties.BUNDLE_KEY_TEACHER_IMG, "");
         LL.i("分享用户的头像：" + userPhotoPath);
-        userPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID);
+        userPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
 
         edtMoney.addTextChangedListener(new TextWatcher() {
             @Override

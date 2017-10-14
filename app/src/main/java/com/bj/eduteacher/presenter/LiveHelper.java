@@ -158,7 +158,7 @@ public class LiveHelper extends Presenter implements ILiveRoomOption.onRoomDisco
     public LiveHelper(Context context, LiveView liveview) {
         mContext = context;
         mLiveView = liveview;
-        teacherPhoneNumber = PreferencesUtils.getString(mContext, MLProperties.PREFER_KEY_USER_ID);
+        teacherPhoneNumber = PreferencesUtils.getString(mContext, MLProperties.PREFER_KEY_USER_ID, "");
         MessageEvent.getInstance().addObserver(this);
     }
 

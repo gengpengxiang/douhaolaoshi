@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.andview.refreshview.recyclerview.BaseRecyclerAdapter;
 import com.bj.eduteacher.R;
 import com.bj.eduteacher.entity.ArticleInfo;
+import com.bj.eduteacher.tool.ShowNameUtil;
 import com.bj.eduteacher.utils.DateFormatUtils;
 import com.bj.eduteacher.utils.StringUtils;
 import com.bj.eduteacher.zzautolayout.utils.AutoUtils;
@@ -71,7 +72,18 @@ public class LiveAllAdapter extends BaseRecyclerAdapter<RecyclerView.ViewHolder>
             holder.ivPicture.setImageURI(itemInfo.getArticlePicture());
             holder.tvLiveTitle.setText(itemInfo.getTitle());
 
-            holder.tvAuthorName.setText(itemInfo.getAuthor());
+            String phone;
+            if (!StringUtils.isEmpty(itemInfo.getAuthDesc())) {
+                phone = itemInfo.getAuthDesc().substring(3);
+                if (!StringUtils.isEmpty(phone) && phone.length() > 10) {
+                    phone = phone.replaceAll("(\\d{3})\\d{4}(\\d{4})", "$1****$2");
+                }
+            } else {
+                phone = "";
+            }
+
+            ShowNameUtil.showNameLogic(holder.tvAuthorName, itemInfo.getNickname(), itemInfo.getAuthor(), phone);
+
             holder.ivAuthorPhoto.setImageURI(itemInfo.getAuthImg());
 
             if ("1".equals(itemInfo.getPreviewType())) {

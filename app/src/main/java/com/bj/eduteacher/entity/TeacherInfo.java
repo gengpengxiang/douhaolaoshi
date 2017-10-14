@@ -13,6 +13,8 @@ public class TeacherInfo {
     private String schoolCode;
     private String schoolImg;
 
+    private String teacherNickname; // 用户昵称
+
     private String errorCode;
     private String message;
 
@@ -21,6 +23,15 @@ public class TeacherInfo {
     private String sxbTitle;        // 直播标题
     private String sxbPicture;      // 直播房间图片
     private String sxbPermissions;  // 直播权限 1 : 允许开直播， 0 : 不允许开直播
+
+
+    public String getTeacherNickname() {
+        return teacherNickname;
+    }
+
+    public void setTeacherNickname(String teacherNickname) {
+        this.teacherNickname = teacherNickname;
+    }
 
     public String getSxbStatus() {
         return sxbStatus;

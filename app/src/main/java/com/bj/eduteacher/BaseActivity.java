@@ -15,8 +15,8 @@ import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.ViewTreeObserver;
 
-import com.bj.eduteacher.activity.LoginActivity;
 import com.bj.eduteacher.dialog.UpdateAPPAlertDialog;
+import com.bj.eduteacher.manager.IntentManager;
 import com.bj.eduteacher.model.MySelfInfo;
 import com.bj.eduteacher.tool.Constants;
 import com.bj.eduteacher.utils.ConnectionChangeReceiver;
@@ -83,8 +83,7 @@ public class BaseActivity extends AutoLayoutActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (intent.getAction().equals(Constants.BD_EXIT_APP)) {
-                    Intent loginIntent = new Intent(context, LoginActivity.class);
-                    startActivity(loginIntent);
+                    IntentManager.toLoginActivity(context, IntentManager.LOGIN_SUCC_ACTION_MAINACTIVITY);
                     finish();
                 }
             }
