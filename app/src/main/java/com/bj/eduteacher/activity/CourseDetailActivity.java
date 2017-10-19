@@ -143,14 +143,11 @@ public class CourseDetailActivity extends BaseActivity {
         courseBuyStatus = args.getString("CourseBuyStatus", "");
         if (StringUtils.isEmpty(coursePrice) || "0".equals(coursePrice)) {
             tvpay.setText("免费加入学习");
-            tvpay.setBackgroundColor(Color.parseColor("#A3A3A3"));
         } else {
             if ("0".equals(courseBuyStatus)) {
                 tvpay.setText("¥ " + (Double.parseDouble(coursePrice)) / 100 + "立即加入学习");
-                tvpay.setBackgroundColor(Color.parseColor("#FC6345"));
             } else {
                 tvpay.setText("已购买，快去学习");
-                tvpay.setBackgroundColor(Color.parseColor("#A3A3A3"));
             }
         }
     }

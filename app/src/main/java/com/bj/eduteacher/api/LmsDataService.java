@@ -16,6 +16,7 @@ import com.bj.eduteacher.entity.OrderInfo;
 import com.bj.eduteacher.entity.SubjectInfo;
 import com.bj.eduteacher.entity.TeacherInfo;
 import com.bj.eduteacher.entity.TradeInfo;
+import com.bj.eduteacher.utils.CharEncodeUtil;
 import com.bj.eduteacher.utils.LL;
 import com.bj.eduteacher.utils.StringUtils;
 import com.bj.eduteacher.zzeaseui.model.EaseConversation;
@@ -1720,6 +1721,7 @@ public class LmsDataService {
                 !StringUtils.isEmpty(data)) {
             JSONArray newsArray = new JSONArray(data);
             CommentInfo item;
+            String content, userReply;
             for (int i = 0; i < newsArray.length(); i++) {
                 JSONObject itemObj = newsArray.optJSONObject(i);
                 item = new CommentInfo();
@@ -1730,7 +1732,13 @@ public class LmsDataService {
                 item.setCommCreaterPhoto(HttpUtilService.BASE_RESOURCE_URL +
                         itemObj.optString("user_img", ""));
                 item.setCommCreateTime(itemObj.optString("createtime", ""));
-                item.setCommContent(itemObj.optString("content", ""));
+
+                // content = itemObj.optString("content", "");
+                // byte b[] = Base64.decode(content, Base64.DEFAULT);
+                // userReply = new String(b, "utf-8");
+                // item.setCommContent(userReply);
+
+                item.setCommContent(CharEncodeUtil.getBase64DecodeContent(itemObj.optString("content", "")));
                 item.setCommCreatePhone(itemObj.optString("userphone", ""));
                 dataList.add(item);
 
@@ -1808,12 +1816,14 @@ public class LmsDataService {
                                             String userType, String content) throws Exception {
         String[] result = new String[3];
 
+        String userReply = Base64.encodeToString(content.getBytes(), Base64.DEFAULT);
+
         String parseUrl = "douke/setcomment";
         HashMap<String, String> params = new HashMap<>();
         params.put("newsid", newsID);
         params.put("userphone", userPhoneNumber);
         params.put("usertype", userType);
-        params.put("content", content);
+        params.put("content", userReply);
 
         String resultStr = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(resultStr);

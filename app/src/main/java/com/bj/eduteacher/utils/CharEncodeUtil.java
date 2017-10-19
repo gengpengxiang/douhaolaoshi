@@ -1,9 +1,11 @@
 package com.bj.eduteacher.utils;
 
+import android.util.Base64;
+
 import java.net.URL;
 import java.net.URLEncoder;
 
-public class MyURLEncode {
+public class CharEncodeUtil {
     /**
      * 对网址路径进行编码，针对其中的汉字
      *
@@ -29,5 +31,35 @@ public class MyURLEncode {
         String urlPath3 = protocol + "://" + authority + "/" + urlPath2;
 
         return urlPath3;
+    }
+
+    /**
+     * 判断是否为BASE加密
+     */
+    public static boolean ifBASE64Encode(String val) throws Exception {
+        byte[] key = Base64.decode(val, Base64.DEFAULT);
+        String strs = new String(key);
+        String result = Base64.encodeToString(strs.getBytes(), Base64.DEFAULT);
+        if (result.equals(val)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 获取可能被Base64加密过的字符串
+     *
+     * @param val
+     * @return
+     * @throws Exception
+     */
+    public static String getBase64DecodeContent(String val) throws Exception {
+        byte[] key = Base64.decode(val, Base64.DEFAULT);
+        String strs = new String(key);
+        String result = Base64.encodeToString(strs.getBytes(), Base64.DEFAULT);
+        if (result.equals(val)) {
+            return strs;
+        }
+        return val;
     }
 }
