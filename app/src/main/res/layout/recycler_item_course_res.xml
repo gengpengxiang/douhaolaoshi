@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:fresco="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/fl_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:foreground="@drawable/selector_item_click_2">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FFFFFF"
+            android:paddingBottom="12dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="12dp">
+
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/iv_authorPhoto"
+                android:layout_width="80dp"
+                android:layout_height="100dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
+                fresco:actualImageScaleType="focusCrop"
+                fresco:placeholderImage="@drawable/shape_bg_zhuanjia"
+                fresco:placeholderImageScaleType="focusCrop"
+                fresco:roundedCornerRadius="5dp"/>
+
+            <TextView
+                android:id="@+id/tv_authorName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/iv_authorPhoto"
+                android:layout_marginBottom="5dp"
+                android:layout_toEndOf="@+id/iv_authorPhoto"
+                android:layout_toRightOf="@+id/iv_authorPhoto"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:textColor="#4A4A4A"
+                android:textSize="16sp"
+                tools:text="北大教学课件"/>
+
+            <TextView
+                android:id="@+id/tv_authorDesc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/tv_authorName"
+                android:layout_below="@+id/tv_authorName"
+                android:layout_marginBottom="5dp"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:textColor="#707070"
+                android:textSize="14sp"
+                tools:text="PPT课件"/>
+
+            <TextView
+                android:id="@+id/tv_previewNum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_authorName"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@+id/tv_authorDesc"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:text="浏览100"
+                android:textColor="#646464"
+                android:textSize="14sp"/>
+
+            <TextView
+                android:id="@+id/tv_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/iv_authorPhoto"
+                android:layout_alignLeft="@+id/tv_authorDesc"
+                android:layout_marginBottom="3dp"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:text="免费试学"
+                android:textColor="#FE5433"
+                android:textSize="14sp"
+                android:visibility="visible"/>
+
+            <ImageView
+                android:id="@+id/iv_iconState"
+                android:layout_width="15dp"
+                android:layout_height="19dp"
+                android:layout_alignBottom="@+id/iv_authorPhoto"
+                android:layout_alignLeft="@+id/tv_authorDesc"
+                android:layout_marginBottom="3dp"
+                android:src="@drawable/ic_lock"
+                android:visibility="gone"/>
+        </RelativeLayout>
+    </FrameLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#EFEFEF"/>
+</LinearLayout>

@@ -2011,6 +2011,83 @@ public class LmsDataService {
     }
 
     /**
+     * 获取首页每日一课列表
+     *
+     * @return
+     * @throws Exception
+     * @setAuthDesc top bottom center single
+     */
+    public List<ArticleInfo> getHomePageLatestRes(String phoneNumber) throws Exception {
+        List<ArticleInfo> dataList = new ArrayList<>();
+        ArticleInfo item1 = new ArticleInfo();
+        item1.setShowType(ArticleInfo.SHOW_TYPE_LATEST_RES);
+        item1.setAuthDesc("top");
+        // item1.setAuthDesc("single");
+        item1.setPreviewType("1");
+        item1.setTitle("游戏化教学的知与行");
+        item1.setAgreeNumber("0");
+        item1.setCommentNumber("0");
+        item1.setArticleID("2");
+
+        ArticleInfo item2 = new ArticleInfo();
+        item2.setShowType(ArticleInfo.SHOW_TYPE_LATEST_RES);
+        item2.setAuthDesc("center");
+        item2.setPreviewType("2");
+        item2.setTitle("一年级游戏化学习资料");
+        item2.setAgreeNumber("1");
+        item2.setCommentNumber("0");
+        item2.setArticleID("1");
+
+        ArticleInfo item3 = new ArticleInfo();
+        item3.setShowType(ArticleInfo.SHOW_TYPE_LATEST_RES);
+        item3.setAuthDesc("bottom");
+        item3.setPreviewType("0");
+        item3.setTitle("北大教授为您讲解游戏化的应用");
+
+        dataList.add(item1);
+        dataList.add(item2);
+        dataList.add(item3);
+
+        return dataList;
+    }
+
+    /**
+     * 获取首页名师成长课程列表
+     *
+     * @return
+     * @throws Exception
+     */
+    public List<ArticleInfo> getHomePageCourseList(String phoneNumber) throws Exception {
+        List<ArticleInfo> dataList = new ArrayList<>();
+        ArticleInfo item1 = new ArticleInfo();
+        item1.setShowType(ArticleInfo.SHOW_TYPE_COURSE);
+        item1.setArticlePicture(HttpUtilService.BASE_RESOURCE_URL + "01958237ddbc0987adcf0114775182bd.jpg");
+        item1.setTitle("游戏化教学法系列课程，考核合格可得教育游戏专委会认证纸质证书1");
+        item1.setAuthor("尚俊杰、蒋宇等");
+        item1.setReadNumber("11");
+        item1.setReplyCount("33,123");
+        item1.setAgreeNumber("0");
+        item1.setCommentNumber("0");
+        item1.setArticleID("0001");
+
+        ArticleInfo item2 = new ArticleInfo();
+        item2.setShowType(ArticleInfo.SHOW_TYPE_COURSE);
+        item2.setArticlePicture(HttpUtilService.BASE_RESOURCE_URL + "01958237ddbc0987adcf0114775182bd.jpg");
+        item2.setTitle("游戏化教学法系列课程，考核合格可得教育游戏专委会认证纸质证书2");
+        item2.setAuthor("陆仁贾，释冰已，龙涛鼎等");
+        item2.setReadNumber("29");
+        item2.setReplyCount("9,999,999,999");
+        item2.setAgreeNumber("10");
+        item2.setCommentNumber("0");
+        item2.setArticleID("0002");
+
+        dataList.add(item1);
+        dataList.add(item2);
+
+        return dataList;
+    }
+
+    /**
      * 获取名师总数
      *
      * @return

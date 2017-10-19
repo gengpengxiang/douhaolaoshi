@@ -17,6 +17,8 @@ public class ArticleInfo {
     public static final int SHOW_TYPE_ZHUANJIA_BLACKBOARD_MORE = 7;
     public static final int SHOW_TYPE_TEACHER = 8;
     public static final int SHOW_TYPE_LIVE = 9;
+    public static final int SHOW_TYPE_LATEST_RES = 10;
+    public static final int SHOW_TYPE_COURSE = 11;
 
     private String articleID;
     private String title;
@@ -40,7 +42,7 @@ public class ArticleInfo {
     private String replyCount;
     private List<ArticleInfo> replyList;
 
-    private String previewType; // 1是文档、2是视频
+    private String previewType; // 1是文档、2是视频、0是逗课
 
     public String getNickname() {
         return nickname;

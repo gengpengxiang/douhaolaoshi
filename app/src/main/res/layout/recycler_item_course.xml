@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:fresco="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFF">
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/iv_picture"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        fresco:actualImageScaleType="focusCrop"
+        fresco:placeholderImage="@drawable/bg_live_default_picture"
+        fresco:placeholderImageScaleType="focusCrop"
+        fresco:viewAspectRatio="2.08"/>
+    
+    <TextView
+        android:id="@+id/tv_courseName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/iv_picture"
+        android:layout_marginBottom="12dp"
+        android:layout_marginLeft="14dp"
+        android:layout_marginRight="14dp"
+        android:layout_marginTop="12dp"
+        android:ellipsize="end"
+        android:lineSpacingExtra="3dp"
+        android:maxLines="2"
+        android:textColor="#4A4A4A"
+        android:textSize="15sp"
+        tools:text="游戏化教学法系列课程，考核合格可得教育游戏专委会认证纸质证书游戏化教学法系列课程，考核合格可得教育游戏专委会认证纸质证书"/>
+
+    <TextView
+        android:id="@+id/tv_teachers"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_courseName"
+        android:layout_marginBottom="12dp"
+        android:layout_marginLeft="14dp"
+        android:layout_toLeftOf="@+id/tv_resNum"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="#797979"
+        android:textSize="14sp"
+        tools:text="主讲人：尚俊杰、蒋宇蒋宇蒋宇蒋宇蒋宇等"/>
+
+    <TextView
+        android:id="@+id/tv_resNum"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/tv_courseName"
+        android:layout_marginLeft="14dp"
+        android:layout_marginRight="14dp"
+        android:maxLines="1"
+        android:textColor="#797979"
+        android:textSize="14sp"
+        tools:text="共16课时"/>
+
+    <TextView
+        android:id="@+id/tv_learnNum"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_teachers"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="14dp"
+        android:layout_toLeftOf="@+id/tv_price"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="#797979"
+        android:textSize="14sp"
+        tools:text="33,123,123,123,123,123,123,123,123人已学习"/>
+
+    <TextView
+        android:id="@+id/tv_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/tv_teachers"
+        android:layout_marginLeft="14dp"
+        android:layout_marginRight="14dp"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:maxLines="1"
+        android:textColor="#FE5433"
+        android:textSize="14sp"
+        tools:text="¥ 9.99"/>
+</RelativeLayout>

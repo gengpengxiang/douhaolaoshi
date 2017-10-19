@@ -32,14 +32,14 @@ public class HttpUtilService {
 
     private static final String TAG = "HTTP";
 
-    public static final String BASE_URL = "http://douhao1p4.gamepku.com/";
-//    public static final String BASE_URL = "http://testdouhao1p4.gamepku.com/";
+    //    public static final String BASE_URL = "http://douhao1p4.gamepku.com/";
+    public static final String BASE_URL = "http://testdouhao1p4.gamepku.com/";
 
-    public static final String BASE_RESOURCE_URL = "http://douhao.gamepku.com/files/";
-//    public static final String BASE_RESOURCE_URL = "http://testdouhao.gamepku.com/files/";
+    //    public static final String BASE_RESOURCE_URL = "http://douhao.gamepku.com/files/";
+    public static final String BASE_RESOURCE_URL = "http://testdouhao.gamepku.com/files/";
 
-    public static final String BASE_FILES_UPLOAD_URL = "http://douhao.gamepku.com/";
-//    public static final String BASE_FILES_UPLOAD_URL = "http://testdouhao.gamepku.com/";
+    //    public static final String BASE_FILES_UPLOAD_URL = "http://douhao.gamepku.com/";
+    public static final String BASE_FILES_UPLOAD_URL = "http://testdouhao.gamepku.com/";
 
     public static final String BASE_API_URL = BASE_URL + "index.php/";
     public static final String DOWNLOAD_PATH = Environment.getExternalStorageDirectory().getAbsolutePath()

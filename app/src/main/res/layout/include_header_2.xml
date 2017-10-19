@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:fresco="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/zoomView"
+                android:layout_width="match_parent"
+                android:layout_height="135dp"
+                android:orientation="vertical"
+                android:tag="header">
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/iv_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:tag="zoom"
+        fresco:actualImageScaleType="focusCrop"
+        fresco:placeholderImage="@drawable/bg_live_default_picture"
+        fresco:placeholderImageScaleType="focusCrop"/>
+</RelativeLayout>

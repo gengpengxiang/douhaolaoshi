@@ -23,6 +23,8 @@ import com.andview.refreshview.XRefreshView;
 import com.andview.refreshview.XRefreshViewFooter;
 import com.bj.eduteacher.BaseFragment;
 import com.bj.eduteacher.R;
+import com.bj.eduteacher.activity.AnnualCaseAllActivity;
+import com.bj.eduteacher.activity.CourseDetailActivity;
 import com.bj.eduteacher.activity.DoukeDetailActivity;
 import com.bj.eduteacher.activity.FamousTeacherAllActivity;
 import com.bj.eduteacher.activity.FamousTeacherDetailActivity;
@@ -179,7 +181,7 @@ public class DoukeFragment extends BaseFragment {
         // 下拉刷新控件
         mRecyclerView.setHasFixedSize(true);
         layoutManager = new SaveGridLayoutManager(getActivity(), 6);
-        mAdapter = new DoukeListAdapter(mDataList);
+        mAdapter = new DoukeListAdapter(getActivity(), mDataList);
         // 添加header
         banner = (Banner) mAdapter.setHeaderView(R.layout.recycler_header_banner, mRecyclerView);
         initHeaderView();
@@ -348,6 +350,61 @@ public class DoukeFragment extends BaseFragment {
                     checkJoinLive();
                 }
             }
+        } else if (item.getShowType() == ArticleInfo.SHOW_TYPE_LATEST_RES) {
+            String previewType = item.getPreviewType();
+            // 如果是文章，跳转到文章详情页面
+            if ("0".equals(previewType)) {
+                T.showShort(getActivity(), "跳转到逗课文章页面");
+                return;
+            }
+            // 如果是资源，跳转到资源页面
+            String price = item.getAgreeNumber();
+            String buyType = item.getCommentNumber();
+
+            if (!StringUtils.isEmpty(price) && !"0".equals(price) && "0".equals(buyType)) {
+                // 如果资源不是免费，需要先登录
+                if (StringUtils.isEmpty(teacherPhoneNumber)) {
+                    IntentManager.toLoginActivity(getActivity(), IntentManager.LOGIN_SUCC_ACTION_MAINACTIVITY);
+                    return;
+                }
+
+                MobclickAgent.onEvent(getActivity(), "doc_buy");
+                initPopViewPayDetail(item.getArticleID(), item.getAgreeNumber());
+            } else {
+                T.showShort(getActivity(), "跳转到资源预览页面");
+//                MobclickAgent.onEvent(getActivity(), "doc_look");
+//                String resID = item.getArticleID();
+//                String resName = item.getTitle();
+//                String previewUrl = item.getArticlePath();
+//                String downloadUrl = item.getArticlePicture();
+//                String resType = item.getPreviewType();  // 目前先根据这个类型来判断是否是视频
+//                if ("2".equals(resType)) {
+//                    Intent intent = new Intent(getActivity(), ResPlayActivity.class);
+//                    intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_ID, resID);
+//                    intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_NAME, resName);
+//                    intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_PREVIEW_URL, previewUrl);
+//                    startActivity(intent);
+//                } else {
+//                    Intent intent = new Intent(getActivity(), ResReviewActivity.class);
+//                    intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_ID, resID);
+//                    intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_NAME, resName);
+//                    intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_PREVIEW_URL, previewUrl);
+//                    intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_DOWNLOAD_URL, downloadUrl);
+//                    startActivity(intent);
+//                }
+            }
+        } else if (item.getShowType() == ArticleInfo.SHOW_TYPE_COURSE) {
+            Intent intent = new Intent(getActivity(), CourseDetailActivity.class);
+            Bundle args = new Bundle();
+            args.putString("CourseID", item.getArticleID());
+            args.putString("CourseTitle", item.getTitle());
+            args.putString("CourseLearnNum", item.getReplyCount());
+            args.putString("CourseResNum", item.getReadNumber());
+            args.putString("CoursePicture", item.getArticlePicture());
+            args.putString("CoursePrice", item.getAgreeNumber());
+            args.putString("CourseBuyStatus", item.getCommentNumber());
+            intent.putExtras(args);
+            startActivity(intent);
         }
     }
 
@@ -411,6 +468,12 @@ public class DoukeFragment extends BaseFragment {
         banner.setOnBannerListener(new OnBannerListener() {
             @Override
             public void OnBannerClick(int position) {
+                if (true) {
+                    Intent test = new Intent(getActivity(), AnnualCaseAllActivity.class);
+                    startActivity(test);
+                    return;
+                }
+
                 MobclickAgent.onEvent(getActivity(), "banner_click");
                 if ("zj".equals(mBannerList.get(position).getTitle())) {
                     // 跳转到专家详情页面
@@ -468,17 +531,24 @@ public class DoukeFragment extends BaseFragment {
         }
         final LmsDataService mService = new LmsDataService();
         // 获取专家卡片列表
-        Observable observable1 = Observable.create(new ObservableOnSubscribe<List<ArticleInfo>>() {
+        Observable<List<ArticleInfo>> observable1 = Observable.create(new ObservableOnSubscribe<List<ArticleInfo>>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<ArticleInfo>> e) throws Exception {
                 List<ArticleInfo> dataList = mService.getMasterCardsFromAPI(currentPage, 5);
+                if (dataList.size() >= 5) {
+                    ArticleInfo articleInfo = mService.getMasterCountFromAPI();
+                    int count = Integer.parseInt(articleInfo.getReplyCount());
+                    if (count > 5) {    // 超过5位专家，显示查看全部
+                        dataList.add(new ArticleInfo("查看全部" + count + "位专家", ArticleInfo.SHOW_TYPE_ZHUANJIA_ALL));
+                    }
+                }
                 e.onNext(dataList);
                 e.onComplete();
             }
         }).subscribeOn(Schedulers.io());
 
         // 获取逗课列表
-        Observable observable2 = Observable.create(new ObservableOnSubscribe<List<ArticleInfo>>() {
+        Observable<List<ArticleInfo>> observable2 = Observable.create(new ObservableOnSubscribe<List<ArticleInfo>>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<ArticleInfo>> e) throws Exception {
                 List<ArticleInfo> dataList = mService.getDouKeListFromAPI(currentPage);
@@ -488,7 +558,7 @@ public class DoukeFragment extends BaseFragment {
         }).subscribeOn(Schedulers.io());
 
         // 获取专家日课
-        Observable observable3 = Observable.create(new ObservableOnSubscribe<List<ArticleInfo>>() {
+        Observable<List<ArticleInfo>> observable3 = Observable.create(new ObservableOnSubscribe<List<ArticleInfo>>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<ArticleInfo>> e) throws Exception {
                 // SystemClock.sleep(1000);
@@ -498,40 +568,47 @@ public class DoukeFragment extends BaseFragment {
             }
         }).subscribeOn(Schedulers.io());
 
-        // 获取专家数量
-        Observable observable4 = Observable.create(new ObservableOnSubscribe<ArticleInfo>() {
-            @Override
-            public void subscribe(@NonNull ObservableEmitter<ArticleInfo> e) throws Exception {
-                // SystemClock.sleep(1000);
-                ArticleInfo articleInfo = mService.getMasterCountFromAPI();
-                e.onNext(articleInfo);
-                e.onComplete();
-            }
-        }).subscribeOn(Schedulers.io());
-
-        // 获取名师卡片列表
-        Observable observable5 = Observable.create(new ObservableOnSubscribe<List<ArticleInfo>>() {
+        // 获取每日一课列表
+        Observable<List<ArticleInfo>> observable4 = Observable.create(new ObservableOnSubscribe<List<ArticleInfo>>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<ArticleInfo>> e) throws Exception {
-                List<ArticleInfo> dataList = mService.getFamousTeacherCardsFromAPI(currentPage, 8);
+                // SystemClock.sleep(1000);
+                List<ArticleInfo> dataList = mService.getHomePageLatestRes(teacherPhoneNumber);
                 e.onNext(dataList);
                 e.onComplete();
             }
         }).subscribeOn(Schedulers.io());
 
-        // 获取名师数量
-        Observable observable6 = Observable.create(new ObservableOnSubscribe<ArticleInfo>() {
+        // 获取名师卡片列表
+        Observable<List<ArticleInfo>> observable5 = Observable.create(new ObservableOnSubscribe<List<ArticleInfo>>() {
             @Override
-            public void subscribe(@NonNull ObservableEmitter<ArticleInfo> e) throws Exception {
+            public void subscribe(@NonNull ObservableEmitter<List<ArticleInfo>> e) throws Exception {
+                List<ArticleInfo> dataList = mService.getFamousTeacherCardsFromAPI(currentPage, 8);
+                if (dataList.size() >= 8) {
+                    ArticleInfo articleInfo = mService.getFamousTeacherCountFromAPI();
+                    int count = Integer.parseInt(articleInfo.getReplyCount());
+                    if (count > 8) {    // 超过8位名师，显示查看全部
+                        dataList.add(new ArticleInfo("查看全部" + count + "位名师", ArticleInfo.SHOW_TYPE_ZHUANJIA_ALL));
+                    }
+                }
+                e.onNext(dataList);
+                e.onComplete();
+            }
+        }).subscribeOn(Schedulers.io());
+
+        // 获取名师成长课程列表
+        Observable<List<ArticleInfo>> observable6 = Observable.create(new ObservableOnSubscribe<List<ArticleInfo>>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<List<ArticleInfo>> e) throws Exception {
                 // SystemClock.sleep(1000);
-                ArticleInfo articleInfo = mService.getFamousTeacherCountFromAPI();
-                e.onNext(articleInfo);
+                List<ArticleInfo> dataList = mService.getHomePageCourseList(teacherPhoneNumber);
+                e.onNext(dataList);
                 e.onComplete();
             }
         }).subscribeOn(Schedulers.io());
 
         // 获取正在直播的列表
-        Observable observable7 = Observable.create(new ObservableOnSubscribe<List<ArticleInfo>>() {
+        Observable<List<ArticleInfo>> observable7 = Observable.create(new ObservableOnSubscribe<List<ArticleInfo>>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<ArticleInfo>> e) throws Exception {
                 List<ArticleInfo> liveList = mService.getLiveListFromAPI(teacherPhoneNumber, "1", 2, 0);
@@ -541,17 +618,23 @@ public class DoukeFragment extends BaseFragment {
         }).subscribeOn(Schedulers.io());
 
         Observable.zip(observable1, observable2, observable3, observable4, observable5, observable6, observable7
-                , new Function7<List<ArticleInfo>, List<ArticleInfo>, List<ArticleInfo>, ArticleInfo, List<ArticleInfo>, ArticleInfo, List<ArticleInfo>, List<ArticleInfo>>() {
+                , new Function7<List<ArticleInfo>, List<ArticleInfo>, List<ArticleInfo>, List<ArticleInfo>, List<ArticleInfo>, List<ArticleInfo>, List<ArticleInfo>, List<ArticleInfo>>() {
                     @Override
-                    public List<ArticleInfo> apply(@NonNull List<ArticleInfo> data1, @NonNull List<ArticleInfo> data2, @NonNull List<ArticleInfo> data3, @NonNull ArticleInfo data4, @NonNull List<ArticleInfo> data5, @NonNull ArticleInfo data6, @NonNull List<ArticleInfo> data7) throws Exception {
+                    public List<ArticleInfo> apply(@NonNull List<ArticleInfo> data1, @NonNull List<ArticleInfo> data2, @NonNull List<ArticleInfo> data3, @NonNull List<ArticleInfo> data4, @NonNull List<ArticleInfo> data5, @NonNull List<ArticleInfo> data6, @NonNull List<ArticleInfo> data7) throws Exception {
                         List<ArticleInfo> dataList = new ArrayList<>();
-
+                        if (data4.size() > 0) {
+                            dataList.add(new ArticleInfo("每日一课", ArticleInfo.SHOW_TYPE_DECORATION));
+                            dataList.addAll(data4);
+                        }
                         if (data7.size() > 0) {
                             dataList.add(new ArticleInfo("正在直播", ArticleInfo.SHOW_TYPE_DECORATION));
                             dataList.addAll(data7);
                             dataList.add(new ArticleInfo("查看全部直播", ArticleInfo.SHOW_TYPE_ZHUANJIA_ALL));
                         }
-
+                        if (data6.size() > 0) {
+                            dataList.add(new ArticleInfo("名师成长课程", ArticleInfo.SHOW_TYPE_DECORATION));
+                            dataList.addAll(data6);
+                        }
                         if (data3.size() > 0) {
                             dataList.add(new ArticleInfo("逗课精选", ArticleInfo.SHOW_TYPE_DECORATION));
                             dataList.addAll(data3);
@@ -561,22 +644,9 @@ public class DoukeFragment extends BaseFragment {
                             dataList.add(new ArticleInfo("专家驻场", ArticleInfo.SHOW_TYPE_DECORATION));
                             dataList.addAll(data1);
                         }
-                        if (data4 != null) {
-                            int count = Integer.parseInt(data4.getReplyCount());
-                            if (count > 5) {    // 超过5位专家，显示查看全部
-                                dataList.add(new ArticleInfo("查看全部" + count + "位专家", ArticleInfo.SHOW_TYPE_ZHUANJIA_ALL));
-                            }
-                        }
-                        // 添加名师堂
                         if (data5.size() > 0) {
                             dataList.add(new ArticleInfo("名师堂", ArticleInfo.SHOW_TYPE_DECORATION));
                             dataList.addAll(data5);
-                        }
-                        if (data6 != null) {
-                            int count = Integer.parseInt(data6.getReplyCount());
-                            if (count > 8) {    // 超过5位专家，显示查看全部
-                                dataList.add(new ArticleInfo("查看全部" + count + "位名师", ArticleInfo.SHOW_TYPE_ZHUANJIA_ALL));
-                            }
                         }
                         if (data2.size() > 0) {
                             dataList.add(new ArticleInfo("干货精选", ArticleInfo.SHOW_TYPE_DECORATION));

@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:fresco="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#FFFFFF">
+
+    <FrameLayout
+        android:id="@+id/fl_top"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_alignParentTop="true">
+
+        <ImageView
+            android:id="@+id/iv_close"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginRight="5dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_close"/>
+    </FrameLayout>
+
+    <ScrollView
+        android:id="@+id/mScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/rl_bottom"
+        android:layout_below="@+id/fl_top"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:fillViewport="true"
+        android:overScrollMode="never"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/llShareContent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#FE5433"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:lines="1"
+                android:text="快去投票支持你的小伙伴吧"
+                android:textColor="#FFFFFFFF"
+                android:textSize="17sp"/>
+
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/iv_picture"
+                android:layout_width="267dp"
+                android:layout_height="99dp"
+                android:layout_marginTop="20dp"
+                fresco:actualImageScaleType="focusCrop"
+                fresco:placeholderImage="@drawable/shape_bg_zhuanjia"
+                fresco:placeholderImageScaleType="focusCrop"
+                fresco:roundedCornerRadius="5dp"/>
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp"
+                android:ellipsize="end"
+                android:gravity="center_horizontal"
+                android:lineSpacingExtra="3dp"
+                android:maxLines="2"
+                android:text="第二届游戏化教学案例征集与评审活动"
+                android:textColor="#FFF"
+                android:textSize="14sp"/>
+
+            <TextView
+                android:id="@+id/tv_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="16dp"
+                android:ellipsize="end"
+                android:gravity="center_horizontal"
+                android:singleLine="true"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                tools:text="作品名称：小学数学加减法"/>
+
+            <TextView
+                android:id="@+id/tv_author"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="5dp"
+                android:ellipsize="end"
+                android:gravity="center_horizontal"
+                android:singleLine="true"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                tools:text="主讲人：张一山，上海市"/>
+
+            <ImageView
+                android:layout_width="69dp"
+                android:layout_height="69dp"
+                android:layout_marginTop="50dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_download_qrcode_teacher"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="28dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp"
+                android:gravity="center_horizontal"
+                android:lineSpacingExtra="5dp"
+                android:text="长按识别二维码，下载逗号老师app\n点击首页顶部图片进入活动页面，找到Ta的作品吧"
+                android:textColor="#FFFFFFFF"
+                android:textSize="14sp"/>
+        </LinearLayout>
+    </ScrollView>
+
+    <RelativeLayout
+        android:id="@+id/rl_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:padding="10dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/iv_shareSession"
+            android:lines="1"
+            android:text="点击右侧分享"
+            android:textColor="#030303"
+            android:textSize="15sp"/>
+
+        <ImageView
+            android:id="@+id/iv_shareSession"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_toLeftOf="@+id/iv_shareTimeline"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_wechat"/>
+
+        <ImageView
+            android:id="@+id/iv_shareTimeline"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="24dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_wechat_moments"/>
+    </RelativeLayout>
+</RelativeLayout>
