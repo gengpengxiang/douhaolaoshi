@@ -25,7 +25,6 @@ import android.widget.TextView;
 import com.bj.eduteacher.BaseActivity;
 import com.bj.eduteacher.R;
 import com.bj.eduteacher.adapter.CourseDetailAdapter;
-import com.bj.eduteacher.api.HttpUtilService;
 import com.bj.eduteacher.api.LmsDataService;
 import com.bj.eduteacher.api.MLProperties;
 import com.bj.eduteacher.dialog.TipsAlertDialog3;
@@ -96,7 +95,6 @@ public class CourseDetailActivity extends BaseActivity {
 
     private String teacherPhoneNumber;
     private CourseDetailAdapter mAdapter;
-    private int currentPage = 1;
     public static long lastRefreshTime;
     private List<ArticleInfo> mDataList = new ArrayList<>();
     private final CompositeDisposable disposables = new CompositeDisposable();
@@ -111,8 +109,11 @@ public class CourseDetailActivity extends BaseActivity {
     private String courseTitle, courseDesc, courseLearnNum, courseResNum;
     private String coursePrice;
     private String courseBuyStatus;
+    private String courseJiaru;
+    private String courseZhengshu, courseShuoming;
     private View headerView;
     private int headerHeight = 0;
+    LmsDataService mService = new LmsDataService();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -130,26 +131,27 @@ public class CourseDetailActivity extends BaseActivity {
     private void initToolbar() {
         Bundle args = getIntent().getExtras();
         courseID = args.getString("CourseID", "");
-        courseTitle = args.getString("CourseTitle", "");
-        tvTitle.setText(courseTitle);
-        // courseDesc = args.getString("CourseDesc", "");
-        courseLearnNum = args.getString("CourseLearnNum", "");
-        courseResNum = args.getString("CourseResNum", "");
-
         coursePicture = args.getString("CoursePicture", "");
         ivCoursePicture.setImageURI(coursePicture, "");
+        courseTitle = args.getString("CourseTitle", "");
+        tvTitle.setText(courseTitle);
+        courseDesc = args.getString("CourseDesc", "");
+        courseLearnNum = args.getString("CourseLearnNum", "");
+        courseResNum = args.getString("CourseResNum", "");
+        courseZhengshu = args.getString("CourseZhengshu", "");
+        courseShuoming = args.getString("CourseShuoming", "");
 
-        coursePrice = args.getString("CoursePrice", "");
-        courseBuyStatus = args.getString("CourseBuyStatus", "");
-        if (StringUtils.isEmpty(coursePrice) || "0".equals(coursePrice)) {
-            tvpay.setText("免费加入学习");
-        } else {
-            if ("0".equals(courseBuyStatus)) {
-                tvpay.setText("¥ " + (Double.parseDouble(coursePrice)) / 100 + "立即加入学习");
-            } else {
-                tvpay.setText("已购买，快去学习");
-            }
-        }
+//        coursePrice = args.getString("CoursePrice", "");
+//        courseBuyStatus = args.getString("CourseBuyStatus", "");
+//        if (StringUtils.isEmpty(coursePrice) || "0".equals(coursePrice)) {
+//            tvpay.setText("免费加入学习");
+//        } else {
+//            if ("0".equals(courseBuyStatus)) {
+//                tvpay.setText("¥ " + (Double.parseDouble(coursePrice)) / 100 + "立即加入学习");
+//            } else {
+//                tvpay.setText("已购买，快去学习");
+//            }
+//        }
     }
 
     private void initView() {
@@ -159,15 +161,7 @@ public class CourseDetailActivity extends BaseActivity {
         mRecyclerView.setLayoutManager(layoutManager);
         // set Adatper
         mAdapter = new CourseDetailAdapter(mDataList);
-        if (StringUtils.isEmpty(coursePrice) || "0".equals(coursePrice)) {
-            mAdapter.setPayStatus(CourseDetailAdapter.PAY_STATUS_FREE);
-        } else {
-            if ("0".equals(courseBuyStatus)) {
-                mAdapter.setPayStatus(CourseDetailAdapter.PAY_STATUS_UNPAY);
-            } else {
-                mAdapter.setPayStatus(CourseDetailAdapter.PAY_STATUS_PAYED);
-            }
-        }
+        mAdapter.setPayStatus(CourseDetailAdapter.PAY_STATUS_UNPAY);
 
         headerView = mAdapter.setHeaderView(R.layout.layout_header_course_detail, mRecyclerView);
         initHeaderView();
@@ -177,7 +171,7 @@ public class CourseDetailActivity extends BaseActivity {
             public void onItemClick(RecyclerView.ViewHolder holder, int position) {
                 if (position > 0) {
                     ArticleInfo item = mDataList.get(position - 1);
-                    actionOnItemClick(item);
+                    actionOnItemClick(item, position - 1);
                 }
             }
 
@@ -192,8 +186,52 @@ public class CourseDetailActivity extends BaseActivity {
         pzv.setIsZoomEnable(true);
         pzv.setSensitive(1.5f);
         pzv.setZoomTime(500);
-        pzv.setOnScrollListener(scrollListener);
-        pzv.setOnPullZoomListener(pullZoomListener);
+        pzv.setOnScrollListener(new PullZoomView.OnScrollListener() {
+            @Override
+            public void onScroll(int l, int t, int oldl, int oldt) {
+                if (Math.abs(t) > 0 && Math.abs(t) <= headerHeight) {
+                    float percent = Float.valueOf(Math.abs(t)) / Float.valueOf(headerHeight);
+                    llCenterLayout.setAlpha(percent);
+                    StatusBarUtil.setColor(CourseDetailActivity.this, ContextCompat.getColor(CourseDetailActivity.this, R.color.colorPrimary), 0);
+                } else if (Math.abs(t) == 0) {
+                    llCenterLayout.setAlpha(0f);
+                    StatusBarUtil.setColor(CourseDetailActivity.this, ContextCompat.getColor(CourseDetailActivity.this, android.R.color.transparent), 0);
+                } else {
+                    llCenterLayout.setAlpha(1f);
+                    StatusBarUtil.setColor(CourseDetailActivity.this, ContextCompat.getColor(CourseDetailActivity.this, R.color.colorPrimary), 0);
+                }
+            }
+
+            @Override
+            public void onHeaderScroll(int currentY, int maxY) {
+            }
+
+            @Override
+            public void onContentScroll(int l, int t, int oldl, int oldt) {
+            }
+        });
+        pzv.setOnPullZoomListener(new PullZoomView.OnPullZoomListener() {
+            @Override
+            public void onPullZoom(int originHeight, int currentHeight) {
+                double progress = Double.valueOf(currentHeight - originHeight) / Double.valueOf(originHeight / 2);
+                if (!progressBar.isSpinning) {
+                    progressBar.setProgress((int) (progress * 360));
+                }
+            }
+
+            @Override
+            public void onUpToZoom() {
+                if (!progressBar.isSpinning) {
+                    // 刷新viewpager里的fragment
+                    startRefreshChildView();
+                }
+            }
+
+            @Override
+            public void onZoomFinish() {
+
+            }
+        });
     }
 
     private void initHeaderView() {
@@ -203,6 +241,7 @@ public class CourseDetailActivity extends BaseActivity {
         tvCourseResNum = (TextView) headerView.findViewById(R.id.tv_resNum);
 
         tvCourseTitle.setText(courseTitle);
+        tvCourseDesc.setText(courseDesc);
         tvCourseLearnNum.setText(courseLearnNum);
         tvCourseResNum.setText(courseResNum);
     }
@@ -246,16 +285,41 @@ public class CourseDetailActivity extends BaseActivity {
     private void initData() {
         teacherPhoneNumber = PreferencesUtils.getString(CourseDetailActivity.this, MLProperties.PREFER_KEY_USER_ID, "");
 
-        currentPage = 1;
         mDataList.clear();
-
         getCourseInfoFromAPI();
-        getRefreshDataList(courseID);
     }
 
-    private void actionOnItemClick(ArticleInfo item) {
+    private void actionOnItemClick(ArticleInfo item, int position) {
         if (item.getShowType() == ArticleInfo.SHOW_TYPE_ZHUANJIA_RES) {
-            T.showShort(this, "打开资源");
+            if (position != 1 && (StringUtils.isEmpty(courseJiaru) || courseJiaru.equals("0"))) {
+                if (StringUtils.isEmpty(coursePrice) || coursePrice.equals("0") || !"0".equals(courseBuyStatus)) {
+                    T.showShort(this, "加入课程后才可学习哦~");
+                } else {
+                    T.showShort(this, "购买后才可学习哦~");
+                }
+            } else {
+                // 查看资源详情
+                MobclickAgent.onEvent(this, "doc_look");
+                String resID = item.getArticleID();
+                String resName = item.getTitle();
+                String previewUrl = item.getArticlePath();
+                String downloadUrl = item.getArticlePicture();
+                String resType = item.getPreviewType();  // 目前先根据这个类型来判断是否是视频
+                if ("2".equals(resType)) {
+                    Intent intent = new Intent(this, ResPlayActivity.class);
+                    intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_ID, resID);
+                    intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_NAME, resName);
+                    intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_PREVIEW_URL, previewUrl);
+                    startActivity(intent);
+                } else {
+                    Intent intent = new Intent(this, ResReviewActivity.class);
+                    intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_ID, resID);
+                    intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_NAME, resName);
+                    intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_PREVIEW_URL, previewUrl);
+                    intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_DOWNLOAD_URL, downloadUrl);
+                    startActivity(intent);
+                }
+            }
         }
     }
 
@@ -263,7 +327,8 @@ public class CourseDetailActivity extends BaseActivity {
         Observable.create(new ObservableOnSubscribe<ArticleInfo>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<ArticleInfo> e) throws Exception {
-                e.onNext(new ArticleInfo());
+                ArticleInfo article = mService.getCourseDetailInfoFromAPI(courseID, teacherPhoneNumber);
+                e.onNext(article);
                 e.onComplete();
             }
         }).subscribeOn(Schedulers.io())
@@ -275,9 +340,12 @@ public class CourseDetailActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onNext(@NonNull ArticleInfo articleInfo) {
-                        tvCourseDesc.setText("北京大学教育学院副院长、教育技术系系主任、中国教育技术协会教育游戏专业委员会理事长。10年来，一直专注于游戏化学习与未来教育的研究，涉及的研究主题涉及教育游戏。");
-
+                    public void onNext(@NonNull ArticleInfo info) {
+                        String desc = info.getAuthDesc();
+                        if (!courseDesc.equals(desc)) {
+                            courseDesc = desc;
+                            tvCourseDesc.setText(desc);
+                        }
                         final ViewTreeObserver viewTreeObserver = tvCourseDesc.getViewTreeObserver();
                         viewTreeObserver.addOnDrawListener(new ViewTreeObserver.OnDrawListener() {
                             @Override
@@ -285,6 +353,50 @@ public class CourseDetailActivity extends BaseActivity {
                                 headerHeight = headerView.getHeight() + rlZoomView.getHeight();
                             }
                         });
+
+                        String learnNum = info.getReplyCount();
+                        if (!courseLearnNum.equals(learnNum)) {
+                            courseLearnNum = learnNum;
+                            tvCourseLearnNum.setText(learnNum);
+                        }
+                        String resNum = info.getReadNumber();
+                        if (!courseResNum.equals(resNum)) {
+                            courseResNum = resNum;
+                            tvCourseResNum.setText(resNum);
+                        }
+                        String zhengshu = info.getAuthImg();
+                        if (!courseZhengshu.equals(zhengshu)) {
+                            courseZhengshu = zhengshu;
+                        }
+                        String shuoming = info.getContent();
+                        if (!courseShuoming.equals(shuoming)) {
+                            courseShuoming = shuoming;
+                        }
+                        // 修改底部加入按钮的显示状态
+                        courseJiaru = info.getNickname();
+                        coursePrice = info.getAgreeNumber();
+                        courseBuyStatus = info.getCommentNumber();
+                        if (StringUtils.isEmpty(courseJiaru) || "0".equals(courseJiaru)) {
+                            if ("0".equals(coursePrice)) {
+                                tvpay.setText("免费加入学习");
+                            } else {
+                                if ("0".equals(courseBuyStatus)) {
+                                    tvpay.setText("¥ " + (Double.parseDouble(coursePrice)) / 100 + "立即加入学习");
+                                } else {
+                                    tvpay.setText("已支付，点击加入学习");
+                                }
+                            }
+                            mAdapter.setPayStatus(CourseDetailAdapter.PAY_STATUS_UNPAY);
+                        } else {
+                            if ("0".equals(coursePrice)) {
+                                tvpay.setText("已加入，快去学习");
+                            } else {
+                                tvpay.setText("已购买，快去学习");
+                            }
+                            mAdapter.setPayStatus(CourseDetailAdapter.PAY_STATUS_PAYED);
+                        }
+                        // 刷新资源列表
+                        getRefreshDataList(courseID);
                     }
 
                     @Override
@@ -310,16 +422,14 @@ public class CourseDetailActivity extends BaseActivity {
         Observable.create(new ObservableOnSubscribe<List<ArticleInfo>>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<ArticleInfo>> e) throws Exception {
-                LmsDataService mService = new LmsDataService();
-                // SystemClock.sleep(1000);
-                List<ArticleInfo> dataList = mService.getMasterResFromAPI(masterID, teacherPhoneNumber, currentPage);
+                List<ArticleInfo> dataList = mService.getCourseResFromAPI(masterID);
                 if (dataList.size() > 0) {
                     dataList.add(0, new ArticleInfo("课程内容", ArticleInfo.SHOW_TYPE_DECORATION));
                 }
                 dataList.add(new ArticleInfo("课程证书", ArticleInfo.SHOW_TYPE_DECORATION));
-                dataList.add(new ArticleInfo(HttpUtilService.BASE_RESOURCE_URL + "01958237ddbc0987adcf0114775182bd.jpg", ArticleInfo.SHOW_TYPE_ZHUANJIA_BLACKBOARD_TOP));
+                dataList.add(new ArticleInfo(courseZhengshu, ArticleInfo.SHOW_TYPE_ZHUANJIA_BLACKBOARD_TOP));
                 dataList.add(new ArticleInfo("课程说明", ArticleInfo.SHOW_TYPE_DECORATION));
-                dataList.add(new ArticleInfo("家庭教育的一般理论知识，学前儿童家庭教育的地位与作用，学前儿童家庭教育的内容、原则与方法；学前儿童家庭教育指导以及幼儿园与家庭合作的基本途径等内容。通过本课程的学习，使学生了解当代学前儿童家庭教育领域中的前沿性研究问题，掌握学前儿童家庭教育的基本原理。并通过借鉴世界主要发达国家的家庭教育模式的优长，透析我国家庭教育中的现实困境，使学生能够解决学前儿童家庭教育实践中出", ArticleInfo.SHOW_TYPE_ZHUANJIA_BLACKBOARD_MORE));
+                dataList.add(new ArticleInfo(courseShuoming, ArticleInfo.SHOW_TYPE_ZHUANJIA_BLACKBOARD_MORE));
                 e.onNext(dataList);
                 e.onComplete();
             }
@@ -359,75 +469,13 @@ public class CourseDetailActivity extends BaseActivity {
         mAdapter.notifyDataSetChanged();
     }
 
-    private void loadData(List<ArticleInfo> list) {
-        // 更新数据
-        mDataList.addAll(list);
-        mAdapter.notifyDataSetChanged();
-    }
-
-    /**
-     * 滑动监听
-     */
-    PullZoomView.OnScrollListener scrollListener = new PullZoomView.OnScrollListener() {
-        @Override
-        public void onScroll(int l, int t, int oldl, int oldt) {
-            if (Math.abs(t) > 0 && Math.abs(t) <= headerHeight) {
-                float percent = Float.valueOf(Math.abs(t)) / Float.valueOf(headerHeight);
-                llCenterLayout.setAlpha(percent);
-                StatusBarUtil.setColor(CourseDetailActivity.this, ContextCompat.getColor(CourseDetailActivity.this, R.color.colorPrimary), 0);
-            } else if (Math.abs(t) == 0) {
-                llCenterLayout.setAlpha(0f);
-                StatusBarUtil.setColor(CourseDetailActivity.this, ContextCompat.getColor(CourseDetailActivity.this, android.R.color.transparent), 0);
-            } else {
-                llCenterLayout.setAlpha(1f);
-                StatusBarUtil.setColor(CourseDetailActivity.this, ContextCompat.getColor(CourseDetailActivity.this, R.color.colorPrimary), 0);
-            }
-        }
-
-        @Override
-        public void onHeaderScroll(int currentY, int maxY) {
-        }
-
-        @Override
-        public void onContentScroll(int l, int t, int oldl, int oldt) {
-        }
-    };
-
-    /**
-     * 顶部缩放监听
-     */
-    PullZoomView.OnPullZoomListener pullZoomListener = new PullZoomView.OnPullZoomListener() {
-        @Override
-        public void onPullZoom(int originHeight, int currentHeight) {
-            double progress = Double.valueOf(currentHeight - originHeight) / Double.valueOf(originHeight / 2);
-            if (!progressBar.isSpinning) {
-                progressBar.setProgress((int) (progress * 360));
-            }
-        }
-
-        @Override
-        public void onUpToZoom() {
-            if (!progressBar.isSpinning) {
-                // 刷新viewpager里的fragment
-                startRefreshChildView();
-            }
-        }
-
-        @Override
-        public void onZoomFinish() {
-
-        }
-    };
-
     /**
      * 开始刷新
      */
     public void startRefreshChildView() {
         progressBar.spin();
-        currentPage = 1;
         // 为了显示刷新效果
         getCourseInfoFromAPI();
-        getRefreshDataList(courseID);
     }
 
     /**
@@ -458,15 +506,26 @@ public class CourseDetailActivity extends BaseActivity {
 
     @OnClick(R.id.tv_pay)
     void clickPayCourse() {
-        if (StringUtils.isEmpty(coursePrice) || "0".equals(coursePrice)) {
-            T.showShort(this, "你赚到了，免费学习哈~");
-        } else {
-            if ("0".equals(courseBuyStatus)) {
-                if (StringUtils.isEmpty(teacherPhoneNumber)) {
-                    IntentManager.toLoginActivity(this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
-                    return;
+        if (StringUtils.isEmpty(courseJiaru) || courseJiaru.equals("0")) {
+            if (StringUtils.isEmpty(coursePrice) || "0".equals(coursePrice)) {
+                // 调用加入课程的接口
+                joinCourse(courseID, teacherPhoneNumber, "1", "free");
+            } else {
+                if ("0".equals(courseBuyStatus)) {
+                    // 未支付
+                    if (StringUtils.isEmpty(teacherPhoneNumber)) {
+                        IntentManager.toLoginActivity(this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
+                        return;
+                    }
+                    initPopViewPayDetail(courseID, coursePrice);
+                } else {
+                    // 已支付，但是加入课程时出现问题，直接加入课程
+                    joinCourse(courseID, teacherPhoneNumber, "1", "reAdd");
                 }
-                initPopViewPayDetail(courseID, coursePrice);
+            }
+        } else {
+            if (StringUtils.isEmpty(coursePrice) || coursePrice.equals(0)) {
+                T.showShort(this, "已加入，快去学习吧~");
             } else {
                 T.showShort(this, "已购买，快去学习吧~");
             }
@@ -505,7 +564,7 @@ public class CourseDetailActivity extends BaseActivity {
                 // 开始支付,隐藏支付窗口
                 hidePopViewPayDetail();
                 // 获取订单号
-                getTheOrderFromAPI(masterid, String.valueOf(realPrice), "masterres");
+                getTheOrderFromAPI(masterid, String.valueOf(realPrice), "kecheng");
                 MobclickAgent.onEvent(CourseDetailActivity.this, "masterres_pay");
             }
         });
@@ -552,7 +611,7 @@ public class CourseDetailActivity extends BaseActivity {
             @Override
             public void subscribe(@NonNull ObservableEmitter<OrderInfo> e) throws Exception {
                 LmsDataService mService = new LmsDataService();
-                OrderInfo info = mService.getTheOrderInfoFromAPI(masterresid, price, teacherPhoneNumber, payType);
+                OrderInfo info = mService.getTheOrderInfoFromAPIForCourse(masterresid, price, teacherPhoneNumber, payType);
                 e.onNext(info);
             }
         }).subscribeOn(Schedulers.io())
@@ -622,7 +681,7 @@ public class CourseDetailActivity extends BaseActivity {
         if (!StringUtils.isEmpty(currTradeID)) {
             queryTheTradeStateFromAPI(currTradeID);
         } else {
-            getRefreshDataList(courseID);
+            getCourseInfoFromAPI();
         }
     }
 
@@ -659,16 +718,14 @@ public class CourseDetailActivity extends BaseActivity {
                         currTradeID = "";
                         if ("SUCCESS".equals(tradeInfo.getResult_code())) {
                             if ("SUCCESS".equals(tradeInfo.getTrade_state())) {
-                                showAlertDialog("支付成功", "您现在就可以去查看完整课程啦");
+                                // 支付成功后自动加入课程
+                                joinCourse(courseID, teacherPhoneNumber, "1", "pay");
                             } else if ("NOTPAY".equals(tradeInfo.getTrade_state())) {
                                 showAlertDialog("支付失败", "支付遇到问题，请重试");
                             }
                         } else {
                             showAlertDialog("支付失败", "支付遇到问题，请重试");
                         }
-                        // 刷新页面
-                        showLoadingDialog();
-                        getRefreshDataList(courseID);
                     }
 
                     @Override
@@ -696,6 +753,65 @@ public class CourseDetailActivity extends BaseActivity {
             }
         });
         dialog.show();
+    }
+
+    /**
+     * 加入课程
+     *
+     * @param courseID
+     * @param phoneNumber
+     * @param payStatus
+     */
+    private void joinCourse(final String courseID, final String phoneNumber, final String payStatus, final String addWay) {
+        Observable.create(new ObservableOnSubscribe<String[]>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<String[]> e) throws Exception {
+                String[] result = mService.joinCourseFromAPI(courseID, phoneNumber, payStatus);
+                e.onNext(result);
+                e.onComplete();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<String[]>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull String[] result) {
+                        if (!StringUtils.isEmpty(result[0]) && "1".equals(result[0])) {
+                            if ("pay".equals(addWay)) {
+                                // 弹框
+                                showAlertDialog("支付成功", "您现在就可以去查看完整课程啦");
+                            } else if ("free".equals(addWay)) {
+                                T.showShort(CourseDetailActivity.this, "你赚到了，免费学习哈~");
+                            } else {
+                                T.showShort(CourseDetailActivity.this, "加入成功，赶快开始学习吧");
+                            }
+                        } else {
+                            if ("pay".equals(addWay)) {
+                                // 加入课程失败
+                                T.showShort(CourseDetailActivity.this, "支付成功，点击加入学习");
+                                tvpay.setText("已支付，点击加入学习");
+                            } else {
+                                T.showShort(CourseDetailActivity.this, "服务器开小差了，请重试");
+                            }
+                        }
+                        // 刷新页面数据
+                        getCourseInfoFromAPI();
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        T.showShort(CourseDetailActivity.this, "服务器开小差了，请重试");
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
 }

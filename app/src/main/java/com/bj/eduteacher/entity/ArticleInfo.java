@@ -42,7 +42,7 @@ public class ArticleInfo {
     private String replyCount;
     private List<ArticleInfo> replyList;
 
-    private String previewType; // 1是文档、2是视频、0是逗课
+    private String previewType;
 
     public String getNickname() {
         return nickname;

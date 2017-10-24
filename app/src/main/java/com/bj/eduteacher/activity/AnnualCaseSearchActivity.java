@@ -15,9 +15,11 @@ import com.bj.eduteacher.BaseActivity;
 import com.bj.eduteacher.R;
 import com.bj.eduteacher.adapter.AnnualCaseAllAdapter;
 import com.bj.eduteacher.api.LmsDataService;
+import com.bj.eduteacher.api.MLProperties;
 import com.bj.eduteacher.entity.ArticleInfo;
 import com.bj.eduteacher.utils.KeyBoardUtils;
 import com.bj.eduteacher.utils.LL;
+import com.bj.eduteacher.utils.PreferencesUtils;
 import com.bj.eduteacher.utils.T;
 import com.bj.eduteacher.view.OnRecyclerItemClickListener;
 import com.bj.eduteacher.widget.manager.SaveGridLayoutManager;
@@ -59,6 +61,8 @@ public class AnnualCaseSearchActivity extends BaseActivity {
     private LmsDataService mService = new LmsDataService();
 
     private String searchContent;
+    private String huodongID, bannerPath;
+    private String teacherPhoneNumber;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -73,6 +77,9 @@ public class AnnualCaseSearchActivity extends BaseActivity {
     }
 
     private void initToolBar() {
+        huodongID = getIntent().getStringExtra("HuodongID");
+        bannerPath = getIntent().getStringExtra("HuodongBanner");
+
         edtSearch.setSingleLine();
         edtSearch.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
         edtSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -98,7 +105,7 @@ public class AnnualCaseSearchActivity extends BaseActivity {
             public void onItemClick(RecyclerView.ViewHolder holder, int position) {
                 if (position > 0) {
                     // 包括header
-                    ArticleInfo item = mDataList.get(position - 1);
+                    ArticleInfo item = mDataList.get(position);
                     actionOnItemClick(item);
                 }
             }
@@ -130,13 +137,30 @@ public class AnnualCaseSearchActivity extends BaseActivity {
     }
 
     private void initDatas() {
+        teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
+    }
 
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        // edtSearch.requestFocus();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
     }
 
     private void actionOnItemClick(ArticleInfo item) {
         Intent intent = new Intent(this, AnnualCaseDetailActivity.class);
-        intent.putExtra("Title", "分数的认识");
-        intent.putExtra("ID", "0002");
+        intent.putExtra("ID", item.getArticleID());
+        intent.putExtra("Title", item.getTitle());
+        intent.putExtra("Author", item.getAuthor());
+        intent.putExtra("Diqu", item.getContent());
+        intent.putExtra("AnliTPNum", item.getAgreeNumber());
+        intent.putExtra("AnliTPStatus", item.getCommentNumber());
+        intent.putExtra("HuodongBanner", bannerPath);
         startActivity(intent);
     }
 
@@ -153,7 +177,6 @@ public class AnnualCaseSearchActivity extends BaseActivity {
     }
 
     private void searchData(String content) {
-        T.showShort(AnnualCaseSearchActivity.this, "搜索内容：" + content);
         KeyBoardUtils.closeKeybord(edtSearch, this);
         // 搜索相关内容
         currentPage = 1;
@@ -169,7 +192,7 @@ public class AnnualCaseSearchActivity extends BaseActivity {
         Observable.create(new ObservableOnSubscribe<List<ArticleInfo>>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<ArticleInfo>> e) throws Exception {
-                List<ArticleInfo> dataList = mService.getFamousTeacherCardsFromAPI(pageIndex, PAGE_SIZE);
+                List<ArticleInfo> dataList = mService.getAnliListFromAPI(huodongID, teacherPhoneNumber, content, pageIndex, PAGE_SIZE);
                 e.onNext(dataList);
                 e.onComplete();
             }
@@ -205,6 +228,9 @@ public class AnnualCaseSearchActivity extends BaseActivity {
             mXRefreshView.stopRefresh();
             mXRefreshView.setPullLoadEnable(true);
             mXRefreshView.setAutoLoadMore(true);
+            if (list.size() == 0) {
+                T.showShort(this, "没有找到他的相关案例");
+            }
         } else {
             mXRefreshView.stopLoadMore();
         }

@@ -353,8 +353,12 @@ public class DoukeFragment extends BaseFragment {
         } else if (item.getShowType() == ArticleInfo.SHOW_TYPE_LATEST_RES) {
             String previewType = item.getPreviewType();
             // 如果是文章，跳转到文章详情页面
-            if ("0".equals(previewType)) {
-                T.showShort(getActivity(), "跳转到逗课文章页面");
+            if ("文章".equals(previewType)) {
+                // 跳转到逗课页面
+                Intent intent = new Intent(getActivity(), DoukeDetailActivity.class);
+                intent.putExtra(MLProperties.BUNDLE_KEY_DOUKE_ID, item.getArticleID());
+                intent.putExtra(MLProperties.BUNDLE_KEY_DOUKE_URL, item.getArticlePath());
+                startActivity(intent);
                 return;
             }
             // 如果是资源，跳转到资源页面
@@ -371,27 +375,31 @@ public class DoukeFragment extends BaseFragment {
                 MobclickAgent.onEvent(getActivity(), "doc_buy");
                 initPopViewPayDetail(item.getArticleID(), item.getAgreeNumber());
             } else {
-                T.showShort(getActivity(), "跳转到资源预览页面");
-//                MobclickAgent.onEvent(getActivity(), "doc_look");
-//                String resID = item.getArticleID();
-//                String resName = item.getTitle();
-//                String previewUrl = item.getArticlePath();
-//                String downloadUrl = item.getArticlePicture();
-//                String resType = item.getPreviewType();  // 目前先根据这个类型来判断是否是视频
-//                if ("2".equals(resType)) {
-//                    Intent intent = new Intent(getActivity(), ResPlayActivity.class);
-//                    intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_ID, resID);
-//                    intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_NAME, resName);
-//                    intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_PREVIEW_URL, previewUrl);
-//                    startActivity(intent);
-//                } else {
-//                    Intent intent = new Intent(getActivity(), ResReviewActivity.class);
-//                    intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_ID, resID);
-//                    intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_NAME, resName);
-//                    intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_PREVIEW_URL, previewUrl);
-//                    intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_DOWNLOAD_URL, downloadUrl);
-//                    startActivity(intent);
-//                }
+                if ("视频".equals(previewType)) {
+                    // 跳转动视频播放页面
+                    String resID = item.getArticleID();
+                    String resName = item.getTitle();
+                    String previewUrl = item.getArticlePath();
+
+                    Intent intent = new Intent(getActivity(), ResPlayActivity.class);
+                    intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_ID, resID);
+                    intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_NAME, resName);
+                    intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_PREVIEW_URL, previewUrl);
+                    startActivity(intent);
+                } else {
+                    // 跳转到文档页面
+                    String resID = item.getArticleID();
+                    String resName = item.getTitle();
+                    String previewUrl = item.getArticlePath();
+                    String downloadUrl = item.getAuthor();
+
+                    Intent intent = new Intent(getActivity(), ResReviewActivity.class);
+                    intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_ID, resID);
+                    intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_NAME, resName);
+                    intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_PREVIEW_URL, previewUrl);
+                    intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_DOWNLOAD_URL, downloadUrl);
+                    startActivity(intent);
+                }
             }
         } else if (item.getShowType() == ArticleInfo.SHOW_TYPE_COURSE) {
             Intent intent = new Intent(getActivity(), CourseDetailActivity.class);
@@ -401,8 +409,13 @@ public class DoukeFragment extends BaseFragment {
             args.putString("CourseLearnNum", item.getReplyCount());
             args.putString("CourseResNum", item.getReadNumber());
             args.putString("CoursePicture", item.getArticlePicture());
+
             args.putString("CoursePrice", item.getAgreeNumber());
             args.putString("CourseBuyStatus", item.getCommentNumber());
+            args.putString("CourseDesc", item.getAuthDesc());
+            args.putString("CourseZhengshu", item.getAuthImg());
+            args.putString("CourseShuoming", item.getContent());
+
             intent.putExtras(args);
             startActivity(intent);
         }
@@ -468,12 +481,6 @@ public class DoukeFragment extends BaseFragment {
         banner.setOnBannerListener(new OnBannerListener() {
             @Override
             public void OnBannerClick(int position) {
-                if (true) {
-                    Intent test = new Intent(getActivity(), AnnualCaseAllActivity.class);
-                    startActivity(test);
-                    return;
-                }
-
                 MobclickAgent.onEvent(getActivity(), "banner_click");
                 if ("zj".equals(mBannerList.get(position).getTitle())) {
                     // 跳转到专家详情页面
@@ -496,6 +503,10 @@ public class DoukeFragment extends BaseFragment {
                     intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_ID, resID);
                     intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_NAME, resName);
                     intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_PREVIEW_URL, previewUrl);
+                    startActivity(intent);
+                } else if ("huodong".equals(mBannerList.get(position).getTitle())) {
+                    Intent intent = new Intent(getActivity(), AnnualCaseAllActivity.class);
+                    intent.putExtra("huodongID", mBannerList.get(position).getArticleID());
                     startActivity(intent);
                 } else {
                     // 跳转到文档页面

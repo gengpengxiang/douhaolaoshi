@@ -201,10 +201,10 @@ public class DoukeListAdapter extends BaseRecyclerAdapter<RecyclerView.ViewHolde
             ViewHolderLatestRes holder = (ViewHolderLatestRes) fholder;
             String type = itemInfo.getPreviewType();
             // 1是文档、2是视频、0是逗课
-            if ("1".equals(type)) {
+            if ("文档".equals(type)) {
                 holder.ivIcon.setImageResource(R.drawable.ic_doc);
                 holder.tvResName.setText("文档：" + itemInfo.getTitle());
-            } else if ("2".equals(type)) {
+            } else if ("视频".equals(type)) {
                 holder.ivIcon.setImageResource(R.drawable.ic_video);
                 holder.tvResName.setText("视频：" + itemInfo.getTitle());
             } else {
@@ -243,6 +243,7 @@ public class DoukeListAdapter extends BaseRecyclerAdapter<RecyclerView.ViewHolde
             holder.tvCourseName.setText(itemInfo.getTitle());
             holder.tvTeachers.setText("主讲人：" + itemInfo.getAuthor());
             holder.tvResNumber.setText("共" + itemInfo.getReadNumber() + "课时");
+            
             holder.tvLearnNumber.setText(itemInfo.getReplyCount() + "人已学习");
             // 价格
             String price = itemInfo.getAgreeNumber();

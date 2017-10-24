@@ -67,7 +67,7 @@ public class AnnualCaseAllAdapter extends BaseRecyclerAdapter<RecyclerView.ViewH
             ViewHolderDouke holder = (ViewHolderDouke) fholder;
             holder.ivPicture.setImageURI(itemInfo.getAuthImg());
             holder.tvName.setText(itemInfo.getTitle());
-            holder.tvDesc.setText(itemInfo.getAuthor());
+            holder.tvDesc.setText(itemInfo.getAuthor() + "，" + itemInfo.getContent());
         }
     }
 

@@ -4,16 +4,19 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.TextView;
 
 import com.andview.refreshview.XRefreshView;
 import com.andview.refreshview.XRefreshViewFooter;
 import com.bj.eduteacher.BaseActivity;
 import com.bj.eduteacher.R;
 import com.bj.eduteacher.adapter.AnnualCaseAllAdapter;
-import com.bj.eduteacher.api.HttpUtilService;
 import com.bj.eduteacher.api.LmsDataService;
+import com.bj.eduteacher.api.MLProperties;
 import com.bj.eduteacher.entity.ArticleInfo;
 import com.bj.eduteacher.utils.LL;
+import com.bj.eduteacher.utils.PreferencesUtils;
 import com.bj.eduteacher.utils.T;
 import com.bj.eduteacher.view.OnRecyclerItemClickListener;
 import com.bj.eduteacher.widget.manager.SaveGridLayoutManager;
@@ -47,13 +50,20 @@ public class AnnualCaseAllActivity extends BaseActivity {
     XRefreshView mXRefreshView;
     @BindView(R.id.mRecyclerView)
     RecyclerView mRecyclerView;
+    @BindView(R.id.header_tv_title)
+    TextView tvTitle;
 
     private SimpleDraweeView ivCaseBanner;
+    private View headerView;
 
     private List<ArticleInfo> mDataList = new ArrayList<>();
     private AnnualCaseAllAdapter mAdapter;
     private int currentPage = 1;
     private LmsDataService mService = new LmsDataService();
+
+    private String huodongID;
+    private String teacherPhoneNumber;
+    private String bannerPath = "";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,15 +72,21 @@ public class AnnualCaseAllActivity extends BaseActivity {
         ButterKnife.bind(this);
 
         // 初始化页面
+        initToolBar();
         initView();
         initDatas();
+    }
+
+    private void initToolBar() {
+        tvTitle.setText("案例评审");
+        huodongID = getIntent().getStringExtra("huodongID");
     }
 
     private void initView() {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new SaveGridLayoutManager(this, 3));
         mAdapter = new AnnualCaseAllAdapter(mDataList);
-        ivCaseBanner = (SimpleDraweeView) mAdapter.setHeaderView(R.layout.recycler_item_course_zhengshu, mRecyclerView);
+        headerView = mAdapter.setHeaderView(R.layout.recycler_item_annual_case_header, mRecyclerView);
         initHeaderView();
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.addOnItemTouchListener(new OnRecyclerItemClickListener(mRecyclerView) {
@@ -99,6 +115,7 @@ public class AnnualCaseAllActivity extends BaseActivity {
             public void onRefresh(boolean isPullDown) {
                 LL.i("刷新数据");
                 currentPage = 1;
+                getHuodongInfo(huodongID);
                 getRefreshDataList(currentPage);
             }
 
@@ -112,18 +129,32 @@ public class AnnualCaseAllActivity extends BaseActivity {
     }
 
     private void initHeaderView() {
-        ivCaseBanner.setImageURI(HttpUtilService.BASE_RESOURCE_URL + "46d99fc38ea7e2b6ff35a3b583a1d0f1.png");
+        ivCaseBanner = (SimpleDraweeView) headerView.findViewById(R.id.iv_zhengshu);
     }
 
     private void initDatas() {
+        teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
+
         currentPage = 1;
+        getHuodongInfo(huodongID);
         getRefreshDataList(currentPage);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
     }
 
     private void actionOnItemClick(ArticleInfo item) {
         Intent intent = new Intent(this, AnnualCaseDetailActivity.class);
-        intent.putExtra("Title", "分数的认识");
-        intent.putExtra("ID", "0002");
+        intent.putExtra("ID", item.getArticleID());
+        intent.putExtra("Title", item.getTitle());
+        intent.putExtra("Author", item.getAuthor());
+        intent.putExtra("Diqu", item.getContent());
+        intent.putExtra("AnliTPNum", item.getAgreeNumber());
+        intent.putExtra("AnliTPStatus", item.getCommentNumber());
+        intent.putExtra("HuodongBanner", bannerPath);
         startActivity(intent);
     }
 
@@ -132,9 +163,11 @@ public class AnnualCaseAllActivity extends BaseActivity {
         onBackPressed();
     }
 
-    @OnClick(R.id.header_ll_center)
+    @OnClick(R.id.header_ll_bottom)
     void clickSearch() {
         Intent intent = new Intent(this, AnnualCaseSearchActivity.class);
+        intent.putExtra("HuodongID", huodongID);
+        intent.putExtra("HuodongBanner", bannerPath);
         startActivity(intent);
         overridePendingTransition(R.anim.act_alpha_in, R.anim.act_alpha_out);
     }
@@ -144,11 +177,50 @@ public class AnnualCaseAllActivity extends BaseActivity {
         mXRefreshView.stopLoadMore();
     }
 
+    /**
+     * 获取活动的相关信息
+     *
+     * @param huodongID
+     */
+    private void getHuodongInfo(final String huodongID) {
+        Observable.create(new ObservableOnSubscribe<ArticleInfo>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<ArticleInfo> e) throws Exception {
+                ArticleInfo info = mService.getHuodongInfoFromAPI(huodongID);
+                e.onNext(info);
+                e.onComplete();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<ArticleInfo>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull ArticleInfo info) {
+                        bannerPath = info.getArticlePicture();
+                        ivCaseBanner.setImageURI(info.getArticlePicture());
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
     private void getRefreshDataList(final int pageIndex) {
         Observable.create(new ObservableOnSubscribe<List<ArticleInfo>>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<ArticleInfo>> e) throws Exception {
-                List<ArticleInfo> dataList = mService.getFamousTeacherCardsFromAPI(pageIndex, PAGE_SIZE);
+                List<ArticleInfo> dataList = mService.getAnliListFromAPI(huodongID, teacherPhoneNumber, "", pageIndex, PAGE_SIZE);
                 e.onNext(dataList);
                 e.onComplete();
             }

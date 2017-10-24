@@ -189,7 +189,7 @@
             android:name=".activity.AnnualCaseSearchActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|stateAlwaysVisible"/>
+            android:windowSoftInputMode="adjustPan|stateVisible"/>
         <activity
             android:name=".activity.SubjectDetailActivity"
             android:launchMode="singleTop"

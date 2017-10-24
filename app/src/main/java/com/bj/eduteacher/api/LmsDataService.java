@@ -1574,6 +1574,39 @@ public class LmsDataService {
         return info;
     }
 
+    /**
+     * 课程支付
+     *
+     * @param masterid
+     * @param price
+     * @param phoneNumber
+     * @param type
+     * @return
+     * @throws Exception
+     */
+    public OrderInfo getTheOrderInfoFromAPIForCourse(String masterid, String price, String phoneNumber, String type) throws Exception {
+        OrderInfo info = new OrderInfo();
+        String parseUrl = "Wxpayjs/example/Testpay.php?price=" + price + "&phone=" + phoneNumber + "&paytype=" + type + "&kechengid=" + masterid;
+        String resultStr = HttpUtilService.getWxPayJsonByUrl(parseUrl);
+
+        JSONObject resultObj = new JSONObject(resultStr);
+        String resultCode = resultObj.optString("result_code", "");
+        if ("SUCCESS".equals(resultCode)) {
+            info.setAppid(resultObj.optString("appid"));
+            info.setMch_id(resultObj.optString("mch_id"));
+            info.setNonce_str(resultObj.optString("nonce_str"));
+            info.setPrepay_id(resultObj.optString("prepay_id"));
+            info.setResult_code(resultCode);
+            info.setReturn_code(resultObj.optString("return_code"));
+            info.setReturn_msg(resultObj.optString("return_msg"));
+            info.setSign(resultObj.optString("sign"));
+            info.setTrade_type(resultObj.optString("trade_type"));
+            info.setTimeStamp(resultObj.optString("timeStamp"));
+            info.setOut_trade_no(resultObj.optString("out_trade_no"));
+        }
+        return info;
+    }
+
     public OrderInfo getTheOrderInfoFromAPI(String masterid, String price, String phoneNumber, String type) throws Exception {
         OrderInfo info = new OrderInfo();
         // Wxpayjs/example/Testpay.php?price=3&phone=18911111111
@@ -1875,6 +1908,7 @@ public class LmsDataService {
 
         String parseUrl = "jsmaster/sylunbo";
         HashMap<String, String> params = new HashMap<>();
+        params.put("type", "huodong");
 
         String resultStr = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(resultStr);
@@ -2029,35 +2063,47 @@ public class LmsDataService {
      */
     public List<ArticleInfo> getHomePageLatestRes(String phoneNumber) throws Exception {
         List<ArticleInfo> dataList = new ArrayList<>();
-        ArticleInfo item1 = new ArticleInfo();
-        item1.setShowType(ArticleInfo.SHOW_TYPE_LATEST_RES);
-        item1.setAuthDesc("top");
-        // item1.setAuthDesc("single");
-        item1.setPreviewType("1");
-        item1.setTitle("游戏化教学的知与行");
-        item1.setAgreeNumber("0");
-        item1.setCommentNumber("0");
-        item1.setArticleID("2");
 
-        ArticleInfo item2 = new ArticleInfo();
-        item2.setShowType(ArticleInfo.SHOW_TYPE_LATEST_RES);
-        item2.setAuthDesc("center");
-        item2.setPreviewType("2");
-        item2.setTitle("一年级游戏化学习资料");
-        item2.setAgreeNumber("1");
-        item2.setCommentNumber("0");
-        item2.setArticleID("1");
+        String parseUrl = "kecheng/mryk";
+        HashMap<String, String> params = new HashMap<>();
+        params.put("phone", phoneNumber);
 
-        ArticleInfo item3 = new ArticleInfo();
-        item3.setShowType(ArticleInfo.SHOW_TYPE_LATEST_RES);
-        item3.setAuthDesc("bottom");
-        item3.setPreviewType("0");
-        item3.setTitle("北大教授为您讲解游戏化的应用");
+        String result = getJsonByPostUrl(parseUrl, params);
+        JSONObject resultObj = new JSONObject(result);
+        String errorCode = resultObj.optString("ret");
+        String errorMsg = resultObj.optString("msg");
+        String data = resultObj.optString("data");
 
-        dataList.add(item1);
-        dataList.add(item2);
-        dataList.add(item3);
+        if (!StringUtils.isEmpty(errorCode) && errorCode.equals("1") && !StringUtils.isEmpty(data)) {
+            JSONArray dataArray = new JSONArray(data);
+            ArticleInfo info;
+            for (int i = 0; i < dataArray.length(); i++) {
+                JSONObject item = dataArray.optJSONObject(i);
+                info = new ArticleInfo();
+                info.setArticleID(item.optString("code", ""));
+                info.setTitle(item.optString("title", ""));
+                info.setAgreeNumber(item.optString("price", "0"));
+                info.setCommentNumber(item.optString("buystatus", "0")); // 0 未购买，1 已购买
 
+                if (dataArray.length() == 1) {
+                    info.setAuthDesc("single");
+                } else {
+                    if (i == 0) {
+                        info.setAuthDesc("top");
+                    } else if (i == dataArray.length() - 1) {
+                        info.setAuthDesc("bottom");
+                    } else {
+                        info.setAuthDesc("center");
+                    }
+                }
+                info.setPreviewType(item.optString("type", ""));
+                info.setArticlePath(item.optString("previewurl", ""));       // 记录预览地址（文档、逗课地址）
+                info.setAuthor(HttpUtilService.BASE_RESOURCE_URL + item.optString("downloadurl", ""));            // 记录下载地址（特指文档）
+
+                info.setShowType(ArticleInfo.SHOW_TYPE_LATEST_RES);
+                dataList.add(info);
+            }
+        }
         return dataList;
     }
 
@@ -2069,30 +2115,40 @@ public class LmsDataService {
      */
     public List<ArticleInfo> getHomePageCourseList(String phoneNumber) throws Exception {
         List<ArticleInfo> dataList = new ArrayList<>();
-        ArticleInfo item1 = new ArticleInfo();
-        item1.setShowType(ArticleInfo.SHOW_TYPE_COURSE);
-        item1.setArticlePicture(HttpUtilService.BASE_RESOURCE_URL + "01958237ddbc0987adcf0114775182bd.jpg");
-        item1.setTitle("游戏化教学法系列课程，考核合格可得教育游戏专委会认证纸质证书1");
-        item1.setAuthor("尚俊杰、蒋宇等");
-        item1.setReadNumber("11");
-        item1.setReplyCount("33,123");
-        item1.setAgreeNumber("0");
-        item1.setCommentNumber("0");
-        item1.setArticleID("0001");
 
-        ArticleInfo item2 = new ArticleInfo();
-        item2.setShowType(ArticleInfo.SHOW_TYPE_COURSE);
-        item2.setArticlePicture(HttpUtilService.BASE_RESOURCE_URL + "01958237ddbc0987adcf0114775182bd.jpg");
-        item2.setTitle("游戏化教学法系列课程，考核合格可得教育游戏专委会认证纸质证书2");
-        item2.setAuthor("陆仁贾，释冰已，龙涛鼎等");
-        item2.setReadNumber("29");
-        item2.setReplyCount("9,999,999,999");
-        item2.setAgreeNumber("10");
-        item2.setCommentNumber("0");
-        item2.setArticleID("0002");
+        String parseUrl = "kecheng/kechenglist";
+        HashMap<String, String> params = new HashMap<>();
+        params.put("phone", phoneNumber);
 
-        dataList.add(item1);
-        dataList.add(item2);
+        String result = getJsonByPostUrl(parseUrl, params);
+        JSONObject resultObj = new JSONObject(result);
+        String errorCode = resultObj.optString("ret");
+        String errorMsg = resultObj.optString("msg");
+        String data = resultObj.optString("data");
+
+        if (!StringUtils.isEmpty(errorCode) && errorCode.equals("1") && !StringUtils.isEmpty(data)) {
+            JSONArray dataArray = new JSONArray(data);
+            ArticleInfo info;
+            for (int i = 0; i < dataArray.length(); i++) {
+                JSONObject item = dataArray.optJSONObject(i);
+                info = new ArticleInfo();
+                info.setArticleID(item.optString("id", ""));
+                info.setArticlePicture(HttpUtilService.BASE_RESOURCE_URL + item.optString("img", ""));
+                info.setTitle(item.optString("title", ""));
+                info.setAuthor(item.optString("author", ""));
+                info.setReadNumber(item.optString("keshi", ""));
+                info.setReplyCount(StringUtils.isEmpty(item.optString("studentnum", "0")) ? "0" : item.optString("studentnum", "0"));
+                info.setAgreeNumber(item.optString("price", "0"));
+                info.setCommentNumber(item.optString("buystatus", "0")); // 0 未购买，1 已购买
+                // 简介、课程说明和证书
+                info.setAuthDesc(item.optString("jianjie", ""));
+                info.setContent(item.optString("shuoming", ""));
+                info.setAuthImg(HttpUtilService.BASE_RESOURCE_URL + item.optString("zhengshu", ""));
+
+                info.setShowType(ArticleInfo.SHOW_TYPE_COURSE);
+                dataList.add(info);
+            }
+        }
 
         return dataList;
     }
@@ -2262,6 +2318,94 @@ public class LmsDataService {
         }
 
         return dataList;
+    }
+
+    /**
+     * 获取课程下的资源ID
+     *
+     * @param courseID
+     * @return
+     * @throws Exception
+     */
+    public List<ArticleInfo> getCourseResFromAPI(String courseID) throws Exception {
+        List<ArticleInfo> dataList = new ArrayList<>();
+
+        String parseUrl = "kecheng/kechengres";
+        HashMap<String, String> params = new HashMap<>();
+        params.put("kechengid", courseID);
+
+        String result = getJsonByPostUrl(parseUrl, params);
+        JSONObject resultObj = new JSONObject(result);
+        String errorCode = resultObj.optString("ret");
+        String errorMsg = resultObj.optString("msg");
+        String data = resultObj.optString("data");
+
+        if (!StringUtils.isEmpty(errorCode) && errorCode.equals("1") && !StringUtils.isEmpty(data)) {
+            JSONArray dataArray = new JSONArray(data);
+            ArticleInfo info;
+            for (int i = 0; i < dataArray.length(); i++) {
+                JSONObject item = dataArray.optJSONObject(i);
+                info = new ArticleInfo();
+                info.setArticleID(item.optString("id", ""));
+                info.setAuthImg(HttpUtilService.BASE_RESOURCE_URL + item.optString("img", ""));
+                info.setTitle(item.optString("title", ""));
+                info.setAuthor(item.optString("filename", ""));
+                info.setArticlePath(item.optString("previewurl", ""));
+                info.setArticlePicture(HttpUtilService.BASE_RESOURCE_URL + item.optString("fileurl", ""));
+                info.setAgreeNumber(item.optString("price", "0"));
+                info.setCommentNumber(item.optString("buystatus", "0")); // 0 未购买，1 已购买
+                info.setReplyCount(item.optString("viewnum", "0"));
+                info.setPreviewType(item.optString("type", "0"));
+
+                info.setShowType(ArticleInfo.SHOW_TYPE_ZHUANJIA_RES);
+                dataList.add(info);
+            }
+        }
+
+        return dataList;
+    }
+
+    /**
+     * 获取课程的详细信息
+     *
+     * @param courseID
+     * @param phoneNumber
+     * @return
+     * @throws Exception
+     */
+    public ArticleInfo getCourseDetailInfoFromAPI(String courseID, String phoneNumber) throws Exception {
+        ArticleInfo info = new ArticleInfo();
+        String parseUrl = "kecheng/kecheng";
+        HashMap<String, String> params = new HashMap<>();
+        params.put("kechengid", courseID);
+        params.put("phone", phoneNumber);
+
+        String result = getJsonByPostUrl(parseUrl, params);
+        JSONObject resultObj = new JSONObject(result);
+        String errorCode = resultObj.optString("ret");
+        String errorMsg = resultObj.optString("msg");
+        String data = resultObj.optString("data");
+
+        if (!StringUtils.isEmpty(errorCode) && errorCode.equals("1") && !StringUtils.isEmpty(data)) {
+            JSONObject item = new JSONObject(data);
+
+            info.setArticleID(item.optString("id", ""));
+            info.setArticlePicture(HttpUtilService.BASE_RESOURCE_URL + item.optString("img", ""));
+            info.setTitle(item.optString("title", ""));
+            info.setAuthor(item.optString("author", ""));
+            info.setReadNumber(item.optString("keshi", ""));
+            info.setReplyCount(StringUtils.isEmpty(item.optString("studentnum", "0")) ? "0" : item.optString("studentnum", "0"));
+            info.setAgreeNumber(item.optString("price", "0"));
+            info.setCommentNumber(item.optString("buystatus", "0")); // 0 未购买，1 已购买
+            // 简介、课程说明和证书
+            info.setAuthDesc(item.optString("jianjie", ""));
+            info.setContent(item.optString("shuoming", ""));
+            info.setAuthImg(HttpUtilService.BASE_RESOURCE_URL + item.optString("zhengshu", ""));
+            info.setNickname(item.optString("jiakestatus", ""));// 0 未加入，1 已加入
+
+            info.setShowType(ArticleInfo.SHOW_TYPE_COURSE);
+        }
+        return info;
     }
 
     /**
@@ -2974,5 +3118,185 @@ public class LmsDataService {
         dataList[2] = data;
 
         return dataList;
+    }
+
+    public String[] joinCourseFromAPI(String courseID, String phoneNumber, String payStatus) throws Exception {
+        String[] dataList = new String[3];
+
+        String parseUrl = "kecheng/kechengjr";
+        HashMap<String, String> params = new HashMap<>();
+        params.put("kechengid", courseID);
+        params.put("phone", phoneNumber);
+        params.put("paystatus", payStatus);
+
+        String result = getJsonByPostUrl(parseUrl, params);
+        JSONObject resultObj = new JSONObject(result);
+        String errorCode = resultObj.optString("ret");
+        String errorMsg = resultObj.optString("msg");
+        String data = resultObj.optString("data");
+
+        dataList[0] = errorCode;
+        dataList[1] = errorMsg;
+        dataList[2] = data;
+
+        return dataList;
+    }
+
+    /**
+     * 获取活动的相关信息
+     *
+     * @param huodongID
+     * @return
+     * @throws Exception
+     */
+    public ArticleInfo getHuodongInfoFromAPI(String huodongID) throws Exception {
+        ArticleInfo info = new ArticleInfo();
+
+        String parseUrl = "anli/huodong";
+        HashMap<String, String> params = new HashMap<>();
+        params.put("huodongid", huodongID);
+
+        String result = getJsonByPostUrl(parseUrl, params);
+        JSONObject resultObj = new JSONObject(result);
+        String errorCode = resultObj.optString("ret");
+        String errorMsg = resultObj.optString("msg");
+        String data = resultObj.optString("data");
+
+        if (!StringUtils.isEmpty(errorCode) && errorCode.equals("1") && !StringUtils.isEmpty(data)) {
+            JSONObject dataObj = new JSONObject(data);
+            info.setArticleID(dataObj.optString("id", ""));
+            info.setTitle(dataObj.optString("title", ""));
+            info.setArticlePicture(HttpUtilService.BASE_RESOURCE_URL + dataObj.optString("banner", ""));
+        }
+        return info;
+    }
+
+    /**
+     * 案例列表
+     *
+     * @param huodongID
+     * @param phone
+     * @param author
+     * @param pageIndex
+     * @param pageSize
+     * @return
+     * @throws Exception
+     */
+    public List<ArticleInfo> getAnliListFromAPI(String huodongID, String phone, String author,
+                                                int pageIndex, int pageSize) throws Exception {
+        List<ArticleInfo> dataList = new ArrayList<>();
+
+        String parseUrl = "anli/anlilist";
+        HashMap<String, String> params = new HashMap<>();
+        params.put("huodongid", huodongID);
+        params.put("phone", phone);
+        params.put("author", author);
+        params.put("limit", String.valueOf(pageSize));
+        params.put("offset", String.valueOf((pageIndex - 1) * pageSize));
+
+        String result = getJsonByPostUrl(parseUrl, params);
+        JSONObject resultObj = new JSONObject(result);
+        String errorCode = resultObj.optString("ret");
+        String errorMsg = resultObj.optString("msg");
+        String data = resultObj.optString("data");
+
+        if (!StringUtils.isEmpty(errorCode) && errorCode.equals("1") && !StringUtils.isEmpty(data)) {
+            JSONArray dataArray = new JSONArray(data);
+            ArticleInfo article;
+            for (int i = 0; i < dataArray.length(); i++) {
+                JSONObject item = dataArray.optJSONObject(i);
+                article = new ArticleInfo();
+                article.setArticleID(item.optString("id", ""));
+                article.setAuthImg(HttpUtilService.BASE_RESOURCE_URL + item.optString("img", ""));
+                article.setTitle(item.optString("title", ""));
+                article.setAuthor(item.optString("author", ""));
+                article.setContent(item.optString("diqu", ""));
+                article.setAgreeNumber(StringUtils.isEmpty(item.optString("piaonum", "")) ? "0" : item.optString("piaonum", ""));
+                article.setCommentNumber(item.optString("atpstatus", ""));
+                dataList.add(article);
+                article = null;
+            }
+        }
+        return dataList;
+    }
+
+    /**
+     * 获取案例下的所有资源
+     *
+     * @param anliid
+     * @param phoneNumber
+     * @param pageIndex
+     * @return
+     * @throws Exception
+     */
+    public List<ArticleInfo> getAnliResFromAPI(String anliid, String phoneNumber, int pageIndex) throws Exception {
+        List<ArticleInfo> dataList = new ArrayList<>();
+
+        String parseUrl = "anli/anlireslist";
+        HashMap<String, String> params = new HashMap<>();
+        params.put("anliid", anliid);
+        params.put("phone", phoneNumber);
+        params.put("limit", String.valueOf(100));
+        params.put("offset", String.valueOf((pageIndex - 1) * 100));
+
+        String result = getJsonByPostUrl(parseUrl, params);
+        JSONObject resultObj = new JSONObject(result);
+        String errorCode = resultObj.optString("ret");
+        String errorMsg = resultObj.optString("msg");
+        String data = resultObj.optString("data");
+
+        if (!StringUtils.isEmpty(errorCode) && errorCode.equals("1")) {
+            JSONArray dataArray = new JSONArray(data);
+            ArticleInfo info;
+            for (int i = 0; i < dataArray.length(); i++) {
+                JSONObject item = dataArray.optJSONObject(i);
+                info = new ArticleInfo();
+                info.setArticleID(item.optString("id", ""));
+                info.setAuthImg(HttpUtilService.BASE_RESOURCE_URL + item.optString("img", ""));
+                info.setTitle(item.optString("title", ""));
+                info.setAuthor(item.optString("filename", ""));
+                info.setArticlePath(item.optString("previewurl", ""));
+                info.setArticlePicture(HttpUtilService.BASE_RESOURCE_URL + item.optString("fileurl", ""));
+                info.setAgreeNumber(item.optString("price", "0"));
+                info.setCommentNumber(item.optString("buystatus", "0")); // 0 未购买，1 已购买
+                info.setReplyCount(item.optString("viewnum", "0"));
+                info.setPreviewType(item.optString("type", "0"));
+
+                info.setShowType(ArticleInfo.SHOW_TYPE_ZHUANJIA_RES);
+                dataList.add(info);
+            }
+        }
+
+        return dataList;
+    }
+
+    /**
+     * 案例投票功能
+     *
+     * @param newsID
+     * @param userPhoneNumber
+     * @param type
+     * @return
+     * @throws Exception
+     */
+    public BaseDataInfo getAnliToupiaoFromAPI(String newsID, String userPhoneNumber, String type) throws Exception {
+        BaseDataInfo dataInfo = new BaseDataInfo();
+        String parseUrl = "anli/anlitoupiao";
+        HashMap<String, String> params = new HashMap<>();
+        params.put("anliid", newsID);
+        params.put("phone", userPhoneNumber);
+        // params.put("dianzanadd", type);
+
+        String result = getJsonByPostUrl(parseUrl, params);
+        JSONObject resultObj = new JSONObject(result);
+        String errorCode = resultObj.optString("ret");
+        String errorMsg = resultObj.optString("msg");
+        String data = resultObj.optString("data");
+
+        dataInfo.setRet(errorCode);
+        dataInfo.setMsg(errorMsg);
+        dataInfo.setData(data);
+
+        return dataInfo;
     }
 }

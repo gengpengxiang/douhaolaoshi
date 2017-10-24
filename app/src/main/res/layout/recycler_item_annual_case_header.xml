@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/bg_gray"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/ll_search"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:background="@drawable/bg_annual_case_search"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:layout_marginLeft="15dp"
+            android:src="@drawable/ic_search"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:ellipsize="end"
+            android:lines="1"
+            android:text="输入案例提交者姓名"
+            android:textColor="#9B9B9B"
+            android:textSize="14sp"
+            android:visibility="visible"/>
+    </LinearLayout>
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:fresco="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/iv_zhengshu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        fresco:actualImageScaleType="focusCrop"
+        fresco:placeholderImage="@drawable/bg_live_default_picture"
+        fresco:placeholderImageScaleType="focusCrop"
+        fresco:viewAspectRatio="2.68"/>
+</LinearLayout>
+
