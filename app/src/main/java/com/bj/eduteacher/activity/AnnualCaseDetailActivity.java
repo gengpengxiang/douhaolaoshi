@@ -51,9 +51,9 @@ import io.reactivex.schedulers.Schedulers;
 
 public class AnnualCaseDetailActivity extends BaseActivity {
 
-    private static final String ARTICLE_AGREE_TYPE_YES = "1";
-    private static final String ARTICLE_AGREE_TYPE_NO = "2";
-    private static final String ARTICLE_AGREE_TYPE_SEARCH = "3";
+    private static final String ARTICLE_AGREE_TYPE_YES = "add";
+    private static final String ARTICLE_AGREE_TYPE_NO = "del";
+    private static final String ARTICLE_AGREE_TYPE_SEARCH = "";
 
     @BindView(R.id.header_img_back)
     ImageView imgBack;
@@ -175,7 +175,7 @@ public class AnnualCaseDetailActivity extends BaseActivity {
         currentPage = 1;
         getMasterDataFromAPI();
         if (!StringUtils.isEmpty(teacherPhoneNumber)) {
-            // getTouPiaoNum(anliID, teacherPhoneNumber, ARTICLE_AGREE_TYPE_SEARCH);
+            searchToupiaoStatus();
         }
     }
 
@@ -262,17 +262,68 @@ public class AnnualCaseDetailActivity extends BaseActivity {
         if (System.currentTimeMillis() - currMillis > 1000) {
             currMillis = System.currentTimeMillis();
             if (!"0".equals(anliTPStatus)) {
-                getTouPiaoNum(anliID, teacherPhoneNumber, ARTICLE_AGREE_TYPE_NO);
+                confirmOrCancelToupiao(anliID, teacherPhoneNumber, ARTICLE_AGREE_TYPE_NO);
             } else {
-                getTouPiaoNum(anliID, teacherPhoneNumber, ARTICLE_AGREE_TYPE_YES);
+                confirmOrCancelToupiao(anliID, teacherPhoneNumber, ARTICLE_AGREE_TYPE_YES);
             }
         }
     }
 
     /**
+     * 搜索投票的状态
+     */
+    private void searchToupiaoStatus() {
+        Observable.create(new ObservableOnSubscribe<BaseDataInfo>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<BaseDataInfo> e) throws Exception {
+                BaseDataInfo result = mService.searchAnliToupiaoFromAPI(anliID, teacherPhoneNumber);
+                e.onNext(result);
+                e.onComplete();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<BaseDataInfo>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull BaseDataInfo info) {
+                        if (!StringUtils.isEmpty(info.getRet()) && "0".equals(info.getRet())) {
+                            // 未投票
+                            anliTPStatus = "0";
+                            anliTPNum = info.getData();
+                            tvPay.setText("投票（" + anliTPNum + "）");
+                            tvPay.setBackgroundColor(Color.parseColor("#FC6345"));
+                        } else if (!StringUtils.isEmpty(info.getRet()) && "1".equals(info.getRet())) {
+                            // 已投票
+                            anliTPStatus = "1";
+                            anliTPNum = info.getData();
+                            tvPay.setText("已投票（" + anliTPNum + "）");
+                            tvPay.setBackgroundColor(Color.parseColor("#A3A3A3"));
+                        } else {
+                            // 数据异常
+                            T.showShort(AnnualCaseDetailActivity.this, "数据异常，请稍后重试");
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    /**
      * 投票
      */
-    private void getTouPiaoNum(final String anliID, final String phoneNumber, final String type) {
+    private void confirmOrCancelToupiao(final String anliID, final String phoneNumber, final String type) {
         Observable.create(new ObservableOnSubscribe<BaseDataInfo>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<BaseDataInfo> e) throws Exception {
@@ -293,9 +344,7 @@ public class AnnualCaseDetailActivity extends BaseActivity {
                         if (info == null || StringUtils.isEmpty(info.getRet())) {
                             return;
                         }
-                        if (type.equals(ARTICLE_AGREE_TYPE_SEARCH)) {
-
-                        } else if (type.equals(ARTICLE_AGREE_TYPE_YES)) {
+                        if (type.equals(ARTICLE_AGREE_TYPE_YES)) {
                             if ("1".equals(info.getRet())) {
                                 T.showShort(AnnualCaseDetailActivity.this, "亲，投票成功！");
                                 anliTPNum = StringUtils.isEmpty(info.getData()) ? "0" : info.getData();
@@ -306,7 +355,7 @@ public class AnnualCaseDetailActivity extends BaseActivity {
                                 T.showShort(AnnualCaseDetailActivity.this, info.getMsg());
                             }
                         } else {
-                            if ("1".equals(info.getRet())) {
+                            if ("3".equals(info.getRet())) {
                                 anliTPNum = StringUtils.isEmpty(info.getData()) ? "0" : info.getData();
                                 anliTPStatus = "0";
                                 tvPay.setText("投票（" + anliTPNum + "）");

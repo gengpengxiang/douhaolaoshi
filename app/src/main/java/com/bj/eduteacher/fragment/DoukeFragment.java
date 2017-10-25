@@ -505,10 +505,11 @@ public class DoukeFragment extends BaseFragment {
                     intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_PREVIEW_URL, previewUrl);
                     startActivity(intent);
                 } else if ("huodong".equals(mBannerList.get(position).getTitle())) {
+                    // 年会活动，案例投票
                     Intent intent = new Intent(getActivity(), AnnualCaseAllActivity.class);
                     intent.putExtra("huodongID", mBannerList.get(position).getArticleID());
                     startActivity(intent);
-                } else {
+                } else if ("zy".equals(mBannerList.get(position).getTitle())) {
                     // 跳转到文档页面
                     String resID = mBannerList.get(position).getArticleID();
                     String resName = mBannerList.get(position).getContent();
@@ -521,6 +522,8 @@ public class DoukeFragment extends BaseFragment {
                     intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_PREVIEW_URL, previewUrl);
                     intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_DOWNLOAD_URL, downloadUrl);
                     startActivity(intent);
+                } else {
+                    // 其余的情况跳转到一个单纯的webView页面
                 }
             }
         });

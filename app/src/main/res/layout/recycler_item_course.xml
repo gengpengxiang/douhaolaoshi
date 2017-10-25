@@ -14,7 +14,7 @@
         fresco:placeholderImage="@drawable/bg_live_default_picture"
         fresco:placeholderImageScaleType="focusCrop"
         fresco:viewAspectRatio="2.08"/>
-    
+
     <TextView
         android:id="@+id/tv_courseName"
         android:layout_width="match_parent"
@@ -86,4 +86,10 @@
         android:textColor="#FE5433"
         android:textSize="14sp"
         tools:text="¥ 9.99"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:layout_below="@+id/tv_learnNum"
+        android:background="@color/bg_gray"/>
 </RelativeLayout>

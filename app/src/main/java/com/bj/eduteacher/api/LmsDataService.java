@@ -3285,7 +3285,7 @@ public class LmsDataService {
         HashMap<String, String> params = new HashMap<>();
         params.put("anliid", newsID);
         params.put("phone", userPhoneNumber);
-        // params.put("dianzanadd", type);
+        params.put("caozuo", type);
 
         String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
@@ -3297,6 +3297,44 @@ public class LmsDataService {
         dataInfo.setMsg(errorMsg);
         dataInfo.setData(data);
 
+        return dataInfo;
+    }
+
+    /**
+     * 案例投票查询功能
+     *
+     * @param anliID
+     * @param phoneNumber
+     * @return
+     * @throws Exception
+     */
+    public BaseDataInfo searchAnliToupiaoFromAPI(String anliID, String phoneNumber) throws Exception {
+        BaseDataInfo dataInfo = new BaseDataInfo();
+        String parseUrl = "anli/anlitoupiao";
+        HashMap<String, String> params = new HashMap<>();
+        params.put("anliid", anliID);
+        params.put("phone", phoneNumber);
+
+        String result = getJsonByPostUrl(parseUrl, params);
+        JSONObject resultObj = new JSONObject(result);
+        String errorCode = resultObj.optString("ret");
+        String errorMsg = resultObj.optString("msg");
+        String data = resultObj.optString("data");
+
+        if (!StringUtils.isEmpty(errorCode) && "2".equals(errorCode) && !StringUtils.isEmpty(data)) {
+            JSONObject dataObj = new JSONObject(data);
+            String atpStatus = dataObj.optString("atpstatus", "");
+            String msg = dataObj.optString("msg", "");
+            String num = StringUtils.isEmpty(dataObj.optString("piaonum", "")) ? "0" : dataObj.optString("piaonum", "");
+
+            dataInfo.setRet(atpStatus);
+            dataInfo.setMsg(msg);
+            dataInfo.setData(num);
+        } else {
+            dataInfo.setRet(errorCode);
+            dataInfo.setMsg(errorMsg);
+            dataInfo.setData(data);
+        }
         return dataInfo;
     }
 }

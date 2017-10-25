@@ -95,9 +95,14 @@ public class CourseDetailAdapter extends BaseRecyclerAdapter<RecyclerView.ViewHo
             holder.tvDesc.setText(itemInfo.getAuthor());
             holder.tvPreviewNum.setText("浏览" + (StringUtils.isEmpty(itemInfo.getReplyCount()) ? "0" : itemInfo.getReplyCount()));
             if ("1".equals(payStatus) || "3".equals(payStatus)) {
-                holder.tvPrice.setVisibility(View.GONE);
-                holder.ivIconState.setImageResource(R.drawable.ic_unlock);
-                holder.ivIconState.setVisibility(View.VISIBLE);
+                if (position == 1) {
+                    holder.tvPrice.setVisibility(View.VISIBLE);
+                    holder.ivIconState.setVisibility(View.GONE);
+                } else {
+                    holder.tvPrice.setVisibility(View.GONE);
+                    holder.ivIconState.setImageResource(R.drawable.ic_unlock);
+                    holder.ivIconState.setVisibility(View.VISIBLE);
+                }
             } else {
                 if (position == 1) {
                     holder.tvPrice.setVisibility(View.VISIBLE);

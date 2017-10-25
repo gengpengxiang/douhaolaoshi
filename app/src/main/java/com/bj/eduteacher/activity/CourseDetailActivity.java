@@ -507,16 +507,16 @@ public class CourseDetailActivity extends BaseActivity {
     @OnClick(R.id.tv_pay)
     void clickPayCourse() {
         if (StringUtils.isEmpty(courseJiaru) || courseJiaru.equals("0")) {
+            if (StringUtils.isEmpty(teacherPhoneNumber)) {
+                IntentManager.toLoginActivity(this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
+                return;
+            }
+            
             if (StringUtils.isEmpty(coursePrice) || "0".equals(coursePrice)) {
                 // 调用加入课程的接口
                 joinCourse(courseID, teacherPhoneNumber, "1", "free");
             } else {
                 if ("0".equals(courseBuyStatus)) {
-                    // 未支付
-                    if (StringUtils.isEmpty(teacherPhoneNumber)) {
-                        IntentManager.toLoginActivity(this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
-                        return;
-                    }
                     initPopViewPayDetail(courseID, coursePrice);
                 } else {
                     // 已支付，但是加入课程时出现问题，直接加入课程
