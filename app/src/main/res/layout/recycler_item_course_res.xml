@@ -94,11 +94,12 @@
 
             <ImageView
                 android:id="@+id/iv_iconState"
-                android:layout_width="15dp"
+                android:layout_width="20dp"
                 android:layout_height="19dp"
                 android:layout_alignBottom="@+id/iv_authorPhoto"
                 android:layout_alignLeft="@+id/tv_authorDesc"
                 android:layout_marginBottom="3dp"
+                android:scaleType="centerInside"
                 android:src="@drawable/ic_lock"
                 android:visibility="gone"/>
         </RelativeLayout>

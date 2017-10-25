@@ -3337,4 +3337,23 @@ public class LmsDataService {
         }
         return dataInfo;
     }
+
+    /**
+     * 更新案例的排序
+     *
+     * @param huodongID
+     * @throws Exception
+     */
+    public void updateAnliPaixu(String huodongID) throws Exception {
+        String parseUrl = "anli/anlipaixu";
+        HashMap<String, String> params = new HashMap<>();
+        params.put("huodongid", huodongID);
+        getJsonByPostUrl(parseUrl, params);
+
+        // String result = getJsonByPostUrl(parseUrl, params);
+        // JSONObject resultObj = new JSONObject(result);
+        // String errorCode = resultObj.optString("ret");
+        // String errorMsg = resultObj.optString("msg");
+        // String data = resultObj.optString("data");
+    }
 }

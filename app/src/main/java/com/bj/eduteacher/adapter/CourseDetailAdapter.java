@@ -100,7 +100,7 @@ public class CourseDetailAdapter extends BaseRecyclerAdapter<RecyclerView.ViewHo
                     holder.ivIconState.setVisibility(View.GONE);
                 } else {
                     holder.tvPrice.setVisibility(View.GONE);
-                    holder.ivIconState.setImageResource(R.drawable.ic_unlock);
+                    holder.ivIconState.setImageResource(R.drawable.ic_unlock_2);
                     holder.ivIconState.setVisibility(View.VISIBLE);
                 }
             } else {

@@ -34,6 +34,7 @@ import com.bj.eduteacher.activity.PayProtocolActivity;
 import com.bj.eduteacher.activity.ResPlayActivity;
 import com.bj.eduteacher.activity.ResReviewActivity;
 import com.bj.eduteacher.activity.ThanksNotifiActivity;
+import com.bj.eduteacher.activity.WebviewActivity;
 import com.bj.eduteacher.activity.ZhuanjiaAllActivity;
 import com.bj.eduteacher.activity.ZhuanjiaDetailActivity;
 import com.bj.eduteacher.adapter.DoukeListAdapter;
@@ -524,6 +525,13 @@ public class DoukeFragment extends BaseFragment {
                     startActivity(intent);
                 } else {
                     // 其余的情况跳转到一个单纯的webView页面
+                    String resName = mBannerList.get(position).getContent();
+                    String previewUrl = mBannerList.get(position).getArticlePath();
+
+                    Intent intent = new Intent(getActivity(), WebviewActivity.class);
+                    intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_NAME, resName);
+                    intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_PREVIEW_URL, previewUrl);
+                    startActivity(intent);
                 }
             }
         });

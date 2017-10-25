@@ -220,6 +220,10 @@ public class AnnualCaseAllActivity extends BaseActivity {
         Observable.create(new ObservableOnSubscribe<List<ArticleInfo>>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<ArticleInfo>> e) throws Exception {
+                if (pageIndex == 1) {
+                    // 刷新数据的时候需要调接口，对所有案例重新进行排序
+                    mService.updateAnliPaixu(huodongID);
+                }
                 List<ArticleInfo> dataList = mService.getAnliListFromAPI(huodongID, teacherPhoneNumber, "", pageIndex, PAGE_SIZE);
                 e.onNext(dataList);
                 e.onComplete();

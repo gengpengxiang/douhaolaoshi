@@ -140,6 +140,10 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"/>
         <activity
+            android:name=".activity.WebviewActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"/>
+        <activity
             android:name=".activity.ChatActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"/>
