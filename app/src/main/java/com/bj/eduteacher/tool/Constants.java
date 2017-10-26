@@ -30,26 +30,12 @@ public class Constants {
     public static final String BEAUTY_TYPE = "beauty_type";
     public static final String VIDEO_QULITY = "video_qulity";
 
-//    //
-//    public static final int ACCOUNT_TYPE = 792;
-//    //    //sdk appid 由腾讯分配
-//    public static final int SDK_APPID = 1400001533;
-
-    // 随心播
-    //public static final int SDK_APPID = 1400001692;
-    //public static final int ACCOUNT_TYPE = 884;
-
-    // ILiveSDK 随心播
-//    public static final int SDK_APPID = 1400019352;
-//    public static final int ACCOUNT_TYPE = 8970;
-//
-//
     // test版
-    public static final int SDK_APPID = 1400042640;
-    public static final int ACCOUNT_TYPE = 17723;
+//    public static final int SDK_APPID = 1400042640;
+//    public static final int ACCOUNT_TYPE = 17723;
     // 正式版
-//    public static final int SDK_APPID = 1400043188;
-//    public static final int ACCOUNT_TYPE = 15370;
+    public static final int SDK_APPID = 1400043188;
+    public static final int ACCOUNT_TYPE = 15370;
 
     public static final int HOST = 1;
 

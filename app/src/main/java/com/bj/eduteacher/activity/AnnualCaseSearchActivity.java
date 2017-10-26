@@ -103,11 +103,8 @@ public class AnnualCaseSearchActivity extends BaseActivity {
         mRecyclerView.addOnItemTouchListener(new OnRecyclerItemClickListener(mRecyclerView) {
             @Override
             public void onItemClick(RecyclerView.ViewHolder holder, int position) {
-                if (position > 0) {
-                    // 包括header
-                    ArticleInfo item = mDataList.get(position);
-                    actionOnItemClick(item);
-                }
+                ArticleInfo item = mDataList.get(position);
+                actionOnItemClick(item);
             }
 
             @Override
