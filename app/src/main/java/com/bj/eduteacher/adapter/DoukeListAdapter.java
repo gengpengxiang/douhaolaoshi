@@ -7,7 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.andview.refreshview.recyclerview.BaseRecyclerAdapter;
@@ -243,7 +243,7 @@ public class DoukeListAdapter extends BaseRecyclerAdapter<RecyclerView.ViewHolde
             holder.tvCourseName.setText(itemInfo.getTitle());
             holder.tvTeachers.setText("主讲人：" + itemInfo.getAuthor());
             holder.tvResNumber.setText("共" + itemInfo.getReadNumber() + "课时");
-            
+
             holder.tvLearnNumber.setText(itemInfo.getReplyCount() + "人已学习");
             // 价格
             String price = itemInfo.getAgreeNumber();
@@ -443,7 +443,7 @@ public class DoukeListAdapter extends BaseRecyclerAdapter<RecyclerView.ViewHolde
     }
 
     public class ViewHolderLatestRes extends RecyclerView.ViewHolder {
-        public LinearLayout rootView;
+        public RelativeLayout rootView;
         public ImageView ivIcon;
         public TextView tvResName;
 
@@ -451,7 +451,7 @@ public class DoukeListAdapter extends BaseRecyclerAdapter<RecyclerView.ViewHolde
             super(itemView);
             if (isItem) {
                 AutoUtils.auto(itemView);
-                rootView = (LinearLayout) itemView.findViewById(R.id.ll_content);
+                rootView = (RelativeLayout) itemView.findViewById(R.id.ll_content);
                 ivIcon = (ImageView) itemView.findViewById(R.id.iv_icon);
                 tvResName = (TextView) itemView.findViewById(R.id.tv_resName);
             }

@@ -1,30 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:id="@+id/ll_content"
-              android:layout_width="match_parent"
-              android:layout_height="32dp"
-              android:background="#FFF"
-              android:gravity="center_vertical"
-              android:orientation="horizontal"
-              android:paddingLeft="15dp"
-              android:paddingRight="15dp">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/ll_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFF">
 
     <ImageView
         android:id="@+id/iv_icon"
         android:layout_width="16dp"
         android:layout_height="16dp"
-        android:scaleType="fitXY"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="8dp"
+        android:scaleType="fitStart"
         android:src="@drawable/ic_article"/>
 
     <TextView
         android:id="@+id/tv_resName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="15dp"
         android:layout_marginLeft="12dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginStart="12dp"
+        android:layout_toRightOf="@+id/iv_icon"
         android:ellipsize="end"
         android:maxLines="1"
         android:textColor="#4A4A4A"
         android:textSize="15sp"
         tools:text="文章：游戏化教学的知与行游戏化教学的知与行游戏化教学的知与行游戏化教学的知与行"/>
-</LinearLayout>
+</RelativeLayout>

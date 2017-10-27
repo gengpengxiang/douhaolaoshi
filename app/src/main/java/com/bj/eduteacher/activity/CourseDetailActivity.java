@@ -140,18 +140,6 @@ public class CourseDetailActivity extends BaseActivity {
         courseResNum = args.getString("CourseResNum", "");
         courseZhengshu = args.getString("CourseZhengshu", "");
         courseShuoming = args.getString("CourseShuoming", "");
-
-//        coursePrice = args.getString("CoursePrice", "");
-//        courseBuyStatus = args.getString("CourseBuyStatus", "");
-//        if (StringUtils.isEmpty(coursePrice) || "0".equals(coursePrice)) {
-//            tvpay.setText("免费加入学习");
-//        } else {
-//            if ("0".equals(courseBuyStatus)) {
-//                tvpay.setText("¥ " + (Double.parseDouble(coursePrice)) / 100 + "立即加入学习");
-//            } else {
-//                tvpay.setText("已购买，快去学习");
-//            }
-//        }
     }
 
     private void initView() {
@@ -377,7 +365,7 @@ public class CourseDetailActivity extends BaseActivity {
                         coursePrice = info.getAgreeNumber();
                         courseBuyStatus = info.getCommentNumber();
                         if (StringUtils.isEmpty(courseJiaru) || "0".equals(courseJiaru)) {
-                            if ("0".equals(coursePrice)) {
+                            if (StringUtils.isEmpty(coursePrice) || "0".equals(coursePrice)) {
                                 tvpay.setText("免费加入学习");
                             } else {
                                 if ("0".equals(courseBuyStatus)) {
@@ -511,7 +499,7 @@ public class CourseDetailActivity extends BaseActivity {
                 IntentManager.toLoginActivity(this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
                 return;
             }
-            
+
             if (StringUtils.isEmpty(coursePrice) || "0".equals(coursePrice)) {
                 // 调用加入课程的接口
                 joinCourse(courseID, teacherPhoneNumber, "1", "free");
@@ -524,7 +512,7 @@ public class CourseDetailActivity extends BaseActivity {
                 }
             }
         } else {
-            if (StringUtils.isEmpty(coursePrice) || coursePrice.equals(0)) {
+            if (StringUtils.isEmpty(coursePrice) || coursePrice.equals("0")) {
                 T.showShort(this, "已加入，快去学习吧~");
             } else {
                 T.showShort(this, "已购买，快去学习吧~");

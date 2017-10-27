@@ -1,5 +1,6 @@
 package com.bj.eduteacher.utils;
 
+import android.content.ComponentCallbacks2;
 import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
@@ -34,6 +35,21 @@ public class FrescoUtils {
 
     private FrescoUtils() {
 
+    }
+
+    public static void TrimMemory(int level) {
+        try {
+            if (level >= ComponentCallbacks2.TRIM_MEMORY_MODERATE) { // 60
+                ImagePipelineFactory.getInstance().getImagePipeline().clearMemoryCaches();
+            }
+        } catch (Exception e) {
+
+        }
+
+    }
+
+    public static void clearAllMemoryCaches() {
+        ImagePipelineFactory.getInstance().getImagePipeline().clearMemoryCaches();
     }
 
     //Fresco

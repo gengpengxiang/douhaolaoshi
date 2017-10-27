@@ -10,6 +10,7 @@ import com.bj.eduteacher.manager.UMPushManager;
 import com.bj.eduteacher.presenter.InitBusinessHelper;
 import com.bj.eduteacher.tool.SxbLogImpl;
 import com.bj.eduteacher.utils.FrescoImagePipelineConfigFactory;
+import com.bj.eduteacher.utils.FrescoUtils;
 import com.bj.eduteacher.utils.LL;
 import com.bj.eduteacher.zzautolayout.config.AutoLayoutConifg;
 import com.facebook.drawee.backends.pipeline.Fresco;
@@ -89,5 +90,17 @@ public class MyApplication extends MultiDexApplication {
 
     public static MyApplication getInstance() {
         return app;
+    }
+
+    @Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
+        FrescoUtils.TrimMemory(level);
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        FrescoUtils.clearAllMemoryCaches();
     }
 }

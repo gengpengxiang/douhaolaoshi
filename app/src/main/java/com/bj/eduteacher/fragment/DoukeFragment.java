@@ -785,9 +785,9 @@ public class DoukeFragment extends BaseFragment {
         // 更新数据
         mDataList.addAll(list);
         mAdapter.notifyDataSetChanged();
-        if (null == mAdapter.getCustomLoadMoreView()) {
-            mAdapter.setCustomLoadMoreView(new XRefreshViewFooter(getActivity()));
-        }
+//        if (null == mAdapter.getCustomLoadMoreView()) {
+//            mAdapter.setCustomLoadMoreView(new XRefreshViewFooter(getActivity()));
+//        }
     }
 
     private void cleanXRefreshView() {
