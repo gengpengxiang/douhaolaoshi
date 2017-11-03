@@ -129,22 +129,31 @@ public class FamousTeacherDetailActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_zhuanjia_detail);
         ButterKnife.bind(this);
-        api = WXAPIFactory.createWXAPI(this, MLProperties.APP_DOUHAO_TEACHER_ID);
+        init();
 
-        initStatus();
-        initToolbar();
+        initToolBar();
         initView();
         initData();
     }
 
-    private void initToolbar() {
+    private void init() {
+        api = WXAPIFactory.createWXAPI(this, MLProperties.APP_DOUHAO_TEACHER_ID);
+        ViewGroup.LayoutParams lp = rlZoomView.getLayoutParams();
+        lp.height = (int) (ScreenUtils.getScreenWidth(this) / 2.67f);
+        rlZoomView.setLayoutParams(lp);
+    }
+
+    @Override
+    protected void initToolBar() {
+        super.initToolBar();
         zhuanjiaID = getIntent().getStringExtra(MLProperties.BUNDLE_KEY_ZHUANJIA_ID);
         zhuanjiaName = getIntent().getStringExtra(MLProperties.BUNDLE_KEY_ZHUANJIA_NAME);
         zhuanjiaTitle = getIntent().getStringExtra(MLProperties.BUNDLE_KEY_ZHUANJIA_TITLE);
         zhuanjiaImg = getIntent().getStringExtra(MLProperties.BUNDLE_KEY_ZHUANJIA_IMG);
     }
 
-    private void initView() {
+    @Override
+    protected void initView() {
         mRecyclerView.setHasFixedSize(true);
         // look as listview
         FullyLinearLayoutManager layoutManager = new FullyLinearLayoutManager(FamousTeacherDetailActivity.this);
@@ -372,7 +381,8 @@ public class FamousTeacherDetailActivity extends BaseActivity {
     /**
      * 初始化状态栏位置
      */
-    private void initStatus() {
+    @Override
+    protected void initStatus() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {//4.4以下不支持状态栏变色
             //注意了，这里使用了第三方库 StatusBarUtil，目的是改变状态栏的alpha
             StatusBarUtil.setTransparentForImageView(FamousTeacherDetailActivity.this, null);
@@ -383,6 +393,14 @@ public class FamousTeacherDetailActivity extends BaseActivity {
             FrameLayout.LayoutParams lp1 = (FrameLayout.LayoutParams) rlTitleLayout.getLayoutParams();
             lp1.topMargin = statusBarHeight;
             rlTitleLayout.setLayoutParams(lp1);
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            // getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimary));
+            // 如果存在虚拟按键，则设置虚拟按键的背景色
+            if (ScreenUtils.isNavigationBarShow(this)) {
+                getWindow().setNavigationBarColor(ContextCompat.getColor(this, android.R.color.black));
+            }
         }
     }
 
@@ -399,7 +417,8 @@ public class FamousTeacherDetailActivity extends BaseActivity {
         return context.getResources().getDimensionPixelSize(resourceId);
     }
 
-    private void initData() {
+    @Override
+    protected void initData() {
         teacherPhoneNumber = PreferencesUtils.getString(FamousTeacherDetailActivity.this, MLProperties.PREFER_KEY_USER_ID, "");
         userPhotoPath = PreferencesUtils.getString(FamousTeacherDetailActivity.this, MLProperties.BUNDLE_KEY_TEACHER_IMG);
 

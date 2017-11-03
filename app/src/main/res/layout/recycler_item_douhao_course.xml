@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fresco="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -11,14 +12,14 @@
 
     <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/iv_authorPhoto"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="86dp"
+        android:layout_height="108dp"
         android:layout_centerHorizontal="true"
         fresco:actualImageScaleType="focusCrop"
         fresco:placeholderImage="@drawable/shape_bg_zhuanjia"
         fresco:placeholderImageScaleType="focusCrop"
         fresco:roundedCornerRadius="5dp"
-        fresco:viewAspectRatio="0.8" />
+        fresco:viewAspectRatio="0.8"/>
 
     <TextView
         android:id="@+id/tv_authorName"
@@ -33,7 +34,7 @@
         android:minLines="2"
         android:textColor="#4A4A4A"
         android:textSize="12sp"
-        tools:text="北大教学课件北大教学课件北大教学课件" />
+        tools:text="北大教学课件北大教学课件北大教学课件"/>
 
     <TextView
         android:id="@+id/tv_resNum"
@@ -46,7 +47,7 @@
         android:singleLine="true"
         android:textColor="#A6A6A6"
         android:textSize="12sp"
-        tools:text="资源666" />
+        tools:text="资源666"/>
 
     <TextView
         android:id="@+id/tv_courseNum"
@@ -61,5 +62,5 @@
         android:singleLine="true"
         android:textColor="#A6A6A6"
         android:textSize="12sp"
-        tools:text="课时6" />
+        tools:text="课时6"/>
 </RelativeLayout>

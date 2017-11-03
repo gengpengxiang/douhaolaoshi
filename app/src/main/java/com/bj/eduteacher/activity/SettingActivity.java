@@ -22,11 +22,13 @@ public class SettingActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
         //
-        initToolbar();
+        initToolBar();
         initView();
     }
 
-    private void initToolbar() {
+    @Override
+    protected void initToolBar() {
+        super.initToolBar();
         LinearLayout llLeft = (LinearLayout) this.findViewById(R.id.header_ll_left);
         llLeft.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -41,7 +43,8 @@ public class SettingActivity extends BaseActivity {
         tvTitle.setText("关于逗号老师");
     }
 
-    private void initView() {
+    @Override
+    protected void initView() {
     }
 
     @Override

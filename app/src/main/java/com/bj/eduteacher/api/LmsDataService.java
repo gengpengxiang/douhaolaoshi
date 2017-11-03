@@ -2466,14 +2466,14 @@ public class LmsDataService {
      * @return
      * @throws Exception
      */
-    public List<ArticleInfo> getMasterRikeFromAPI(String phoneNumber) throws Exception {
+    public List<ArticleInfo> getMasterRikeFromAPI(String phoneNumber, int pagesize) throws Exception {
         List<ArticleInfo> dataList = new ArrayList<>();
 
         String parseUrl = "jsmaster/masterrike";
         HashMap<String, String> params = new HashMap<>();
         params.put("phone", phoneNumber);
         params.put("type", "all");
-        params.put("limit", "9");
+        params.put("limit", String.valueOf(pagesize));
         params.put("offset", "0");
 
         String result = getJsonByPostUrl(parseUrl, params);

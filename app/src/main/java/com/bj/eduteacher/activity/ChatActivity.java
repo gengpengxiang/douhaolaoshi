@@ -15,6 +15,7 @@ import com.bj.eduteacher.utils.ScreenUtils;
 import com.bj.eduteacher.zzeaseui.ui.EaseBaseActivity;
 import com.bj.eduteacher.zzeaseui.ui.EaseChatFragment;
 import com.hyphenate.util.EasyUtils;
+import com.jaeger.library.StatusBarUtil;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.umeng.analytics.MobclickAgent;
 
@@ -38,6 +39,8 @@ public class ChatActivity extends EaseBaseActivity implements EaseChatFragment.O
             }
         }
         setContentView(R.layout.em_activity_chat);
+        // 设置状态栏颜色
+        StatusBarUtil.setColor(this, ContextCompat.getColor(this, R.color.colorPrimary));
         activityInstance = this;
         Bundle bundle = getIntent().getExtras();
         currUserPhoto = PreferencesUtils.getString(this, MLProperties.BUNDLE_KEY_TEACHER_IMG);

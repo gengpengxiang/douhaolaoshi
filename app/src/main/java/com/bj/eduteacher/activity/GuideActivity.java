@@ -39,8 +39,8 @@ public class GuideActivity extends BaseActivity {
         initView();
     }
 
-    private void initView() {
-
+    @Override
+    protected void initView() {
         List<Fragment> dataList = new ArrayList<>();
         dataList.add(new Guide1Fragment());
         dataList.add(new Guide2Fragment());

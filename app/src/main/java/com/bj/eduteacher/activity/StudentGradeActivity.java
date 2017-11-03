@@ -77,7 +77,9 @@ public class StudentGradeActivity extends BaseActivity {
         initData();
     }
 
-    private void initToolBar() {
+    @Override
+    protected void initToolBar() {
+        super.initToolBar();
         tvTitle = (TextView) this.findViewById(R.id.header_tv_title);
         tvTitle.setVisibility(View.VISIBLE);
 
@@ -103,7 +105,8 @@ public class StudentGradeActivity extends BaseActivity {
         ivQuestion.setVisibility(View.VISIBLE);
     }
 
-    private void initView() {
+    @Override
+    protected void initView() {
         mXRefreshView = (XRefreshView) this.findViewById(R.id.mXRefreshView);
         mRecyclerView = (RecyclerView) this.findViewById(R.id.mRecyclerView);
         mRecyclerView.setHasFixedSize(true);
@@ -163,7 +166,8 @@ public class StudentGradeActivity extends BaseActivity {
         });
     }
 
-    private void initData() {
+    @Override
+    protected void initData() {
         userPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
         classId = getIntent().getExtras().getString(MLConfig.KEY_CLASS_ID);
         gradeTypeID = getIntent().getExtras().getString(MLConfig.KEY_GRADE_ID);

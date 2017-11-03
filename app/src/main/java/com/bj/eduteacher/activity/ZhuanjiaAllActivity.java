@@ -69,13 +69,16 @@ public class ZhuanjiaAllActivity extends BaseActivity {
         initData();
     }
 
-    private void initToolBar() {
+    @Override
+    protected void initToolBar() {
+        super.initToolBar();
         imgBack.setVisibility(View.VISIBLE);
         tvTitle.setVisibility(View.VISIBLE);
         tvTitle.setText("驻场专家");
     }
 
-    private void initView() {
+    @Override
+    protected void initView() {
         // 初始化下拉刷新控件
         mRecyclerView.setHasFixedSize(true);
         // look as listview
@@ -127,7 +130,8 @@ public class ZhuanjiaAllActivity extends BaseActivity {
         });
     }
 
-    private void initData() {
+    @Override
+    protected void initData() {
         currentPage = 1;
         getMasterDataFromAPI();
     }

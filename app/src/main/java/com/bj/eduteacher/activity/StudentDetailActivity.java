@@ -105,7 +105,9 @@ public class StudentDetailActivity extends BaseActivity implements View.OnClickL
         initData();
     }
 
-    private void initToolBar() {
+    @Override
+    protected void initToolBar() {
+        super.initToolBar();
         TextView tvTitle = (TextView) this.findViewById(R.id.header_tv_title);
         tvTitle.setVisibility(View.VISIBLE);
         tvTitle.setText("学生主页");
@@ -122,7 +124,8 @@ public class StudentDetailActivity extends BaseActivity implements View.OnClickL
         imgBack.setVisibility(View.VISIBLE);
     }
 
-    private void initView() {
+    @Override
+    protected void initView() {
         llCommendStudent = (LinearLayout) this.findViewById(R.id.ll_qrCode);
         llCommendStudent.setOnClickListener(this);
         mXRefreshView = (XRefreshView) this.findViewById(R.id.mXRefreshView);
@@ -196,7 +199,8 @@ public class StudentDetailActivity extends BaseActivity implements View.OnClickL
         tvStudGrade.setText(studGrade + "等级");
     }
 
-    private void initData() {
+    @Override
+    protected void initData() {
         userPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
         schoolImg = PreferencesUtils.getString(this, MLProperties.BUNDLE_KEY_SCHOOL_IMG, "");
 

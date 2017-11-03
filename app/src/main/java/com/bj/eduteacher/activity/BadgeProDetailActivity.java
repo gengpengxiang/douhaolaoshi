@@ -76,13 +76,16 @@ public class BadgeProDetailActivity extends BaseActivity {
         initData();
     }
 
-    private void initToolBar() {
+    @Override
+    protected void initToolBar() {
+        super.initToolBar();
         imgBack.setVisibility(View.VISIBLE);
         tvTitle.setVisibility(View.VISIBLE);
         tvTitle.setText("专项");
     }
 
-    private void initView() {
+    @Override
+    protected void initView() {
         mInflater = LayoutInflater.from(this);
         classId = getIntent().getExtras().getString(MLConfig.KEY_CLASS_ID);
         // 初始化流式布局
@@ -165,7 +168,8 @@ public class BadgeProDetailActivity extends BaseActivity {
         tv.setText("专项记录");
     }
 
-    private void initData() {
+    @Override
+    protected void initData() {
         MyClassCommendTypeAsyncTask task = new MyClassCommendTypeAsyncTask();
         task.execute();
 

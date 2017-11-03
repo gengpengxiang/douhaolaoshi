@@ -78,13 +78,16 @@ public class ReasonEditActivity extends BaseActivity {
         initData();
     }
 
-    private void initToolBar() {
+    @Override
+    protected void initToolBar() {
+        super.initToolBar();
         tvTitle.setVisibility(View.VISIBLE);
         tvTitle.setText("编辑理由");
         imgBack.setVisibility(View.VISIBLE);
     }
 
-    private void initView() {
+    @Override
+    protected void initView() {
         int padding = DensityUtils.dp2px(this, 4);
         int itemPadding = DensityUtils.dp2px(this, 4);
         // 下拉刷新控件
@@ -127,7 +130,8 @@ public class ReasonEditActivity extends BaseActivity {
         });
     }
 
-    private void initData() {
+    @Override
+    protected void initData() {
         teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
         // 获取缓存的点赞理由
         String commendReasons = PreferencesUtils.getString(this, "CommendReason");

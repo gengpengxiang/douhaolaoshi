@@ -73,10 +73,12 @@ public class AnnualCaseSearchActivity extends BaseActivity {
         // 初始化页面
         initToolBar();
         initView();
-        initDatas();
+        initData();
     }
 
-    private void initToolBar() {
+    @Override
+    protected void initToolBar() {
+        super.initToolBar();
         huodongID = getIntent().getStringExtra("HuodongID");
         bannerPath = getIntent().getStringExtra("HuodongBanner");
 
@@ -95,7 +97,8 @@ public class AnnualCaseSearchActivity extends BaseActivity {
         });
     }
 
-    private void initView() {
+    @Override
+    protected void initView() {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new SaveGridLayoutManager(this, 3));
         mAdapter = new AnnualCaseAllAdapter(mDataList);
@@ -133,7 +136,8 @@ public class AnnualCaseSearchActivity extends BaseActivity {
         });
     }
 
-    private void initDatas() {
+    @Override
+    protected void initData() {
         teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
     }
 

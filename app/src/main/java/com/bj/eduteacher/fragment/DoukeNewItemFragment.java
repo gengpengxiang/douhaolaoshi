@@ -16,6 +16,7 @@ import com.bj.eduteacher.api.MLProperties;
 import com.bj.eduteacher.entity.ArticleInfo;
 import com.bj.eduteacher.utils.LL;
 import com.bj.eduteacher.utils.PreferencesUtils;
+import com.bj.eduteacher.utils.ScreenUtils;
 import com.bj.eduteacher.utils.T;
 import com.bj.eduteacher.widget.manager.SaveGridLayoutManager;
 import com.shizhefei.fragment.LazyFragment;
@@ -38,6 +39,7 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 public class DoukeNewItemFragment extends LazyFragment {
+    private final int PAGE_SIZE = 30;
 
     public static final String[] NJARRAY = new String[]{
             "一年级", "二年级", "三年级", "四年级", "五年级",
@@ -57,11 +59,14 @@ public class DoukeNewItemFragment extends LazyFragment {
     private int currNianjiPosition = 0;
     private int currNJOffset;
 
+    private int columnNum;
+
     @Override
     protected void onCreateViewLazy(Bundle savedInstanceState) {
         super.onCreateViewLazy(savedInstanceState);
         xuekeName = getArguments().getString("XueKe");
         setContentView(R.layout.layout_refresh_view_2);
+        columnNum = ScreenUtils.isPadDevice(getActivity()) ? 5 : 3;
 
         initView();
         initData();
@@ -72,7 +77,7 @@ public class DoukeNewItemFragment extends LazyFragment {
         mRecyclerView = (RecyclerView) findViewById(R.id.mRecyclerView);
 
         mRecyclerView.setHasFixedSize(true);
-        layoutManager = new SaveGridLayoutManager(getActivity(), 3);
+        layoutManager = new SaveGridLayoutManager(getActivity(), columnNum);
         mAdapter = new DoukeNewAdapter(mDataList);
         mAdapter.setOnMyItemClickListener(new DoukeNewAdapter.OnMyItemClickListener() {
             @Override
@@ -123,7 +128,7 @@ public class DoukeNewItemFragment extends LazyFragment {
             public void subscribe(@NonNull ObservableEmitter<List<ArticleInfo>> e) throws Exception {
                 LmsDataService mService = new LmsDataService();
                 List<ArticleInfo> dataList = new ArrayList<>();
-                int pageSize = 18;
+                int pageSize = PAGE_SIZE;
                 for (int i = 0; i < NJARRAY.length; i++) {
                     // 记录当前加载到几年级了
                     currNianjiPosition = i;
@@ -135,23 +140,28 @@ public class DoukeNewItemFragment extends LazyFragment {
                     }
                     if (pageSize > 0) {
                         // 如果下一个年级的数量小于3，则补齐一行
-                        if (pageSize < 3) {
-                            pageSize = 3;
+                        if (pageSize < columnNum) {
+                            pageSize = columnNum;
                         } else {
-                            int last = pageSize % 3;
+                            int last = pageSize % columnNum;
                             if (last > 0) {
-                                pageSize = pageSize + (3 - last);
+                                pageSize = pageSize + (columnNum - last);
                             }
                         }
+                        if (i == NJARRAY.length - 1) {
+                            currNJOffset = njList.size();
+                        }
+                        LL.i("HTTP", "当前年级：" + currNianjiPosition + ":" + NJARRAY[currNianjiPosition] + " -- 当前年级的偏移量：" + currNJOffset);
                         continue;
                     } else {
                         // 如果最后不满一行3个的话就去掉最后一行
-                        int reduceNum = njList.size() % 3;
+                        int reduceNum = njList.size() % columnNum;
                         if (reduceNum > 0) {
                             dataList = dataList.subList(0, dataList.size() - reduceNum);
                         }
                         // 刷新页面，当最后跳出循环时，记录当前年级的偏移量（刷新页面的时候每个年级肯定只加载第一页的数据）
                         currNJOffset = njList.size() - reduceNum;
+                        LL.i("HTTP", "当前年级：" + currNianjiPosition + ":" + NJARRAY[currNianjiPosition] + " -- 当前年级的偏移量：" + currNJOffset);
                         break;
                     }
                 }
@@ -191,13 +201,13 @@ public class DoukeNewItemFragment extends LazyFragment {
             @Override
             public int getSpanSize(int position) {
                 if (mAdapter.getAdapterItemCount() == 0) {
-                    return 3;
+                    return columnNum;
                 }
 
                 if (mAdapter.getItemViewType(position) == DoukeNewAdapter.ShowType.ITEM_TYPE_DOUKE.ordinal()) {
                     return 1;
                 } else {
-                    return 3;
+                    return columnNum;
                 }
             }
         });
@@ -211,7 +221,7 @@ public class DoukeNewItemFragment extends LazyFragment {
                     size++;
                 }
             }
-            if (size < 18) {
+            if (size < PAGE_SIZE) {
                 mXRefreshView.setPullLoadEnable(false);
             }
         } else {
@@ -219,7 +229,7 @@ public class DoukeNewItemFragment extends LazyFragment {
         }
         mAdapter.notifyDataSetChanged();
 
-        if (mXRefreshView.getPullLoadEnable() && null == mAdapter.getCustomLoadMoreView()) {
+        if (getActivity() != null && mXRefreshView.getPullLoadEnable() && null == mAdapter.getCustomLoadMoreView()) {
             mAdapter.setCustomLoadMoreView(new XRefreshViewFooter(getActivity()));
         }
     }
@@ -230,7 +240,7 @@ public class DoukeNewItemFragment extends LazyFragment {
             public void subscribe(@NonNull ObservableEmitter<List<ArticleInfo>> e) throws Exception {
                 LmsDataService mService = new LmsDataService();
                 List<ArticleInfo> dataList = new ArrayList<>();
-                int pageSize = 18;
+                int pageSize = PAGE_SIZE;
                 for (int i = currNianjiPosition; i < NJARRAY.length; i++) {
                     // 记录当前加载到几年级了
                     List<ArticleInfo> njList = mService.getNewDoukeListFromAPI(xuekeName, NJARRAY[i], currNJOffset, pageSize);
@@ -247,26 +257,31 @@ public class DoukeNewItemFragment extends LazyFragment {
 
                     if (pageSize > 0) {
                         // 如果下一个年级的数量小于3，则补齐一行
-                        if (pageSize < 3) {
-                            pageSize = 3;
+                        if (pageSize < columnNum) {
+                            pageSize = columnNum;
                         } else {
-                            int last = pageSize % 3;
+                            int last = pageSize % columnNum;
                             if (last > 0) {
-                                pageSize = pageSize + (3 - last);
+                                pageSize = pageSize + (columnNum - last);
                             }
                         }
-                        // pageSize = pageSize < 3 ? 3 : pageSize;
-                        currNJOffset = 0;
-                        // currentPage = 1;
+                        if (i != NJARRAY.length - 1) {
+                            // 要进入下一个年级，offset置为0
+                            currNJOffset = 0;
+                        } else {
+                            currNJOffset = currNJOffset + njList.size();
+                        }
+                        LL.i("HTTP", "当前年级：" + currNianjiPosition + ":" + NJARRAY[currNianjiPosition] + " -- 当前年级的偏移量：" + currNJOffset);
                         continue;
                     } else {
-                        // 如果最后不满一行3个的话就去掉最后一行
-                        int reduceNum = njList.size() % 3;
+                        // 如果最后不满一行  个的话就去掉最后一行
+                        int reduceNum = njList.size() % columnNum;
                         if (reduceNum > 0) {
                             dataList = dataList.subList(0, dataList.size() - reduceNum);
                         }
                         // 当最后跳出循环时，记录当前年级的偏移量
                         currNJOffset = currNJOffset + (njList.size() - reduceNum);
+                        LL.i("HTTP", "当前年级：" + currNianjiPosition + ":" + NJARRAY[currNianjiPosition] + " -- 当前年级的偏移量：" + currNJOffset);
                         break;
                     }
                 }
@@ -312,7 +327,7 @@ public class DoukeNewItemFragment extends LazyFragment {
                     size++;
                 }
             }
-            if (size < 18) {
+            if (size < PAGE_SIZE) {
                 mXRefreshView.setPullLoadEnable(false);
             }
         } else {

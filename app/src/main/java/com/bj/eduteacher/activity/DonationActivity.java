@@ -97,16 +97,19 @@ public class DonationActivity extends BaseActivity {
         // 初始化页面
         initToolBar();
         initView();
-        initDatas();
+        initData();
     }
 
-    private void initToolBar() {
+    @Override
+    protected void initToolBar() {
+        super.initToolBar();
         tvTitle.setVisibility(View.VISIBLE);
         tvTitle.setText("支持下我们");
         imgBack.setVisibility(View.VISIBLE);
     }
 
-    private void initView() {
+    @Override
+    protected void initView() {
         userPhotoPath = PreferencesUtils.getString(this, MLProperties.BUNDLE_KEY_TEACHER_IMG, "");
         LL.i("分享用户的头像：" + userPhotoPath);
         userPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
@@ -139,7 +142,8 @@ public class DonationActivity extends BaseActivity {
         });
     }
 
-    private void initDatas() {
+    @Override
+    protected void initData() {
         edtMoney.post(new Runnable() {
             @Override
             public void run() {

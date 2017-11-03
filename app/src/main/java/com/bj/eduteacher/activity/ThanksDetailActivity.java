@@ -63,13 +63,16 @@ public class ThanksDetailActivity extends BaseActivity {
         initData();
     }
 
-    private void initToolBar() {
+    @Override
+    protected void initToolBar() {
+        super.initToolBar();
         imgBack.setVisibility(View.VISIBLE);
         tvTitle.setVisibility(View.VISIBLE);
         tvTitle.setText("感谢");
     }
 
-    private void initView() {
+    @Override
+    protected void initView() {
         classId = getIntent().getExtras().getString(MLConfig.KEY_CLASS_ID);
         // 初始化下拉刷新控件
         mRecyclerView.setHasFixedSize(true);
@@ -121,7 +124,8 @@ public class ThanksDetailActivity extends BaseActivity {
         });
     }
 
-    private void initData() {
+    @Override
+    protected void initData() {
         MyClassAllNewsAsyncTask task3 = new MyClassAllNewsAsyncTask();
         task3.execute(classId, String.valueOf(currentPage));
     }

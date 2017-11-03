@@ -92,7 +92,9 @@ public class AnnualCaseDetailActivity extends BaseActivity {
         initView();
     }
 
-    private void initToolBar() {
+    @Override
+    protected void initToolBar() {
+        super.initToolBar();
         anliID = getIntent().getExtras().getString("ID", "");
         anliTitle = getIntent().getExtras().getString("Title", "");
         anliAuthor = getIntent().getExtras().getString("Author", "");
@@ -111,7 +113,8 @@ public class AnnualCaseDetailActivity extends BaseActivity {
         }
     }
 
-    private void initView() {
+    @Override
+    protected void initView() {
         // mXRefreshView.setBackgroundResource(R.color.bg_gray);
         mRecyclerView.setBackground(null);
 
@@ -169,7 +172,8 @@ public class AnnualCaseDetailActivity extends BaseActivity {
         });
     }
 
-    private void initData() {
+    @Override
+    protected void initData() {
         teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
 
         currentPage = 1;

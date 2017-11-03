@@ -68,7 +68,9 @@ public class LoginHelpActivity extends BaseActivity {
         loadContent();
     }
 
-    private void initToolBar() {
+    @Override
+    protected void initToolBar() {
+        super.initToolBar();
         tvTitle.setVisibility(View.VISIBLE);
         ivBack.setVisibility(View.VISIBLE);
     }
@@ -76,7 +78,8 @@ public class LoginHelpActivity extends BaseActivity {
     /**
      * 初始化WebView
      */
-    private void initView() {
+    @Override
+    protected void initView() {
         // 覆盖WebView默认使用第三方或系统默认浏览器打开网页的行为，使网页用WebView打开
         // 主要处理解析，渲染网页等浏览器做的事情 WebViewClient就是帮助WebView处理各种通知、请求事件的。
         web_content.setWebViewClient(new WebViewClient() {

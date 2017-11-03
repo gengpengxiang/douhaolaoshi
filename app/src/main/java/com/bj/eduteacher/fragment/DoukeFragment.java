@@ -17,6 +17,7 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.andview.refreshview.XRefreshView;
@@ -53,6 +54,7 @@ import com.bj.eduteacher.utils.FrescoImageLoader;
 import com.bj.eduteacher.utils.LL;
 import com.bj.eduteacher.utils.NetUtils;
 import com.bj.eduteacher.utils.PreferencesUtils;
+import com.bj.eduteacher.utils.ScreenUtils;
 import com.bj.eduteacher.utils.StringUtils;
 import com.bj.eduteacher.utils.T;
 import com.bj.eduteacher.view.OnRecyclerItemClickListener;
@@ -125,6 +127,9 @@ public class DoukeFragment extends BaseFragment {
     private boolean isUserPaySuccess = false;  // 是否支付成功
     private String currTradeID = "";     // 当前商户订单号
 
+    private int columnResNum, columnTeaNum;
+    private int resPageSize, teaPageSize;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -135,12 +140,28 @@ public class DoukeFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_douke, container, false);
         ButterKnife.bind(this, view);
-        api = WXAPIFactory.createWXAPI(getActivity(), MLProperties.APP_DOUHAO_TEACHER_ID);
+        init();
 
         initToolbar();
         initView();
         initData();
         return view;
+    }
+
+    private void init() {
+        api = WXAPIFactory.createWXAPI(getActivity(), MLProperties.APP_DOUHAO_TEACHER_ID);
+        if (ScreenUtils.isPadDevice(getActivity())) {
+            columnResNum = 6;
+            resPageSize = 15;
+            columnTeaNum = 10;
+            teaPageSize = 9;
+        } else {
+            columnResNum = 10;
+            resPageSize = 9;
+            columnTeaNum = 15;
+            teaPageSize = 8;
+        }
+
     }
 
     @Override
@@ -181,11 +202,15 @@ public class DoukeFragment extends BaseFragment {
         teacherPhoneNumber = PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_USER_ID, "");
         // 下拉刷新控件
         mRecyclerView.setHasFixedSize(true);
-        layoutManager = new SaveGridLayoutManager(getActivity(), 6);
+        layoutManager = new SaveGridLayoutManager(getActivity(), 30);
         mAdapter = new DoukeListAdapter(getActivity(), mDataList);
         // 添加header
-        banner = (Banner) mAdapter.setHeaderView(R.layout.recycler_header_banner, mRecyclerView);
-        initHeaderView();
+        RelativeLayout headerView = (RelativeLayout) mAdapter.setHeaderView(R.layout.recycler_header_banner, mRecyclerView);
+        ViewGroup.LayoutParams lp = headerView.getLayoutParams();
+        lp.height = (int) (ScreenUtils.getScreenWidth(getActivity()) / 2.67f);
+        headerView.setLayoutParams(lp);
+
+        initHeaderView(headerView);
 
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(mAdapter);
@@ -462,7 +487,8 @@ public class DoukeFragment extends BaseFragment {
         }
     }
 
-    private void initHeaderView() {
+    private void initHeaderView(View headerView) {
+        banner = (Banner) headerView.findViewById(R.id.banner);
         //设置banner样式
         banner.setBannerStyle(BannerConfig.CIRCLE_INDICATOR);
         //设置图片加载器
@@ -584,7 +610,7 @@ public class DoukeFragment extends BaseFragment {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<ArticleInfo>> e) throws Exception {
                 // SystemClock.sleep(1000);
-                List<ArticleInfo> dataList = mService.getMasterRikeFromAPI(teacherPhoneNumber);
+                List<ArticleInfo> dataList = mService.getMasterRikeFromAPI(teacherPhoneNumber, resPageSize);
                 e.onNext(dataList);
                 e.onComplete();
             }
@@ -605,11 +631,11 @@ public class DoukeFragment extends BaseFragment {
         Observable<List<ArticleInfo>> observable5 = Observable.create(new ObservableOnSubscribe<List<ArticleInfo>>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<ArticleInfo>> e) throws Exception {
-                List<ArticleInfo> dataList = mService.getFamousTeacherCardsFromAPI(currentPage, 8);
-                if (dataList.size() >= 8) {
+                List<ArticleInfo> dataList = mService.getFamousTeacherCardsFromAPI(currentPage, teaPageSize);
+                if (dataList.size() >= teaPageSize) {
                     ArticleInfo articleInfo = mService.getFamousTeacherCountFromAPI();
                     int count = Integer.parseInt(articleInfo.getReplyCount());
-                    if (count > 8) {    // 超过8位名师，显示查看全部
+                    if (count > teaPageSize) {    // 超过8位名师，显示查看全部
                         dataList.add(new ArticleInfo("查看全部" + count + "位名师", ArticleInfo.SHOW_TYPE_ZHUANJIA_ALL));
                     }
                 }
@@ -716,15 +742,15 @@ public class DoukeFragment extends BaseFragment {
             @Override
             public int getSpanSize(int position) {
                 if (mAdapter.getAdapterItemCount() == 0) {
-                    return 6;
+                    return 30;
                 }
 
                 if (mAdapter.getItemViewType(position) == DoukeListAdapter.ShowType.ITEM_TYPE_ZHUANJIA_RES.ordinal()) {
-                    return 2;
+                    return columnResNum;
                 } else if (mAdapter.getItemViewType(position) == DoukeListAdapter.ShowType.ITEM_TYPE_TEACHER.ordinal()) {
-                    return 3;
+                    return columnTeaNum;
                 } else {
-                    return 6;
+                    return 30;
                 }
             }
         });

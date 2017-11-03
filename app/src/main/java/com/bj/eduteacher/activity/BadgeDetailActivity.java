@@ -90,13 +90,16 @@ public class BadgeDetailActivity extends BaseActivity {
         initData();
     }
 
-    private void initToolBar() {
+    @Override
+    protected void initToolBar() {
+        super.initToolBar();
         imgBack.setVisibility(View.VISIBLE);
         tvTitle.setVisibility(View.VISIBLE);
         tvTitle.setText("徽章");
     }
 
-    private void initView() {
+    @Override
+    protected void initView() {
         mInflater = LayoutInflater.from(this);
         classId = getIntent().getExtras().getString(MLConfig.KEY_CLASS_ID);
 
@@ -222,7 +225,8 @@ public class BadgeDetailActivity extends BaseActivity {
         tv.setText("徽章记录");
     }
 
-    private void initData() {
+    @Override
+    protected void initData() {
         mDataList.clear();
 
         MyClassCommendTypeAsyncTask task = new MyClassCommendTypeAsyncTask();

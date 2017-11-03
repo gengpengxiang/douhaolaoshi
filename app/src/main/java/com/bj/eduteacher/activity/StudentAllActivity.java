@@ -52,7 +52,9 @@ public class StudentAllActivity extends BaseActivity {
         initData();
     }
 
-    private void initToolBar() {
+    @Override
+    protected void initToolBar() {
+        super.initToolBar();
         TextView tvTitle = (TextView) this.findViewById(R.id.header_tv_title);
         tvTitle.setVisibility(View.VISIBLE);
         tvTitle.setText("全班学生");
@@ -79,14 +81,16 @@ public class StudentAllActivity extends BaseActivity {
         ivQuestion.setVisibility(View.VISIBLE);
     }
 
-    private void initView() {
+    @Override
+    protected void initView() {
         fm = getSupportFragmentManager();
 
         mTabLayout = (TabLayout) this.findViewById(R.id.mTabLayout);
         mViewPager = (ViewPager) this.findViewById(R.id.mViewPager);
     }
 
-    private void initData() {
+    @Override
+    protected void initData() {
         classId = getIntent().getExtras().getString(MLConfig.KEY_CLASS_ID, "");
         currIndex = getIntent().getExtras().getInt(MLProperties.BUNDLE_KEY_VIEWPAGER_INDEX, 0);
 

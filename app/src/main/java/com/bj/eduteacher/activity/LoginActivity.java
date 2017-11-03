@@ -74,7 +74,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         // 初始化页面
         initToolBar();
         initView();
-        initDatas();
+        initData();
 
         // 恢复数据
         if (savedInstanceState != null && !StringUtils.isEmpty(savedInstanceState.getString("PhoneNumber"))) {
@@ -87,7 +87,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         }
     }
 
-    private void initToolBar() {
+    @Override
+    protected void initToolBar() {
+        super.initToolBar();
         loginSuccAction = getIntent().getExtras().getString("LoginSuccAction", "0");
         ImageView ivBack = (ImageView) this.findViewById(R.id.header_img_back);
         ivBack.setVisibility(View.VISIBLE);
@@ -103,7 +105,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         });
     }
 
-    private void initView() {
+    @Override
+    protected void initView() {
         mScrollView = (ScrollView) this.findViewById(R.id.scrollview);
         LinearLayout llContent = (LinearLayout) this.findViewById(R.id.ll_content);
         llContent.setOnClickListener(new View.OnClickListener() {
@@ -157,7 +160,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         });
     }
 
-    private void initDatas() {
+    @Override
+    protected void initData() {
         RxPermissions rxPermissions = new RxPermissions(this);
         rxPermissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .subscribe();

@@ -79,13 +79,16 @@ public class CommendDetailActivity extends BaseActivity {
         initData();
     }
 
-    private void initToolBar() {
+    @Override
+    protected void initToolBar() {
+        super.initToolBar();
         imgBack.setVisibility(View.VISIBLE);
         tvTitle.setVisibility(View.VISIBLE);
         tvTitle.setText("点赞");
     }
 
-    private void initView() {
+    @Override
+    protected void initView() {
         mInflater = LayoutInflater.from(this);
         classId = getIntent().getExtras().getString(MLConfig.KEY_CLASS_ID);
         // 初始化流式布局
@@ -169,7 +172,8 @@ public class CommendDetailActivity extends BaseActivity {
         tv.setText("点赞记录");
     }
 
-    private void initData() {
+    @Override
+    protected void initData() {
         userPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
 
         MyClassCommendTypeAsyncTask task = new MyClassCommendTypeAsyncTask();

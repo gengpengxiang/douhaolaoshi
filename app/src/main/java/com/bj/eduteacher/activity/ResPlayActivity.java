@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -70,6 +72,9 @@ public class ResPlayActivity extends BaseActivity {
     private LmsDataService service;
     private String teacherPhoneNumber;
 
+    JCVideoPlayer.JCAutoFullscreenListener mSensorEventListener;
+    SensorManager mSensorManager;
+
     @Override
 
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -84,10 +89,10 @@ public class ResPlayActivity extends BaseActivity {
 
         initView();
         initData();
-
     }
 
-    private void initView() {
+    @Override
+    protected void initView() {
         resID = getIntent().getStringExtra(MLProperties.BUNDLE_KEY_MASTER_RES_ID);
         resName = getIntent().getStringExtra(MLProperties.BUNDLE_KEY_MASTER_RES_NAME);
         resUrl = getIntent().getStringExtra(MLProperties.BUNDLE_KEY_MASTER_RES_PREVIEW_URL);
@@ -104,10 +109,14 @@ public class ResPlayActivity extends BaseActivity {
         JCVideoPlayer.FULLSCREEN_ORIENTATION = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
         JCVideoPlayer.NORMAL_ORIENTATION = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
 
+        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        mSensorEventListener = new JCVideoPlayer.JCAutoFullscreenListener();
+
         mPlayer.startButton.performClick();
     }
 
-    private void initData() {
+    @Override
+    protected void initData() {
         if (!NetUtils.isConnected(this)) {
             T.showShort(this, "无法连接到网络，请检查您的网络设置");
             hideLoadingDialog();
@@ -129,6 +138,9 @@ public class ResPlayActivity extends BaseActivity {
         if (mPlayer.currentState != JCVideoPlayer.CURRENT_STATE_PLAYING && mPlayer.currentState != JCVideoPlayer.CURRENT_STATE_ERROR) {
             mPlayer.startButton.performClick();
         }
+        // 注册重力监听
+        Sensor accelerometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mSensorManager.registerListener(mSensorEventListener, accelerometerSensor, SensorManager.SENSOR_DELAY_GAME);
     }
 
     @OnClick(R.id.ll_commentNumber)
@@ -156,6 +168,7 @@ public class ResPlayActivity extends BaseActivity {
     protected void onPause() {
         super.onPause();
         JCVideoPlayer.releaseAllVideos();
+        mSensorManager.unregisterListener(mSensorEventListener);
     }
 
     private void getResPreviewNumber() {

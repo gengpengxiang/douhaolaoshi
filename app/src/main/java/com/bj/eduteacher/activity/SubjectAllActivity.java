@@ -94,13 +94,16 @@ public class SubjectAllActivity extends BaseActivity {
         initData();
     }
 
-    private void initToolBar() {
+    @Override
+    protected void initToolBar() {
+        super.initToolBar();
         imgBack.setVisibility(View.VISIBLE);
         tvTitle.setVisibility(View.VISIBLE);
         tvTitle.setText("全部话题");
     }
 
-    private void initView() {
+    @Override
+    protected void initView() {
         // 初始化下拉刷新控件
         mRecyclerView.setHasFixedSize(true);
         // look as listview
@@ -167,7 +170,8 @@ public class SubjectAllActivity extends BaseActivity {
         });
     }
 
-    private void initData() {
+    @Override
+    protected void initData() {
         zhuanjiaID = getIntent().getStringExtra("MasterCode");
         teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
         userPhotoPath = PreferencesUtils.getString(SubjectAllActivity.this, MLProperties.BUNDLE_KEY_TEACHER_IMG);

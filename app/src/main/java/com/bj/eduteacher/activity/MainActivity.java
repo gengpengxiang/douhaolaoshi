@@ -47,6 +47,7 @@ import com.bj.eduteacher.utils.KeyBoardUtils;
 import com.bj.eduteacher.utils.LL;
 import com.bj.eduteacher.utils.LeakedUtils;
 import com.bj.eduteacher.utils.PreferencesUtils;
+import com.bj.eduteacher.utils.ScreenUtils;
 import com.bj.eduteacher.utils.StringUtils;
 import com.bj.eduteacher.widget.CustomViewPager;
 import com.bj.eduteacher.widget.dialog.NotifyDialog;
@@ -129,6 +130,7 @@ public class MainActivity extends BaseActivity implements ChangeBottomTabListene
         SharedPreferences pref = getSharedPreferences("data", MODE_PRIVATE);
         living = pref.getBoolean("living", false);
 
+        initToolBar();
         initView();
         initDonation();
 
@@ -136,7 +138,13 @@ public class MainActivity extends BaseActivity implements ChangeBottomTabListene
         checkLiveException();
     }
 
-    private void initView() {
+    @Override
+    protected void initToolBar() {
+        super.initToolBar();
+    }
+
+    @Override
+    protected void initView() {
         currentPageIndex = getIntent().getIntExtra(MLProperties.BUNDLE_KEY_MAIN_PAGEINDEX, currentPageIndex);
 
         mTabFragments = new Fragment[TAB_NUMBER];
@@ -180,9 +188,12 @@ public class MainActivity extends BaseActivity implements ChangeBottomTabListene
                 }
             }
         }, 1000);
+
+        LL.i("是否是PAD：" + ScreenUtils.isPadDevice(this) + " -- 是否包含虚拟键：" + ScreenUtils.isNavigationBarShow(this));
     }
 
-    private void initData() {
+    @Override
+    protected void initData() {
         teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
         updateUnreadLabel();
         EMClient.getInstance().chatManager().addMessageListener(messageListener);

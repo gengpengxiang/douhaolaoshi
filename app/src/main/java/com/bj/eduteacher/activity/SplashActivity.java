@@ -43,13 +43,21 @@ public class SplashActivity extends BaseActivity {
         loginHelper = new LoginHelper(this);
         // 禁止默认的页面统计方式，这样将不会再自动统计Activity
         MobclickAgent.openActivityDurationTrack(false);
+
+        initToolBar();
         initView();
         registWx();
 
         initData();
     }
 
-    private void initData() {
+    @Override
+    protected void initToolBar() {
+        super.initToolBar();
+    }
+
+    @Override
+    protected void initData() {
         // 首先判断是否要进入导航页
         if (isShowGuide()) {
             mHandler.postDelayed(new Runnable() {
@@ -96,7 +104,8 @@ public class SplashActivity extends BaseActivity {
         ShareHelp.getInstance().init(getApplicationContext());
     }
 
-    private void initView() {
+    @Override
+    protected void initView() {
         ImageView imgSplash = (ImageView) this.findViewById(R.id.img_splash);
         Animation animation = new AlphaAnimation(0, 1.0f);
         animation.setDuration(1500);

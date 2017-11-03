@@ -278,7 +278,8 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
     /**
      * 初始化界面
      */
-    private void initView() {
+    @Override
+    protected void initView() {
         mHostCtrView = (LinearLayout) findViewById(R.id.host_bottom_layout);
         mCtrViewMore = (LinearLayout) findViewById(R.id.host_bottom_layout_more);
         mNomalMemberCtrView = (LinearLayout) findViewById(R.id.member_bottom_layout);

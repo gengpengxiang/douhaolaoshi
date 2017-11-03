@@ -108,7 +108,9 @@ public class SubjectDetailActivity extends BaseActivity {
         initData();
     }
 
-    private void initToolBar() {
+    @Override
+    protected void initToolBar() {
+        super.initToolBar();
         subjectID = getIntent().getStringExtra("SubId");
         viewType = getIntent().getStringExtra("Type");
         subTitle = getIntent().getStringExtra("SubTitle");
@@ -130,7 +132,8 @@ public class SubjectDetailActivity extends BaseActivity {
         imgBack.setVisibility(View.VISIBLE);
     }
 
-    private void initView() {
+    @Override
+    protected void initView() {
         mRecyclerView.setHasFixedSize(true);
         // look as listview
         layoutManager = new LinearLayoutManager(this);
@@ -205,7 +208,8 @@ public class SubjectDetailActivity extends BaseActivity {
     }
 
 
-    private void initData() {
+    @Override
+    protected void initData() {
         userPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
         userPhotoPath = PreferencesUtils.getString(this, MLProperties.BUNDLE_KEY_TEACHER_IMG);
 

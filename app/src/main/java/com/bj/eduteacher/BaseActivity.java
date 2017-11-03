@@ -23,6 +23,7 @@ import com.bj.eduteacher.utils.ConnectionChangeReceiver;
 import com.bj.eduteacher.utils.ScreenUtils;
 import com.bj.eduteacher.widget.LoadingDialog;
 import com.bj.eduteacher.zzautolayout.AutoLayoutActivity;
+import com.jaeger.library.StatusBarUtil;
 import com.tencent.TIMFriendshipManager;
 import com.tencent.ilivesdk.ILiveConstants;
 import com.tencent.ilivesdk.core.ILiveLoginManager;
@@ -45,22 +46,30 @@ public class BaseActivity extends AutoLayoutActivity {
         super.onCreate(savedInstanceState);
         // 统计应用启动数据
         PushAgent.getInstance(this).onAppStart();
-
-        // 设置状态栏颜色
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimary));
-        }
-
         loadingDialog = new LoadingDialog(this);
+        initLive();
+    }
 
-        // 如果存在虚拟按键，则设置虚拟按键的背景色
-        if (ScreenUtils.checkDeviceHasNavigationBar(this)) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+    protected void initToolBar() {
+        initStatus();
+    }
+
+    protected void initView() {
+    }
+
+    protected void initData() {
+    }
+
+    protected void initStatus() {
+        // 设置顶部状态栏颜色
+        StatusBarUtil.setColor(this, ContextCompat.getColor(this, R.color.colorPrimary), 0);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            // getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimary));
+            // 如果存在虚拟按键，则设置虚拟按键的背景色
+            if (ScreenUtils.isNavigationBarShow(this)) {
                 getWindow().setNavigationBarColor(ContextCompat.getColor(this, android.R.color.black));
             }
         }
-
-        initLive();
     }
 
     private void initLive() {

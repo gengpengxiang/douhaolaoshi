@@ -3,6 +3,8 @@ package com.bj.eduteacher.activity;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -11,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bj.eduteacher.BaseActivity;
@@ -36,10 +40,12 @@ import com.bj.eduteacher.manager.IntentManager;
 import com.bj.eduteacher.utils.LL;
 import com.bj.eduteacher.utils.NetUtils;
 import com.bj.eduteacher.utils.PreferencesUtils;
+import com.bj.eduteacher.utils.ScreenUtils;
 import com.bj.eduteacher.utils.StringUtils;
 import com.bj.eduteacher.utils.T;
 import com.bj.eduteacher.zzokhttp.OkHttpUtils;
 import com.bj.eduteacher.zzokhttp.callback.FileCallBack;
+import com.jaeger.library.StatusBarUtil;
 import com.umeng.analytics.MobclickAgent;
 
 import java.io.File;
@@ -93,6 +99,8 @@ public class ResReviewActivity extends BaseActivity {
     ImageView ivAgree;
     @BindView(R.id.ll_bottomBar)
     LinearLayout llBottomBar;
+    @BindView(R.id.toolbar)
+    RelativeLayout toolbar;
 
     private String resID;
     private String resName;
@@ -104,6 +112,7 @@ public class ResReviewActivity extends BaseActivity {
     private String teacherPhoneNumber;
 
     private PopupWindow popShare;
+    private WebSettings setting;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -112,12 +121,14 @@ public class ResReviewActivity extends BaseActivity {
         ButterKnife.bind(this);
         service = new LmsDataService();
 
-        initToolbar();
+        initToolBar();
         initView();
         initData();
     }
 
-    private void initToolbar() {
+    @Override
+    protected void initToolBar() {
+        super.initToolBar();
         resID = getIntent().getStringExtra(MLProperties.BUNDLE_KEY_MASTER_RES_ID);
         resName = getIntent().getStringExtra(MLProperties.BUNDLE_KEY_MASTER_RES_NAME);
         previewUrl = getIntent().getStringExtra(MLProperties.BUNDLE_KEY_MASTER_RES_PREVIEW_URL);
@@ -134,7 +145,10 @@ public class ResReviewActivity extends BaseActivity {
         initPopViewShare();
     }
 
-    private void initView() {
+    @Override
+    protected void initView() {
+        llBottomBar.setVisibility(View.VISIBLE);
+
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
@@ -156,24 +170,35 @@ public class ResReviewActivity extends BaseActivity {
         webView.setWebChromeClient(new WebChromeClient());
         webView.setVerticalScrollbarOverlay(true); //指定的垂直滚动条有叠加样式
         // 启用支持JavaScript
-        WebSettings setting = webView.getSettings();
+        setting = webView.getSettings();
         setting.setJavaScriptEnabled(true);
+        setting.setLoadsImagesAutomatically(true);//支持自动加载图片
         setting.setCacheMode(WebSettings.LOAD_NO_CACHE);
-        setting.setUseWideViewPort(true);   //设定支持viewport
-        setting.setLoadWithOverviewMode(true);
+        setting.setAppCacheEnabled(false);
+        setting.setDatabaseEnabled(true);
+        setting.setDomStorageEnabled(true); //设置DOM Storage缓存
+
+        if (downloadUrl.endsWith("ppt") || downloadUrl.endsWith("pptx")
+                || downloadUrl.endsWith("PPT") || downloadUrl.endsWith("PPTX")) {
+            setting.setUseWideViewPort(true);   //设定支持viewport
+            setting.setLoadWithOverviewMode(true);
+        } else {
+            webView.setInitialScale(150);
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             setting.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         }
 
-        setting.setBuiltInZoomControls(false);
+        setting.setBuiltInZoomControls(true);
         setting.setDisplayZoomControls(false);// 显示放大缩小按钮
-        setting.setSupportZoom(false);   //设定支持缩放
+        setting.setSupportZoom(true);   //设定支持缩放
 
         webView.loadUrl(previewUrl);
     }
 
-    private void initData() {
+    @Override
+    protected void initData() {
         if (!NetUtils.isConnected(this)) {
             T.showShort(this, "无法连接到网络，请检查您的网络设置");
             hideLoadingDialog();
@@ -220,6 +245,10 @@ public class ResReviewActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
+        if (isLandscape) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            return;
+        }
         if (webView.canGoBack()) {
             webView.goBack();
         } else {
@@ -229,6 +258,8 @@ public class ResReviewActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
+        webView.destroy();
+        webView = null;
         super.onDestroy();
     }
 
@@ -239,6 +270,7 @@ public class ResReviewActivity extends BaseActivity {
 
     @OnClick(R.id.header_ll_right)
     void onClickShare() {
+        // setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         showPopViewShare();
     }
 
@@ -436,7 +468,6 @@ public class ResReviewActivity extends BaseActivity {
                     @Override
                     public void onNext(@NonNull ArticleInfo articleInfo) {
                         hideLoadingDialog();
-                        llBottomBar.setVisibility(View.VISIBLE);
                         tvAgreeNumber.setText(articleInfo.getAgreeNumber());
                         tvCommentNumber.setText(articleInfo.getCommentNumber());
                         tvReadNumber.setText(articleInfo.getReadNumber() + "次阅读");
@@ -530,4 +561,45 @@ public class ResReviewActivity extends BaseActivity {
 
     }
 
+    private boolean isLandscape = false;    // 是否横屏
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            // T.showShort(this, "横屏");
+            toolbar.setVisibility(View.GONE);
+            llBottomBar.setVisibility(View.GONE);
+            isLandscape = true;
+            ScreenUtils.setFullScreen(this);    // 进入全屏
+            StatusBarUtil.setColor(this, ContextCompat.getColor(this, R.color.transparent), 0);
+            landscapeShowDoc();
+        } else {
+            // T.showShort(this, "竖屏");
+            toolbar.setVisibility(View.VISIBLE);
+            llBottomBar.setVisibility(View.VISIBLE);
+            isLandscape = false;
+            ScreenUtils.quitFullScreen(this);   // 退出全屏
+            StatusBarUtil.setColor(this, ContextCompat.getColor(this, R.color.colorPrimary), 0);
+            portraitShowDoc();
+        }
+    }
+
+    public void portraitShowDoc() {
+        if (downloadUrl.endsWith("ppt") || downloadUrl.endsWith("pptx")
+                || downloadUrl.endsWith("PPT") || downloadUrl.endsWith("PPTX")) {
+            return;
+        } else {
+            webView.setInitialScale(150);
+        }
+    }
+
+    public void landscapeShowDoc() {
+        if (downloadUrl.endsWith("ppt") || downloadUrl.endsWith("pptx")
+                || downloadUrl.endsWith("PPT") || downloadUrl.endsWith("PPTX")) {
+            return;
+        } else {
+            webView.setInitialScale(250);
+        }
+    }
 }

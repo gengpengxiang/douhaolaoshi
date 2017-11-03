@@ -63,13 +63,16 @@ public class ThanksNotifiActivity extends BaseActivity {
         initData();
     }
 
-    private void initToolBar() {
+    @Override
+    protected void initToolBar() {
+        super.initToolBar();
         imgBack.setVisibility(View.VISIBLE);
         tvTitle.setVisibility(View.VISIBLE);
         tvTitle.setText("通知");
     }
 
-    private void initView() {
+    @Override
+    protected void initView() {
         teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
         // 初始化下拉刷新控件
         mRecyclerView.setHasFixedSize(true);
@@ -108,7 +111,8 @@ public class ThanksNotifiActivity extends BaseActivity {
         });
     }
 
-    private void initData() {
+    @Override
+    protected void initData() {
         MyClassAllNewsAsyncTask task3 = new MyClassAllNewsAsyncTask();
         task3.execute(teacherPhoneNumber, String.valueOf(currentPage));
     }

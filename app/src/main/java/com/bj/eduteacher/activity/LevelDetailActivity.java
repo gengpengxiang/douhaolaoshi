@@ -49,16 +49,20 @@ public class LevelDetailActivity extends BaseActivity {
         initData();
     }
 
-    private void initToolBar() {
+    @Override
+    protected void initToolBar() {
+        super.initToolBar();
         ivBack.setVisibility(View.VISIBLE);
         tvTitle.setVisibility(View.VISIBLE);
         tvTitle.setText("等级说明");
     }
 
-    private void initView() {
+    @Override
+    protected void initView() {
     }
 
-    private void initData() {
+    @Override
+    protected void initData() {
         String levelPath = HttpUtilService.BASE_RESOURCE_URL + "levelpicture/levelSchool001.jpg";
         ivLevelDetail.setCriticalScaleValueHook(new LargeImageView.CriticalScaleValueHook() {
 

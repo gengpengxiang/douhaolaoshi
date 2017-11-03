@@ -120,13 +120,16 @@ public class LiveAllActivity extends BaseActivity {
         checkLiveException();
     }
 
-    private void initToolBar() {
+    @Override
+    protected void initToolBar() {
+        super.initToolBar();
         imgBack.setVisibility(View.VISIBLE);
         tvTitle.setVisibility(View.VISIBLE);
         tvTitle.setText("全部直播");
     }
 
-    private void initView() {
+    @Override
+    protected void initView() {
         // 初始化下拉刷新控件
         mRecyclerView.setHasFixedSize(true);
         // look as listview
@@ -219,7 +222,8 @@ public class LiveAllActivity extends BaseActivity {
         }
     }
 
-    private void initData() {
+    @Override
+    protected void initData() {
         teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
         String sxbPermissions = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_SXB_PERMISSIONS, "0");
         if ("1".equals(sxbPermissions)) {

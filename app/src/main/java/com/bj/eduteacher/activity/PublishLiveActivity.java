@@ -83,6 +83,7 @@ public class PublishLiveActivity extends BaseActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_live_publish);
         mPublishLivePresenter = new UploadHelper(this, this);
+        initToolBar();
         initView();
 
         initPhotoDialog();
@@ -94,7 +95,13 @@ public class PublishLiveActivity extends BaseActivity implements View.OnClickLis
         checkPublishPermission();
     }
 
-    private void initView() {
+    @Override
+    protected void initToolBar() {
+        super.initToolBar();
+    }
+
+    @Override
+    protected void initView() {
         sxbTitle = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_SXB_Title, "");
         sxbPicture = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_SXB_Picture, "");
 

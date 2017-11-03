@@ -68,7 +68,7 @@ public class RankListActivity extends BaseActivity {
         // 初始化页面
         initToolBar();
         initView();
-        initDatas();
+        initData();
     }
 
     @Override
@@ -83,7 +83,9 @@ public class RankListActivity extends BaseActivity {
         MobclickAgent.onPause(this);
     }
 
-    private void initToolBar() {
+    @Override
+    protected void initToolBar() {
+        super.initToolBar();
         tvTitle.setVisibility(View.VISIBLE);
         tvTitle.setText("全校活力榜");
         imgBack.setVisibility(View.VISIBLE);
@@ -110,7 +112,8 @@ public class RankListActivity extends BaseActivity {
         actionBackClick();
     }
 
-    private void initView() {
+    @Override
+    protected void initView() {
         mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -136,7 +139,8 @@ public class RankListActivity extends BaseActivity {
 //        linearLayout.setDividerPadding(DensityUtils.dp2px(this, 10));
     }
 
-    private void initDatas() {
+    @Override
+    protected void initData() {
         schoolID = PreferencesUtils.getString(this, MLProperties.BUNDLE_KEY_SCHOOL_CODE, "");
         LL.i("schoolID: " + schoolID);
         MyClassCommendTypeAsyncTask task = new MyClassCommendTypeAsyncTask();

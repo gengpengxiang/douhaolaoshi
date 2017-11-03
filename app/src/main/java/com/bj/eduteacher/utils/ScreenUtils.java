@@ -3,11 +3,16 @@ package com.bj.eduteacher.utils;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Point;
 import android.graphics.Rect;
+import android.os.Build;
 import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.View;
@@ -49,6 +54,36 @@ public class ScreenUtils {
         DisplayMetrics outMetrics = new DisplayMetrics();
         wm.getDefaultDisplay().getMetrics(outMetrics);
         return outMetrics.heightPixels;
+    }
+
+    /**
+     * 获取屏幕最小宽度
+     *
+     * @param context
+     * @return result >= 600认为是pad，result < 600 认为是phone
+     */
+    public static int getSmallestScreenWidth(Context context) {
+        return context.getResources().getConfiguration().smallestScreenWidthDp;
+    }
+
+    /**
+     * 判断是否Pad
+     *
+     * @param context
+     * @return
+     */
+    public static boolean isPadDevice(Context context) {
+        return context.getResources().getConfiguration().smallestScreenWidthDp >= 600;
+    }
+
+    /**
+     * 判断是否平板设备
+     *
+     * @param context
+     * @return true:平板,false:手机
+     */
+    public static boolean isTabletDevice(Context context) {
+        return (context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE;
     }
 
     /**
@@ -176,6 +211,7 @@ public class ScreenUtils {
      * @param activity
      * @return
      */
+    @Deprecated
     @SuppressLint("NewApi")
     public static boolean checkDeviceHasNavigationBar(Activity activity) {
 
@@ -185,10 +221,52 @@ public class ScreenUtils {
 
         // 做任何你需要做的,这个设备有一个导航栏
         if (!hasMenuKey && !hasBackKey) {
-
             return true;
         }
         return false;
+    }
+
+    /**
+     * 检查设备是否包含导航键
+     *
+     * @param activity
+     * @return
+     */
+    public static boolean isNavigationBarShow(Activity activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            Display display = activity.getWindowManager().getDefaultDisplay();
+            Point size = new Point();
+            Point realSize = new Point();
+            display.getSize(size);
+            display.getRealSize(realSize);
+            return realSize.y != size.y;
+        } else {
+            boolean menu = ViewConfiguration.get(activity).hasPermanentMenuKey();
+            boolean back = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK);
+            if (menu || back) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }
+
+    /**
+     * 获取状态栏高度
+     *
+     * @param activity
+     * @return
+     */
+    public static int getNavigationBarHeight(Activity activity) {
+        if (!isNavigationBarShow(activity)) {
+            return 0;
+        }
+        Resources resources = activity.getResources();
+        int resourceId = resources.getIdentifier("navigation_bar_height",
+                "dimen", "android");
+        //获取NavigationBar的高度
+        int height = resources.getDimensionPixelSize(resourceId);
+        return height;
     }
 
     /**

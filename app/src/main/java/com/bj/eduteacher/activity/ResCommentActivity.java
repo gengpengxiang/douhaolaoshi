@@ -77,7 +77,9 @@ public class ResCommentActivity extends BaseActivity {
         initData();
     }
 
-    private void initToolBar() {
+    @Override
+    protected void initToolBar() {
+        super.initToolBar();
         TextView tvTitle = (TextView) this.findViewById(R.id.header_tv_title);
         tvTitle.setVisibility(View.VISIBLE);
         tvTitle.setText("评论");
@@ -94,7 +96,8 @@ public class ResCommentActivity extends BaseActivity {
         imgBack.setVisibility(View.VISIBLE);
     }
 
-    private void initView() {
+    @Override
+    protected void initView() {
         mRecyclerView.setHasFixedSize(true);
         // look as listview
         layoutManager = new LinearLayoutManager(this);
@@ -129,7 +132,8 @@ public class ResCommentActivity extends BaseActivity {
         });
     }
 
-    private void initData() {
+    @Override
+    protected void initData() {
         userPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
         newsID = getIntent().getStringExtra(MLProperties.BUNDLE_KEY_DOUKE_ID);
 

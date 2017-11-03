@@ -170,9 +170,10 @@
             android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.ResReviewActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
             android:hardwareAccelerated="true"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="sensor"/>
         <activity
             android:name=".activity.PayProtocolActivity"
             android:launchMode="singleTop"

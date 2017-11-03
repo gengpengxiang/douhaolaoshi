@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fresco="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -18,7 +19,7 @@
         fresco:actualImageScaleType="focusCrop"
         fresco:placeholderImage="@drawable/shape_bg_zhuanjia"
         fresco:placeholderImageScaleType="focusCrop"
-        fresco:roundedCornerRadius="5dp" />
+        fresco:roundedCornerRadius="5dp"/>
 
     <TextView
         android:id="@+id/tv_authorName"
@@ -33,7 +34,7 @@
         android:minLines="2"
         android:textColor="#4A4A4A"
         android:textSize="12sp"
-        tools:text="北大教学课件北大教学课件北大教学课件" />
+        tools:text="北大教学课件北大教学课件北大教学课件"/>
 
     <TextView
         android:id="@+id/tv_price"
@@ -47,5 +48,5 @@
         android:singleLine="true"
         android:textColor="#FE5433"
         android:textSize="14sp"
-        tools:text="免费" />
+        tools:text="免费"/>
 </RelativeLayout>

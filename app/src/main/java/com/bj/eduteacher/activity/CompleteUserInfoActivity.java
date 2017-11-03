@@ -101,12 +101,34 @@ public class CompleteUserInfoActivity extends BaseActivity implements LoginView 
         ButterKnife.bind(this);
         sxbLoginHelper = new LoginHelper(this, this);
 
-        initToolbar();
-        intiView();
+        initToolBar();
+        initView();
         initData();
     }
 
-    private void initData() {
+    @Override
+    protected void initToolBar() {
+        super.initToolBar();
+        loginSuccAction = getIntent().getExtras().getString("LoginSuccAction", "0");
+        ivBack.setVisibility(View.VISIBLE);
+        tvTitle.setVisibility(View.VISIBLE);
+        tvTitle.setText("完善个人资料");
+    }
+
+    @Override
+    protected void initView() {
+        edtNickname.setFilters(new InputFilter[]{emojiFilter, specialCharFilter, new InputFilter.LengthFilter(8)});
+        edtNickname.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                changeScrollView();
+                return false;
+            }
+        });
+    }
+
+    @Override
+    protected void initData() {
         mService = new LmsDataService();
         sxbStatus = getIntent().getStringExtra("SxbStatus");
         userPhotoPath = PreferencesUtils.getString(this, MLProperties.BUNDLE_KEY_TEACHER_IMG, "");
@@ -121,24 +143,6 @@ public class CompleteUserInfoActivity extends BaseActivity implements LoginView 
         if (!StringUtils.isEmpty(userNickName)) {
             edtNickname.setText(userNickName);
         }
-    }
-
-    private void initToolbar() {
-        loginSuccAction = getIntent().getExtras().getString("LoginSuccAction", "0");
-        ivBack.setVisibility(View.VISIBLE);
-        tvTitle.setVisibility(View.VISIBLE);
-        tvTitle.setText("完善个人资料");
-    }
-
-    private void intiView() {
-        edtNickname.setFilters(new InputFilter[]{emojiFilter, specialCharFilter, new InputFilter.LengthFilter(8)});
-        edtNickname.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                changeScrollView();
-                return false;
-            }
-        });
     }
 
     /**

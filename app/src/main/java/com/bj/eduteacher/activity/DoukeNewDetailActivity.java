@@ -96,14 +96,17 @@ public class DoukeNewDetailActivity extends BaseActivity {
         initView();
     }
 
-    private void initToolBar() {
+    @Override
+    protected void initToolBar() {
+        super.initToolBar();
         title = getIntent().getExtras().getString("Title", "");
         doukeID = getIntent().getExtras().getString("ID", "");
 
         tvTitle.setText(title);
     }
 
-    private void initView() {
+    @Override
+    protected void initView() {
         // mXRefreshView.setBackgroundResource(R.color.bg_gray);
         mRecyclerView.setBackground(null);
 
@@ -172,7 +175,8 @@ public class DoukeNewDetailActivity extends BaseActivity {
         });
     }
 
-    private void initData() {
+    @Override
+    protected void initData() {
         teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
 
         currentPage = 1;

@@ -36,6 +36,7 @@ import com.bj.eduteacher.manager.ShareHelp;
 import com.bj.eduteacher.utils.LL;
 import com.bj.eduteacher.utils.NetUtils;
 import com.bj.eduteacher.utils.PreferencesUtils;
+import com.bj.eduteacher.utils.ScreenUtils;
 import com.bj.eduteacher.utils.StringUtils;
 import com.bj.eduteacher.utils.T;
 import com.bj.eduteacher.view.FullyLinearLayoutManager;
@@ -120,15 +121,23 @@ public class CourseDetailActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course_detail);
         ButterKnife.bind(this);
-        api = WXAPIFactory.createWXAPI(this, MLProperties.APP_DOUHAO_TEACHER_ID);
+        init();
 
-        initStatus();
-        initToolbar();
+        initToolBar();
         initView();
         initData();
     }
 
-    private void initToolbar() {
+    private void init() {
+        api = WXAPIFactory.createWXAPI(this, MLProperties.APP_DOUHAO_TEACHER_ID);
+        ViewGroup.LayoutParams lp = rlZoomView.getLayoutParams();
+        lp.height = (int) (ScreenUtils.getScreenWidth(this) / 2.08f);
+        rlZoomView.setLayoutParams(lp);
+    }
+
+    @Override
+    protected void initToolBar() {
+        super.initToolBar();
         Bundle args = getIntent().getExtras();
         courseID = args.getString("CourseID", "");
         coursePicture = args.getString("CoursePicture", "");
@@ -142,7 +151,8 @@ public class CourseDetailActivity extends BaseActivity {
         courseShuoming = args.getString("CourseShuoming", "");
     }
 
-    private void initView() {
+    @Override
+    protected void initView() {
         mRecyclerView.setHasFixedSize(true);
         // look as listview
         FullyLinearLayoutManager layoutManager = new FullyLinearLayoutManager(CourseDetailActivity.this);
@@ -243,7 +253,8 @@ public class CourseDetailActivity extends BaseActivity {
     /**
      * 初始化状态栏位置
      */
-    private void initStatus() {
+    @Override
+    protected void initStatus() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {//4.4以下不支持状态栏变色
             //注意了，这里使用了第三方库 StatusBarUtil，目的是改变状态栏的alpha
             StatusBarUtil.setTransparentForImageView(CourseDetailActivity.this, null);
@@ -254,6 +265,14 @@ public class CourseDetailActivity extends BaseActivity {
             RelativeLayout.LayoutParams lp1 = (RelativeLayout.LayoutParams) rlTitleLayout.getLayoutParams();
             lp1.topMargin = statusBarHeight;
             rlTitleLayout.setLayoutParams(lp1);
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            // getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimary));
+            // 如果存在虚拟按键，则设置虚拟按键的背景色
+            if (ScreenUtils.isNavigationBarShow(this)) {
+                getWindow().setNavigationBarColor(ContextCompat.getColor(this, android.R.color.black));
+            }
         }
     }
 
@@ -270,7 +289,8 @@ public class CourseDetailActivity extends BaseActivity {
         return context.getResources().getDimensionPixelSize(resourceId);
     }
 
-    private void initData() {
+    @Override
+    protected void initData() {
         teacherPhoneNumber = PreferencesUtils.getString(CourseDetailActivity.this, MLProperties.PREFER_KEY_USER_ID, "");
 
         mDataList.clear();

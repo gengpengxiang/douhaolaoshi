@@ -70,19 +70,22 @@ public class AnnualCaseAllActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_annual_case_all);
         ButterKnife.bind(this);
-
+        initStatus();
         // 初始化页面
         initToolBar();
         initView();
-        initDatas();
+        initData();
     }
 
-    private void initToolBar() {
+    @Override
+    protected void initToolBar() {
+        super.initToolBar();
         tvTitle.setText("案例评审");
         huodongID = getIntent().getStringExtra("huodongID");
     }
 
-    private void initView() {
+    @Override
+    protected void initView() {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new SaveGridLayoutManager(this, 3));
         mAdapter = new AnnualCaseAllAdapter(mDataList);
@@ -132,7 +135,8 @@ public class AnnualCaseAllActivity extends BaseActivity {
         ivCaseBanner = (SimpleDraweeView) headerView.findViewById(R.id.iv_zhengshu);
     }
 
-    private void initDatas() {
+    @Override
+    protected void initData() {
         teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
 
         currentPage = 1;
