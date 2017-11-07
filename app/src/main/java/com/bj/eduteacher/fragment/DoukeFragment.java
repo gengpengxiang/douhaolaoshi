@@ -582,16 +582,25 @@ public class DoukeFragment extends BaseFragment {
         Observable<List<ArticleInfo>> observable1 = Observable.create(new ObservableOnSubscribe<List<ArticleInfo>>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<ArticleInfo>> e) throws Exception {
-                List<ArticleInfo> dataList = mService.getMasterCardsFromAPI(currentPage, 5);
-                if (dataList.size() >= 5) {
-                    ArticleInfo articleInfo = mService.getMasterCountFromAPI();
-                    int count = Integer.parseInt(articleInfo.getReplyCount());
-                    if (count > 5) {    // 超过5位专家，显示查看全部
-                        dataList.add(new ArticleInfo("查看全部" + count + "位专家", ArticleInfo.SHOW_TYPE_ZHUANJIA_ALL));
+                try {
+                    List<ArticleInfo> dataList = mService.getMasterCardsFromAPI(currentPage, 5);
+                    if (dataList.size() >= 5) {
+                        ArticleInfo articleInfo = mService.getMasterCountFromAPI();
+                        int count = Integer.parseInt(articleInfo.getReplyCount());
+                        if (count > 5) {    // 超过5位专家，显示查看全部
+                            dataList.add(new ArticleInfo("查看全部" + count + "位专家", ArticleInfo.SHOW_TYPE_ZHUANJIA_ALL));
+                        }
+                    }
+                    if (!e.isDisposed()) {
+                        e.onNext(dataList);
+                        e.onComplete();
+                    }
+                } catch (InterruptedException ex) {
+                    if (!e.isDisposed()) {
+                        e.onError(ex);
+                        return;
                     }
                 }
-                e.onNext(dataList);
-                e.onComplete();
             }
         }).subscribeOn(Schedulers.io());
 
@@ -599,9 +608,18 @@ public class DoukeFragment extends BaseFragment {
         Observable<List<ArticleInfo>> observable2 = Observable.create(new ObservableOnSubscribe<List<ArticleInfo>>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<ArticleInfo>> e) throws Exception {
-                List<ArticleInfo> dataList = mService.getDouKeListFromAPI(currentPage);
-                e.onNext(dataList);
-                e.onComplete();
+                try {
+                    List<ArticleInfo> dataList = mService.getDouKeListFromAPI(currentPage);
+                    if (!e.isDisposed()) {
+                        e.onNext(dataList);
+                        e.onComplete();
+                    }
+                } catch (InterruptedException ex) {
+                    if (!e.isDisposed()) {
+                        e.onError(ex);
+                        return;
+                    }
+                }
             }
         }).subscribeOn(Schedulers.io());
 
@@ -609,10 +627,18 @@ public class DoukeFragment extends BaseFragment {
         Observable<List<ArticleInfo>> observable3 = Observable.create(new ObservableOnSubscribe<List<ArticleInfo>>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<ArticleInfo>> e) throws Exception {
-                // SystemClock.sleep(1000);
-                List<ArticleInfo> dataList = mService.getMasterRikeFromAPI(teacherPhoneNumber, resPageSize);
-                e.onNext(dataList);
-                e.onComplete();
+                try {
+                    List<ArticleInfo> dataList = mService.getMasterRikeFromAPI(teacherPhoneNumber, resPageSize);
+                    if (!e.isDisposed()) {
+                        e.onNext(dataList);
+                        e.onComplete();
+                    }
+                } catch (InterruptedException ex) {
+                    if (!e.isDisposed()) {
+                        e.onError(ex);
+                        return;
+                    }
+                }
             }
         }).subscribeOn(Schedulers.io());
 
@@ -620,10 +646,18 @@ public class DoukeFragment extends BaseFragment {
         Observable<List<ArticleInfo>> observable4 = Observable.create(new ObservableOnSubscribe<List<ArticleInfo>>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<ArticleInfo>> e) throws Exception {
-                // SystemClock.sleep(1000);
-                List<ArticleInfo> dataList = mService.getHomePageLatestRes(teacherPhoneNumber);
-                e.onNext(dataList);
-                e.onComplete();
+                try {
+                    List<ArticleInfo> dataList = mService.getHomePageLatestRes(teacherPhoneNumber);
+                    if (!e.isDisposed()) {
+                        e.onNext(dataList);
+                        e.onComplete();
+                    }
+                } catch (InterruptedException ex) {
+                    if (!e.isDisposed()) {
+                        e.onError(ex);
+                        return;
+                    }
+                }
             }
         }).subscribeOn(Schedulers.io());
 
@@ -631,16 +665,25 @@ public class DoukeFragment extends BaseFragment {
         Observable<List<ArticleInfo>> observable5 = Observable.create(new ObservableOnSubscribe<List<ArticleInfo>>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<ArticleInfo>> e) throws Exception {
-                List<ArticleInfo> dataList = mService.getFamousTeacherCardsFromAPI(currentPage, teaPageSize);
-                if (dataList.size() >= teaPageSize) {
-                    ArticleInfo articleInfo = mService.getFamousTeacherCountFromAPI();
-                    int count = Integer.parseInt(articleInfo.getReplyCount());
-                    if (count > teaPageSize) {    // 超过8位名师，显示查看全部
-                        dataList.add(new ArticleInfo("查看全部" + count + "位名师", ArticleInfo.SHOW_TYPE_ZHUANJIA_ALL));
+                try {
+                    List<ArticleInfo> dataList = mService.getFamousTeacherCardsFromAPI(currentPage, teaPageSize);
+                    if (dataList.size() >= teaPageSize) {
+                        ArticleInfo articleInfo = mService.getFamousTeacherCountFromAPI();
+                        int count = Integer.parseInt(articleInfo.getReplyCount());
+                        if (count > teaPageSize) {    // 超过8位名师，显示查看全部
+                            dataList.add(new ArticleInfo("查看全部" + count + "位名师", ArticleInfo.SHOW_TYPE_ZHUANJIA_ALL));
+                        }
+                    }
+                    if (!e.isDisposed()) {
+                        e.onNext(dataList);
+                        e.onComplete();
+                    }
+                } catch (InterruptedException ex) {
+                    if (!e.isDisposed()) {
+                        e.onError(ex);
+                        return;
                     }
                 }
-                e.onNext(dataList);
-                e.onComplete();
             }
         }).subscribeOn(Schedulers.io());
 
@@ -648,10 +691,18 @@ public class DoukeFragment extends BaseFragment {
         Observable<List<ArticleInfo>> observable6 = Observable.create(new ObservableOnSubscribe<List<ArticleInfo>>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<ArticleInfo>> e) throws Exception {
-                // SystemClock.sleep(1000);
-                List<ArticleInfo> dataList = mService.getHomePageCourseList(teacherPhoneNumber);
-                e.onNext(dataList);
-                e.onComplete();
+                try {
+                    List<ArticleInfo> dataList = mService.getHomePageCourseList(teacherPhoneNumber);
+                    if (!e.isDisposed()) {
+                        e.onNext(dataList);
+                        e.onComplete();
+                    }
+                } catch (InterruptedException ex) {
+                    if (!e.isDisposed()) {
+                        e.onError(ex);
+                        return;
+                    }
+                }
             }
         }).subscribeOn(Schedulers.io());
 
@@ -659,9 +710,18 @@ public class DoukeFragment extends BaseFragment {
         Observable<List<ArticleInfo>> observable7 = Observable.create(new ObservableOnSubscribe<List<ArticleInfo>>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<ArticleInfo>> e) throws Exception {
-                List<ArticleInfo> liveList = mService.getLiveListFromAPI(teacherPhoneNumber, "1", 2, 0);
-                e.onNext(liveList);
-                e.onComplete();
+                try {
+                    List<ArticleInfo> liveList = mService.getLiveListFromAPI(teacherPhoneNumber, "1", 2, 0);
+                    if (!e.isDisposed()) {
+                        e.onNext(liveList);
+                        e.onComplete();
+                    }
+                } catch (InterruptedException ex) {
+                    if (!e.isDisposed()) {
+                        e.onError(ex);
+                        return;
+                    }
+                }
             }
         }).subscribeOn(Schedulers.io());
 
@@ -825,10 +885,19 @@ public class DoukeFragment extends BaseFragment {
         Observable.create(new ObservableOnSubscribe<List<ArticleInfo>>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<ArticleInfo>> e) throws Exception {
-                LmsDataService dataService = new LmsDataService();
-                List<ArticleInfo> list = dataService.getBannerInfoFromAPI();
-                e.onNext(list);
-                e.onComplete();
+                try {
+                    LmsDataService dataService = new LmsDataService();
+                    List<ArticleInfo> list = dataService.getBannerInfoFromAPI();
+                    if (!e.isDisposed()) {
+                        e.onNext(list);
+                        e.onComplete();
+                    }
+                } catch (InterruptedException ex) {
+                    if (!e.isDisposed()) {
+                        e.onError(ex);
+                        return;
+                    }
+                }
             }
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -960,7 +1029,9 @@ public class DoukeFragment extends BaseFragment {
                                     LL.e(e);
                                     result = 0;
                                 }
-                                integer.onNext(result);
+                                if (!integer.isDisposed()) {
+                                    integer.onNext(result);
+                                }
                             }
                         }, 1, 5, TimeUnit.SECONDS);
                 disposables.add(disposable);
@@ -1130,7 +1201,9 @@ public class DoukeFragment extends BaseFragment {
             public void subscribe(@NonNull ObservableEmitter<OrderInfo> e) throws Exception {
                 LmsDataService mService = new LmsDataService();
                 OrderInfo info = mService.getTheOrderInfoFromAPI(masterresid, price, teacherPhoneNumber, payType);
-                e.onNext(info);
+                if (!e.isDisposed()) {
+                    e.onNext(info);
+                }
             }
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -1172,7 +1245,9 @@ public class DoukeFragment extends BaseFragment {
             public void subscribe(@NonNull ObservableEmitter<OrderInfo> e) throws Exception {
                 LmsDataService mService = new LmsDataService();
                 OrderInfo info = mService.getTheOrderInfoFromAPIForLive(masterresid, sxbroomuser, price, teacherPhoneNumber, payType);
-                e.onNext(info);
+                if (!e.isDisposed()) {
+                    e.onNext(info);
+                }
             }
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -1242,7 +1317,9 @@ public class DoukeFragment extends BaseFragment {
             public void subscribe(@NonNull ObservableEmitter<TradeInfo> e) throws Exception {
                 LmsDataService mService = new LmsDataService();
                 TradeInfo info = mService.getTheTradeInfoFromAPI(tradeID);
-                e.onNext(info);
+                if (!e.isDisposed()) {
+                    e.onNext(info);
+                }
             }
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

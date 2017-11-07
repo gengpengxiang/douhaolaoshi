@@ -30,6 +30,7 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
@@ -60,6 +61,8 @@ public class DoukeNewItemFragment extends LazyFragment {
     private int currNJOffset;
 
     private int columnNum;
+
+    private final CompositeDisposable disposables = new CompositeDisposable();
 
     @Override
     protected void onCreateViewLazy(Bundle savedInstanceState) {
@@ -122,57 +125,79 @@ public class DoukeNewItemFragment extends LazyFragment {
         mXRefreshView.startRefresh();
     }
 
+    @Override
+    protected void onPauseLazy() {
+        super.onPauseLazy();
+    }
+
+    @Override
+    public void onDestroy() {
+        LL.i("DoukeNewItemFragment.....onDestroy()");
+        disposables.clear();
+        super.onDestroy();
+    }
+
     private void getDoukeRefreshList() {
         Observable.create(new ObservableOnSubscribe<List<ArticleInfo>>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<ArticleInfo>> e) throws Exception {
-                LmsDataService mService = new LmsDataService();
-                List<ArticleInfo> dataList = new ArrayList<>();
-                int pageSize = PAGE_SIZE;
-                for (int i = 0; i < NJARRAY.length; i++) {
-                    // 记录当前加载到几年级了
-                    currNianjiPosition = i;
-                    List<ArticleInfo> njList = mService.getNewDoukeListFromAPI(xuekeName, NJARRAY[i], 0, pageSize);
-                    if (njList.size() > 0) {
-                        dataList.add(new ArticleInfo(NJARRAY[i], ArticleInfo.SHOW_TYPE_DECORATION));
-                        dataList.addAll(njList);
-                        pageSize -= njList.size();
-                    }
-                    if (pageSize > 0) {
-                        // 如果下一个年级的数量小于3，则补齐一行
-                        if (pageSize < columnNum) {
-                            pageSize = columnNum;
-                        } else {
-                            int last = pageSize % columnNum;
-                            if (last > 0) {
-                                pageSize = pageSize + (columnNum - last);
+                try {
+
+                    LmsDataService mService = new LmsDataService();
+                    List<ArticleInfo> dataList = new ArrayList<>();
+                    int pageSize = PAGE_SIZE;
+                    for (int i = 0; i < NJARRAY.length; i++) {
+                        // 记录当前加载到几年级了
+                        currNianjiPosition = i;
+                        List<ArticleInfo> njList = mService.getNewDoukeListFromAPI(xuekeName, NJARRAY[i], 0, pageSize);
+                        if (njList.size() > 0) {
+                            dataList.add(new ArticleInfo(NJARRAY[i], ArticleInfo.SHOW_TYPE_DECORATION));
+                            dataList.addAll(njList);
+                            pageSize -= njList.size();
+                        }
+                        if (pageSize > 0) {
+                            // 如果下一个年级的数量小于3，则补齐一行
+                            if (pageSize < columnNum) {
+                                pageSize = columnNum;
+                            } else {
+                                int last = pageSize % columnNum;
+                                if (last > 0) {
+                                    pageSize = pageSize + (columnNum - last);
+                                }
                             }
+                            if (i == NJARRAY.length - 1) {
+                                currNJOffset = njList.size();
+                            }
+                            LL.i("HTTP", "当前年级：" + currNianjiPosition + ":" + NJARRAY[currNianjiPosition] + " -- 当前年级的偏移量：" + currNJOffset);
+                            continue;
+                        } else {
+                            // 如果最后不满一行3个的话就去掉最后一行
+                            int reduceNum = njList.size() % columnNum;
+                            if (reduceNum > 0) {
+                                dataList = dataList.subList(0, dataList.size() - reduceNum);
+                            }
+                            // 刷新页面，当最后跳出循环时，记录当前年级的偏移量（刷新页面的时候每个年级肯定只加载第一页的数据）
+                            currNJOffset = njList.size() - reduceNum;
+                            LL.i("HTTP", "当前年级：" + currNianjiPosition + ":" + NJARRAY[currNianjiPosition] + " -- 当前年级的偏移量：" + currNJOffset);
+                            break;
                         }
-                        if (i == NJARRAY.length - 1) {
-                            currNJOffset = njList.size();
-                        }
-                        LL.i("HTTP", "当前年级：" + currNianjiPosition + ":" + NJARRAY[currNianjiPosition] + " -- 当前年级的偏移量：" + currNJOffset);
-                        continue;
-                    } else {
-                        // 如果最后不满一行3个的话就去掉最后一行
-                        int reduceNum = njList.size() % columnNum;
-                        if (reduceNum > 0) {
-                            dataList = dataList.subList(0, dataList.size() - reduceNum);
-                        }
-                        // 刷新页面，当最后跳出循环时，记录当前年级的偏移量（刷新页面的时候每个年级肯定只加载第一页的数据）
-                        currNJOffset = njList.size() - reduceNum;
-                        LL.i("HTTP", "当前年级：" + currNianjiPosition + ":" + NJARRAY[currNianjiPosition] + " -- 当前年级的偏移量：" + currNJOffset);
-                        break;
+                    }
+                    if (!e.isDisposed()) {
+                        e.onNext(dataList);
+                        e.onComplete();
+                    }
+                } catch (InterruptedException ex) {
+                    if (!e.isDisposed()) {
+                        e.onError(ex);
+                        return;
                     }
                 }
-                e.onNext(dataList);
-                e.onComplete();
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<List<ArticleInfo>>() {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {
-
+                        disposables.add(d);
                     }
 
                     @Override
@@ -184,7 +209,9 @@ public class DoukeNewItemFragment extends LazyFragment {
                     public void onError(@NonNull Throwable e) {
                         LL.e(e);
                         cleanXRefreshView();
-                        T.showShort(getActivity(), "服务器开小差了，请重试");
+                        if (getActivity() != null) {
+                            T.showShort(getActivity(), "服务器开小差了，请重试");
+                        }
                     }
 
                     @Override
@@ -238,62 +265,70 @@ public class DoukeNewItemFragment extends LazyFragment {
         Observable.create(new ObservableOnSubscribe<List<ArticleInfo>>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<ArticleInfo>> e) throws Exception {
-                LmsDataService mService = new LmsDataService();
-                List<ArticleInfo> dataList = new ArrayList<>();
-                int pageSize = PAGE_SIZE;
-                for (int i = currNianjiPosition; i < NJARRAY.length; i++) {
-                    // 记录当前加载到几年级了
-                    List<ArticleInfo> njList = mService.getNewDoukeListFromAPI(xuekeName, NJARRAY[i], currNJOffset, pageSize);
+                try {
+                    LmsDataService mService = new LmsDataService();
+                    List<ArticleInfo> dataList = new ArrayList<>();
+                    int pageSize = PAGE_SIZE;
+                    for (int i = currNianjiPosition; i < NJARRAY.length; i++) {
+                        // 记录当前加载到几年级了
+                        List<ArticleInfo> njList = mService.getNewDoukeListFromAPI(xuekeName, NJARRAY[i], currNJOffset, pageSize);
 
-                    if (njList.size() > 0) {
-                        if (currNJOffset == 0) {
-                            dataList.add(new ArticleInfo(NJARRAY[i], ArticleInfo.SHOW_TYPE_DECORATION));
-                        }
-                        dataList.addAll(njList);
-                        pageSize -= njList.size();
-                    }
-                    // 保存当前年级
-                    currNianjiPosition = i;
-
-                    if (pageSize > 0) {
-                        // 如果下一个年级的数量小于3，则补齐一行
-                        if (pageSize < columnNum) {
-                            pageSize = columnNum;
-                        } else {
-                            int last = pageSize % columnNum;
-                            if (last > 0) {
-                                pageSize = pageSize + (columnNum - last);
+                        if (njList.size() > 0) {
+                            if (currNJOffset == 0) {
+                                dataList.add(new ArticleInfo(NJARRAY[i], ArticleInfo.SHOW_TYPE_DECORATION));
                             }
+                            dataList.addAll(njList);
+                            pageSize -= njList.size();
                         }
-                        if (i != NJARRAY.length - 1) {
-                            // 要进入下一个年级，offset置为0
-                            currNJOffset = 0;
+                        // 保存当前年级
+                        currNianjiPosition = i;
+
+                        if (pageSize > 0) {
+                            // 如果下一个年级的数量小于3，则补齐一行
+                            if (pageSize < columnNum) {
+                                pageSize = columnNum;
+                            } else {
+                                int last = pageSize % columnNum;
+                                if (last > 0) {
+                                    pageSize = pageSize + (columnNum - last);
+                                }
+                            }
+                            if (i != NJARRAY.length - 1) {
+                                // 要进入下一个年级，offset置为0
+                                currNJOffset = 0;
+                            } else {
+                                currNJOffset = currNJOffset + njList.size();
+                            }
+                            LL.i("HTTP", "当前年级：" + currNianjiPosition + ":" + NJARRAY[currNianjiPosition] + " -- 当前年级的偏移量：" + currNJOffset);
+                            continue;
                         } else {
-                            currNJOffset = currNJOffset + njList.size();
+                            // 如果最后不满一行  个的话就去掉最后一行
+                            int reduceNum = njList.size() % columnNum;
+                            if (reduceNum > 0) {
+                                dataList = dataList.subList(0, dataList.size() - reduceNum);
+                            }
+                            // 当最后跳出循环时，记录当前年级的偏移量
+                            currNJOffset = currNJOffset + (njList.size() - reduceNum);
+                            LL.i("HTTP", "当前年级：" + currNianjiPosition + ":" + NJARRAY[currNianjiPosition] + " -- 当前年级的偏移量：" + currNJOffset);
+                            break;
                         }
-                        LL.i("HTTP", "当前年级：" + currNianjiPosition + ":" + NJARRAY[currNianjiPosition] + " -- 当前年级的偏移量：" + currNJOffset);
-                        continue;
-                    } else {
-                        // 如果最后不满一行  个的话就去掉最后一行
-                        int reduceNum = njList.size() % columnNum;
-                        if (reduceNum > 0) {
-                            dataList = dataList.subList(0, dataList.size() - reduceNum);
-                        }
-                        // 当最后跳出循环时，记录当前年级的偏移量
-                        currNJOffset = currNJOffset + (njList.size() - reduceNum);
-                        LL.i("HTTP", "当前年级：" + currNianjiPosition + ":" + NJARRAY[currNianjiPosition] + " -- 当前年级的偏移量：" + currNJOffset);
-                        break;
+                    }
+                    if (!e.isDisposed()) {
+                        e.onNext(dataList);
+                        e.onComplete();
+                    }
+                } catch (InterruptedException ex) {
+                    if (!e.isDisposed()) {
+                        e.onError(ex);
+                        return;
                     }
                 }
-
-                e.onNext(dataList);
-                e.onComplete();
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<List<ArticleInfo>>() {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {
-
+                        disposables.add(d);
                     }
 
                     @Override
@@ -305,7 +340,9 @@ public class DoukeNewItemFragment extends LazyFragment {
                     public void onError(@NonNull Throwable e) {
                         LL.e(e);
                         cleanXRefreshView();
-                        T.showShort(getActivity(), "服务器开小差了，请重试");
+                        if (getActivity() != null) {
+                            T.showShort(getActivity(), "服务器开小差了，请重试");
+                        }
                     }
 
                     @Override

@@ -34,6 +34,7 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
@@ -56,6 +57,8 @@ public class DoukeNewFragment extends BaseFragment {
 
     private List<String> mDataList = new ArrayList<>();
     private MyAdapter mAdapter;
+
+    private final CompositeDisposable disposables = new CompositeDisposable();
 
     @Nullable
     @Override
@@ -122,15 +125,17 @@ public class DoukeNewFragment extends BaseFragment {
             public void subscribe(@NonNull ObservableEmitter<List<String>> e) throws Exception {
                 LmsDataService service = new LmsDataService();
                 List<String> dataList = service.getNewDoukeXuekeFromAPI();
-                e.onNext(dataList);
-                e.onComplete();
+                if (!e.isDisposed()) {
+                    e.onNext(dataList);
+                    e.onComplete();
+                }
             }
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<List<String>>() {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {
-
+                        disposables.add(d);
                     }
 
                     @Override
@@ -175,7 +180,10 @@ public class DoukeNewFragment extends BaseFragment {
             textView.setText(dataList.get(position));
 
             int width = getTextWidth(textView);
-            int padding = DensityUtils.dp2px(getActivity(), 16);
+            int padding = 0;
+            if (getActivity() != null) {
+                padding = DensityUtils.dp2px(getActivity(), 16);
+            }
             //因为wrap的布局 字体大小变化会导致textView大小变化产生抖动，这里通过设置textView宽度就避免抖动现象
             //1.3f是根据上面字体大小变化的倍数1.3f设置
             textView.setWidth(width + padding * 2);
@@ -203,5 +211,11 @@ public class DoukeNewFragment extends BaseFragment {
             int width = bounds.left + bounds.width();
             return width;
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        disposables.clear();
     }
 }

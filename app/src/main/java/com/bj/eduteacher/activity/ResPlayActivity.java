@@ -189,6 +189,12 @@ public class ResPlayActivity extends BaseActivity {
         mSensorManager.unregisterListener(mSensorEventListener);
     }
 
+    @Override
+    protected void onDestroy() {
+        
+        super.onDestroy();
+    }
+
     private void getResPreviewNumber() {
         Observable.create(new ObservableOnSubscribe<String[]>() {
             @Override

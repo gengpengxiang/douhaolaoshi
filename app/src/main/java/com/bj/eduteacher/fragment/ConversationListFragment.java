@@ -135,7 +135,10 @@ public class ConversationListFragment extends EaseConversationListFragment {
             public void subscribe(@NonNull ObservableEmitter<List<EaseConversation>> e) throws Exception {
                 LmsDataService mService = new LmsDataService();
                 List<EaseConversation> dataList = mService.getConversationListFromAPI(userPhone, pageIndex);
-                e.onNext(dataList);
+                if (!e.isDisposed()) {
+                    e.onNext(dataList);
+                    e.onComplete();
+                }
             }
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

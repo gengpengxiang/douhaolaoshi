@@ -253,6 +253,7 @@ public class HomeFragment extends BaseFragment {
             @Override
             public void subscribe(@NonNull ObservableEmitter<AppVersionInfo> emitter) throws Exception {
                 if (emitter.isDisposed()) return;
+                if (getActivity() == null) emitter.onComplete();
                 AppVersionInfo info;
                 String versionName = AppUtils.getVersionName(getActivity());
                 String qudao = AppUtils.getMetaDataFromApplication(getActivity(), MLConfig.KEY_CHANNEL_NAME);
@@ -264,8 +265,10 @@ public class HomeFragment extends BaseFragment {
                     info = new AppVersionInfo();
                     info.setErrorCode("0");
                 }
-                emitter.onNext(info);
-                emitter.onComplete();
+                if (!emitter.isDisposed()) {
+                    emitter.onNext(info);
+                    emitter.onComplete();
+                }
             }
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -350,11 +353,13 @@ public class HomeFragment extends BaseFragment {
         Observable.create(new ObservableOnSubscribe<String>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<String> emitter) throws Exception {
-                if (emitter.isDisposed()) return;
+                if (emitter.isDisposed() || getActivity() == null) return;
                 String result;
                 result = mService.getCommendReasonFromAPI(teacherPhoneNumber);
                 PreferencesUtils.putString(getActivity(), "CommendReason", result);
-                emitter.onComplete();
+                if (!emitter.isDisposed()) {
+                    emitter.onComplete();
+                }
             }
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -385,10 +390,18 @@ public class HomeFragment extends BaseFragment {
         Observable.create(new ObservableOnSubscribe<List<ClassInfo>>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<ClassInfo>> emitter) throws Exception {
-                if (emitter.isDisposed()) return;
-                List<ClassInfo> resultList = mService.getTeacherLinksClassFromAPI(teacherPhoneNumber);
-                emitter.onNext(resultList);
-                emitter.onComplete();
+                try {
+                    List<ClassInfo> resultList = mService.getTeacherLinksClassFromAPI(teacherPhoneNumber);
+                    if (!emitter.isDisposed()) {
+                        emitter.onNext(resultList);
+                        emitter.onComplete();
+                    }
+                } catch (InterruptedException ex) {
+                    if (!emitter.isDisposed()) {
+                        emitter.onError(ex);
+                        return;
+                    }
+                }
             }
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -400,6 +413,7 @@ public class HomeFragment extends BaseFragment {
 
                     @Override
                     public void onNext(List<ClassInfo> classInfos) {
+                        if (getActivity() == null) return;
                         if (classInfos.size() != 0) {
                             PreferencesUtils.putString(getActivity(), MLProperties.BUNDLE_KEY_CLASS_LINKED, "1");
                             updatePage1(classInfos);
