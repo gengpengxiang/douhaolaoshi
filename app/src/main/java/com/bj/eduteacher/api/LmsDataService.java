@@ -16,7 +16,6 @@ import com.bj.eduteacher.entity.OrderInfo;
 import com.bj.eduteacher.entity.SubjectInfo;
 import com.bj.eduteacher.entity.TeacherInfo;
 import com.bj.eduteacher.entity.TradeInfo;
-import com.bj.eduteacher.utils.CharEncodeUtil;
 import com.bj.eduteacher.utils.LL;
 import com.bj.eduteacher.utils.StringUtils;
 import com.bj.eduteacher.zzeaseui.model.EaseConversation;
@@ -1766,12 +1765,12 @@ public class LmsDataService {
                         itemObj.optString("user_img", ""));
                 item.setCommCreateTime(itemObj.optString("createtime", ""));
 
-                // content = itemObj.optString("content", "");
-                // byte b[] = Base64.decode(content, Base64.DEFAULT);
-                // userReply = new String(b, "utf-8");
-                // item.setCommContent(userReply);
+                content = itemObj.optString("content", "");
+                byte b[] = Base64.decode(content, Base64.DEFAULT);
+                userReply = new String(b, "utf-8");
+                item.setCommContent(userReply);
 
-                item.setCommContent(CharEncodeUtil.getBase64DecodeContent(itemObj.optString("content", "")));
+                // item.setCommContent(CharEncodeUtil.getBase64DecodeContent(itemObj.optString("content", "")));
                 item.setCommCreatePhone(itemObj.optString("userphone", ""));
                 dataList.add(item);
 

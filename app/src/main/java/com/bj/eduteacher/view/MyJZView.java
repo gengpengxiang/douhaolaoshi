@@ -6,19 +6,19 @@ import android.view.View;
 
 import com.bj.eduteacher.R;
 
-import fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard;
+import cn.jzvd.JZVideoPlayerStandard;
 
 /**
  * Created by zz379 on 2017/8/31.
  */
 
-public class MyJCView extends JCVideoPlayerStandard {
+public class MyJZView extends JZVideoPlayerStandard {
 
-    public MyJCView(Context context) {
+    public MyJZView(Context context) {
         super(context);
     }
 
-    public MyJCView(Context context, AttributeSet attrs) {
+    public MyJZView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
@@ -41,7 +41,7 @@ public class MyJCView extends JCVideoPlayerStandard {
 
     @Override
     public int getLayoutId() {
-        return R.layout.layout_jc_standard_with_self;
+        return R.layout.layout_jz_standard_with_self;
     }
 
     @Override
@@ -54,7 +54,7 @@ public class MyJCView extends JCVideoPlayerStandard {
         super.setUp(url, screen, objects);
         backButton.setVisibility(View.VISIBLE);
     }
-    
+
     private BackListener backListener;
 
     public void setBackListener(BackListener backListener) {

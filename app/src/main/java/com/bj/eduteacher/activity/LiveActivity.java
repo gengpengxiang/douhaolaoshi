@@ -15,6 +15,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.RequiresApi;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Display;
@@ -56,6 +57,7 @@ import com.bj.eduteacher.tool.LogConstants;
 import com.bj.eduteacher.tool.SxbLog;
 import com.bj.eduteacher.tool.UIUtils;
 import com.bj.eduteacher.utils.PreferencesUtils;
+import com.bj.eduteacher.utils.ScreenUtils;
 import com.bj.eduteacher.utils.StringUtils;
 import com.bj.eduteacher.widget.HeartLayout;
 import com.bj.eduteacher.widget.dialog.InputTextMsgDialog;
@@ -165,7 +167,7 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
         checkPermission();
 
         mLiveHelper = new LiveHelper(this, this);
-
+        initStatus();
         initView();
         backGroundId = CurLiveInfo.getHostID();
         //进入房间流程
@@ -177,6 +179,16 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
         }
     }
 
+    @Override
+    protected void initStatus() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            // getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimary));
+            // 如果存在虚拟按键，则设置虚拟按键的背景色
+            if (ScreenUtils.isNavigationBarShow(this)) {
+                getWindow().setNavigationBarColor(ContextCompat.getColor(this, android.R.color.black));
+            }
+        }
+    }
 
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override

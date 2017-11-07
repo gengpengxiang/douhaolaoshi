@@ -3,7 +3,6 @@ package com.bj.eduteacher.activity;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -14,8 +13,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -43,6 +44,7 @@ import com.bj.eduteacher.utils.PreferencesUtils;
 import com.bj.eduteacher.utils.ScreenUtils;
 import com.bj.eduteacher.utils.StringUtils;
 import com.bj.eduteacher.utils.T;
+import com.bj.eduteacher.view.ResPreWebView;
 import com.bj.eduteacher.zzokhttp.OkHttpUtils;
 import com.bj.eduteacher.zzokhttp.callback.FileCallBack;
 import com.jaeger.library.StatusBarUtil;
@@ -86,7 +88,7 @@ public class ResReviewActivity extends BaseActivity {
     @BindView(R.id.tv_share)
     TextView tvShare;
     @BindView(R.id.web_content)
-    WebView webView;
+    ResPreWebView webView;
     @BindView(R.id.progress)
     ProgressBar progressBar;
     @BindView(R.id.tv_readNumber)
@@ -114,12 +116,16 @@ public class ResReviewActivity extends BaseActivity {
     private PopupWindow popShare;
     private WebSettings setting;
 
+    // 2.创建一个检测器
+    GestureDetector detector;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_res_review);
         ButterKnife.bind(this);
         service = new LmsDataService();
+        detector = new GestureDetector(this, gestureListener);
 
         initToolBar();
         initView();
@@ -148,7 +154,7 @@ public class ResReviewActivity extends BaseActivity {
     @Override
     protected void initView() {
         llBottomBar.setVisibility(View.VISIBLE);
-
+        webView.setClickable(false);
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
@@ -195,6 +201,13 @@ public class ResReviewActivity extends BaseActivity {
         setting.setSupportZoom(true);   //设定支持缩放
 
         webView.loadUrl(previewUrl);
+
+        webView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return detector.onTouchEvent(event);
+            }
+        });
     }
 
     @Override
@@ -245,10 +258,10 @@ public class ResReviewActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (isLandscape) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            return;
-        }
+//        if (isLandscape) {
+//            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+//            return;
+//        }
         if (webView.canGoBack()) {
             webView.goBack();
         } else {
@@ -270,7 +283,6 @@ public class ResReviewActivity extends BaseActivity {
 
     @OnClick(R.id.header_ll_right)
     void onClickShare() {
-        // setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         showPopViewShare();
     }
 
@@ -568,24 +580,76 @@ public class ResReviewActivity extends BaseActivity {
         super.onConfigurationChanged(newConfig);
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             // T.showShort(this, "横屏");
-            toolbar.setVisibility(View.GONE);
-            llBottomBar.setVisibility(View.GONE);
             isLandscape = true;
+            screenWidth = ScreenUtils.getScreenWidth(this);
+            screenHeight = ScreenUtils.getScreenHeight(this);
+            hideHeaderAndBottom();
             ScreenUtils.setFullScreen(this);    // 进入全屏
             StatusBarUtil.setColor(this, ContextCompat.getColor(this, R.color.transparent), 0);
             landscapeShowDoc();
+            // 修改RelativeLayout中的位置
+            RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) webView.getLayoutParams();
+            lp.addRule(RelativeLayout.BELOW, 0);
+            lp.addRule(RelativeLayout.ABOVE, 0);
+            webView.setLayoutParams(lp);
         } else {
             // T.showShort(this, "竖屏");
-            toolbar.setVisibility(View.VISIBLE);
-            llBottomBar.setVisibility(View.VISIBLE);
             isLandscape = false;
+            screenWidth = ScreenUtils.getScreenWidth(this);
+            screenHeight = ScreenUtils.getScreenHeight(this);
+            showHeaderAndBottom();
             ScreenUtils.quitFullScreen(this);   // 退出全屏
             StatusBarUtil.setColor(this, ContextCompat.getColor(this, R.color.colorPrimary), 0);
             portraitShowDoc();
+            // 修改RelativeLayout中的位置
+            RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) webView.getLayoutParams();
+            lp.addRule(RelativeLayout.BELOW, toolbar.getId());
+            lp.addRule(RelativeLayout.ABOVE, llBottomBar.getId());
+            webView.setLayoutParams(lp);
         }
     }
 
-    public void portraitShowDoc() {
+    private boolean isShowHeaderAndBottom;
+    private int screenWidth, screenHeight;
+
+    /**
+     * 隐藏Toolbar和bottombar
+     */
+    private void hideHeaderAndBottom() {
+        toolbar.setVisibility(View.GONE);
+        llBottomBar.setVisibility(View.GONE);
+        isShowHeaderAndBottom = false;
+    }
+
+    /**
+     * 延迟隐藏
+     */
+    private void delayHide() {
+        toolbar.setVisibility(View.VISIBLE);
+        llBottomBar.setVisibility(View.VISIBLE);
+        isShowHeaderAndBottom = true;
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (isLandscape) {
+                    toolbar.setVisibility(View.GONE);
+                    llBottomBar.setVisibility(View.GONE);
+                    isShowHeaderAndBottom = false;
+                }
+            }
+        }, 2000);
+    }
+
+    /**
+     * 显示全屏状态下的Toolbar和bottombar
+     */
+    private void showHeaderAndBottom() {
+        toolbar.setVisibility(View.VISIBLE);
+        llBottomBar.setVisibility(View.VISIBLE);
+        isShowHeaderAndBottom = true;
+    }
+
+    private void portraitShowDoc() {
         if (downloadUrl.endsWith("ppt") || downloadUrl.endsWith("pptx")
                 || downloadUrl.endsWith("PPT") || downloadUrl.endsWith("PPTX")) {
             return;
@@ -594,7 +658,7 @@ public class ResReviewActivity extends BaseActivity {
         }
     }
 
-    public void landscapeShowDoc() {
+    private void landscapeShowDoc() {
         if (downloadUrl.endsWith("ppt") || downloadUrl.endsWith("pptx")
                 || downloadUrl.endsWith("PPT") || downloadUrl.endsWith("PPTX")) {
             return;
@@ -602,4 +666,15 @@ public class ResReviewActivity extends BaseActivity {
             webView.setInitialScale(250);
         }
     }
+
+    GestureDetector.SimpleOnGestureListener gestureListener = new GestureDetector.SimpleOnGestureListener() {
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            int rawY = (int) e.getRawY();
+            if (rawY >= screenHeight / 8 * 3 && rawY <= screenHeight / 8 * 5 && !isShowHeaderAndBottom) {
+                delayHide();
+            }
+            return super.onSingleTapConfirmed(e);
+        }
+    };
 }

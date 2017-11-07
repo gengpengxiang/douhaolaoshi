@@ -4,7 +4,7 @@ import com.bj.eduteacher.tool.ShowNameUtil;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -26,5 +26,9 @@ public class ExampleUnitTest {
     public void add_threeString() throws Exception {
         String result = ShowNameUtil.getFirstNotNullParams("", "", "null", "zhangheng", "haode", "191919191919");
         System.out.println("运行结果: " + result);
+    }
+
+    public void add_testBase64() throws Exception {
+        String s = "";
     }
 }

@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.bj.eduteacher.view.MyJCView
+    <com.bj.eduteacher.view.MyJZView
         android:id="@+id/mPlayer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/ll_bottomBar" />
+        android:layout_above="@+id/ll_bottomBar"/>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1px"
         android:layout_above="@+id/ll_bottomBar"
-        android:background="#D8D8D8" />
+        android:background="#D8D8D8"/>
 
     <LinearLayout
         android:id="@+id/ll_bottomBar"
@@ -33,7 +34,7 @@
             android:gravity="center"
             android:textColor="#424242"
             android:textSize="15sp"
-            tools:text="231次阅读" />
+            tools:text="231次阅读"/>
 
         <LinearLayout
             android:id="@+id/ll_agreeNumber"
@@ -48,7 +49,7 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:scaleType="fitXY"
-                android:src="@mipmap/ic_like" />
+                android:src="@mipmap/ic_like"/>
 
             <TextView
                 android:id="@+id/tv_agreeNumber"
@@ -57,7 +58,7 @@
                 android:layout_marginLeft="4dp"
                 android:textColor="#424242"
                 android:textSize="15sp"
-                tools:text="123" />
+                tools:text="123"/>
         </LinearLayout>
 
         <LinearLayout
@@ -73,7 +74,7 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:scaleType="fitXY"
-                android:src="@drawable/ic_comment" />
+                android:src="@drawable/ic_comment"/>
 
             <TextView
                 android:id="@+id/tv_commentNumber"
@@ -82,7 +83,7 @@
                 android:layout_marginLeft="4dp"
                 android:textColor="#424242"
                 android:textSize="15sp"
-                tools:text="123" />
+                tools:text="123"/>
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

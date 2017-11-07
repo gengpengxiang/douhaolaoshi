@@ -1,39 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include layout="@layout/layout_header_toolbar_3" />
+    <com.bj.eduteacher.view.ResPreWebView
+        android:id="@+id/web_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/ll_bottomBar"
+        android:layout_below="@+id/toolbar"
+        android:overScrollMode="never"
+        android:visibility="visible"/>
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/layout_header_toolbar_3"/>
 
     <ProgressBar
         android:id="@+id/progress"
         style="@android:style/Widget.ProgressBar.Horizontal"
         android:layout_width="match_parent"
         android:layout_height="3dp"
+        android:layout_alignTop="@+id/web_content"
         android:max="100"
         android:progressDrawable="@drawable/bg_webview_progress"
-        android:visibility="gone" />
-
-    <WebView
-        android:id="@+id/web_content"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:overScrollMode="never"
-        android:visibility="visible" />
+        android:visibility="gone"/>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1px"
-        android:background="#D8D8D8" />
+        android:layout_alignBottom="@+id/web_content"
+        android:background="#D8D8D8"/>
 
     <LinearLayout
         android:id="@+id/ll_bottomBar"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_weight="0"
+        android:layout_alignParentBottom="true"
         android:background="#FFF"
         android:orientation="horizontal"
         android:visibility="gone">
@@ -46,7 +52,7 @@
             android:gravity="center"
             android:textColor="#424242"
             android:textSize="15sp"
-            tools:text="231次阅读" />
+            tools:text="231次阅读"/>
 
         <LinearLayout
             android:id="@+id/ll_agreeNumber"
@@ -61,7 +67,7 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:scaleType="fitXY"
-                android:src="@mipmap/ic_like" />
+                android:src="@mipmap/ic_like"/>
 
             <TextView
                 android:id="@+id/tv_agreeNumber"
@@ -70,7 +76,7 @@
                 android:layout_marginLeft="4dp"
                 android:textColor="#424242"
                 android:textSize="15sp"
-                tools:text="123" />
+                tools:text="123"/>
         </LinearLayout>
 
         <LinearLayout
@@ -86,7 +92,7 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:scaleType="fitXY"
-                android:src="@drawable/ic_comment" />
+                android:src="@drawable/ic_comment"/>
 
             <TextView
                 android:id="@+id/tv_commentNumber"
@@ -95,7 +101,7 @@
                 android:layout_marginLeft="4dp"
                 android:textColor="#424242"
                 android:textSize="15sp"
-                tools:text="123" />
+                tools:text="123"/>
         </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+</RelativeLayout>

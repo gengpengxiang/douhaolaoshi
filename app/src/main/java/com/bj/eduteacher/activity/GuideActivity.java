@@ -1,8 +1,10 @@
 package com.bj.eduteacher.activity;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.view.WindowManager;
 
@@ -12,6 +14,7 @@ import com.bj.eduteacher.adapter.GuideFragmentPagerAdapter;
 import com.bj.eduteacher.fragment.Guide1Fragment;
 import com.bj.eduteacher.fragment.Guide2Fragment;
 import com.bj.eduteacher.fragment.Guide3Fragment;
+import com.bj.eduteacher.utils.ScreenUtils;
 import com.umeng.analytics.MobclickAgent;
 
 import java.util.ArrayList;
@@ -35,8 +38,19 @@ public class GuideActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guide);
         ButterKnife.bind(this);
-
+        initStatus();
         initView();
+    }
+
+    @Override
+    protected void initStatus() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            // getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimary));
+            // 如果存在虚拟按键，则设置虚拟按键的背景色
+            if (ScreenUtils.isNavigationBarShow(this)) {
+                getWindow().setNavigationBarColor(ContextCompat.getColor(this, android.R.color.black));
+            }
+        }
     }
 
     @Override

@@ -5,6 +5,8 @@ import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,18 +24,21 @@ import com.bj.eduteacher.api.MLProperties;
 import com.bj.eduteacher.entity.ArticleInfo;
 import com.bj.eduteacher.entity.BaseDataInfo;
 import com.bj.eduteacher.manager.IntentManager;
+import com.bj.eduteacher.utils.LL;
 import com.bj.eduteacher.utils.NetUtils;
 import com.bj.eduteacher.utils.PreferencesUtils;
+import com.bj.eduteacher.utils.ScreenUtils;
 import com.bj.eduteacher.utils.StringUtils;
 import com.bj.eduteacher.utils.T;
-import com.bj.eduteacher.view.MyJCView;
+import com.bj.eduteacher.view.MyJZView;
 import com.umeng.analytics.MobclickAgent;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import fm.jiecao.jcvideoplayer_lib.JCVideoPlayer;
-import fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard;
+import cn.jzvd.JZVideoPlayer;
+import cn.jzvd.JZVideoPlayerManager;
+import cn.jzvd.JZVideoPlayerStandard;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -64,7 +69,7 @@ public class ResPlayActivity extends BaseActivity {
     @BindView(R.id.ll_bottomBar)
     LinearLayout llBottomBar;
 
-    private MyJCView mPlayer;
+    private MyJZView mPlayer;
 
     private String resID;
     private String resUrl;
@@ -72,7 +77,8 @@ public class ResPlayActivity extends BaseActivity {
     private LmsDataService service;
     private String teacherPhoneNumber;
 
-    JCVideoPlayer.JCAutoFullscreenListener mSensorEventListener;
+    // JZVideoPlayer.JZAutoFullscreenListener mSensorEventListener;
+    AutoFullScreenListener mSensorEventListener;
     SensorManager mSensorManager;
 
     @Override
@@ -83,12 +89,23 @@ public class ResPlayActivity extends BaseActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(ContextCompat.getColor(this, android.R.color.black));
         }
-        setContentView(R.layout.layout_jc_player);
+        setContentView(R.layout.layout_jz_player);
         ButterKnife.bind(this);
         service = new LmsDataService();
-
+        initStatus();
         initView();
         initData();
+    }
+
+    @Override
+    protected void initStatus() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            // getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimary));
+            // 如果存在虚拟按键，则设置虚拟按键的背景色
+            if (ScreenUtils.isNavigationBarShow(this)) {
+                getWindow().setNavigationBarColor(ContextCompat.getColor(this, android.R.color.black));
+            }
+        }
     }
 
     @Override
@@ -97,20 +114,21 @@ public class ResPlayActivity extends BaseActivity {
         resName = getIntent().getStringExtra(MLProperties.BUNDLE_KEY_MASTER_RES_NAME);
         resUrl = getIntent().getStringExtra(MLProperties.BUNDLE_KEY_MASTER_RES_PREVIEW_URL);
 
-        mPlayer = (MyJCView) findViewById(R.id.mPlayer);
-        mPlayer.setBackListener(new MyJCView.BackListener() {
+        mPlayer = (MyJZView) findViewById(R.id.mPlayer);
+        mPlayer.setBackListener(new MyJZView.BackListener() {
             @Override
             public void onBackClick() {
                 onBackPressed();
             }
         });
-        mPlayer.setUp(resUrl, JCVideoPlayerStandard.SCREEN_LAYOUT_NORMAL, resName);
+        mPlayer.setUp(resUrl, JZVideoPlayerStandard.SCREEN_LAYOUT_NORMAL, resName);
         // 设置全屏前后的屏幕方向
-        JCVideoPlayer.FULLSCREEN_ORIENTATION = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
-        JCVideoPlayer.NORMAL_ORIENTATION = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+        JZVideoPlayer.FULLSCREEN_ORIENTATION = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+        JZVideoPlayer.NORMAL_ORIENTATION = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
 
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        mSensorEventListener = new JCVideoPlayer.JCAutoFullscreenListener();
+        // mSensorEventListener = new JZVideoPlayer.JZAutoFullscreenListener();
+        mSensorEventListener = new AutoFullScreenListener();
 
         mPlayer.startButton.performClick();
     }
@@ -135,12 +153,12 @@ public class ResPlayActivity extends BaseActivity {
             getArticleAgreeNumber(ARTICLE_AGREE_TYPE_SEARCH);
         }
 
-        if (mPlayer.currentState != JCVideoPlayer.CURRENT_STATE_PLAYING && mPlayer.currentState != JCVideoPlayer.CURRENT_STATE_ERROR) {
+        if (mPlayer.currentState != JZVideoPlayer.CURRENT_STATE_PLAYING && mPlayer.currentState != JZVideoPlayer.CURRENT_STATE_ERROR) {
             mPlayer.startButton.performClick();
         }
         // 注册重力监听
         Sensor accelerometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        mSensorManager.registerListener(mSensorEventListener, accelerometerSensor, SensorManager.SENSOR_DELAY_GAME);
+        mSensorManager.registerListener(mSensorEventListener, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @OnClick(R.id.ll_commentNumber)
@@ -158,7 +176,7 @@ public class ResPlayActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (JCVideoPlayer.backPress()) {
+        if (JZVideoPlayer.backPress()) {
             return;
         }
         super.onBackPressed();
@@ -167,7 +185,7 @@ public class ResPlayActivity extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        JCVideoPlayer.releaseAllVideos();
+        JZVideoPlayer.releaseAllVideos();
         mSensorManager.unregisterListener(mSensorEventListener);
     }
 
@@ -331,5 +349,68 @@ public class ResPlayActivity extends BaseActivity {
                 return super.getSystemService(name);
             }
         });
+    }
+
+    public static class AutoFullScreenListener implements SensorEventListener {
+        private static final int _DATA_X = 0;
+        private static final int _DATA_Y = 1;
+        private static final int _DATA_Z = 2;
+
+        public static final int ORIENTATION_UNKNOWN = -1;
+
+        public AutoFullScreenListener() {
+        }
+
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            float[] values = event.values;
+            int orientation = ORIENTATION_UNKNOWN;
+            float X = -values[_DATA_X];
+            float Y = -values[_DATA_Y];
+            float Z = -values[_DATA_Z];
+            float magnitude = X * X + Y * Y;
+            // Don't trust the angle if the magnitude is small compared to the y
+            // value
+            if (magnitude * 4 >= Z * Z) {
+                // 屏幕旋转时
+                float OneEightyOverPi = 57.29577957855f;
+                float angle = (float) Math.atan2(-Y, X) * OneEightyOverPi;
+                orientation = 90 - Math.round(angle);
+                // normalize to 0 - 359 range
+                while (orientation >= 360) {
+                    orientation -= 360;
+                }
+                while (orientation < 0) {
+                    orientation += 360;
+                }
+            }
+
+            /**
+             * 根据手机屏幕的朝向角度，来设置内容的横竖屏，并且记录状态
+             */
+            if (orientation > 45 && orientation < 135) {
+                LL.i("··········反向横屏··········");
+                return;
+            } else if (orientation > 135 && orientation < 225) {
+                LL.i("··········反向竖屏··········");
+                return;
+            } else if (orientation > 225 && orientation < 315) {
+                LL.i("··········横屏··········");
+                if (JZVideoPlayerManager.getCurrentJzvd() != null && System.currentTimeMillis() - JZVideoPlayer.lastAutoFullscreenTime > 2000L) {
+                    JZVideoPlayerManager.getCurrentJzvd().autoFullscreen(X);
+                    JZVideoPlayer.lastAutoFullscreenTime = System.currentTimeMillis();
+                }
+            } else if ((orientation > 315 && orientation < 360) || (orientation > 0 && orientation < 45)) {
+                LL.i("··········竖屏··········");
+                if (JZVideoPlayerManager.getCurrentJzvd() != null) {
+                    JZVideoPlayerManager.getCurrentJzvd().autoQuitFullscreen();
+                }
+            }
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+        }
     }
 }
