@@ -125,6 +125,7 @@ public class ResPlayActivity extends BaseActivity {
         // 设置全屏前后的屏幕方向
         JZVideoPlayer.FULLSCREEN_ORIENTATION = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
         JZVideoPlayer.NORMAL_ORIENTATION = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+        JZVideoPlayer.SAVE_PROGRESS = false;
 
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         // mSensorEventListener = new JZVideoPlayer.JZAutoFullscreenListener();
@@ -191,7 +192,6 @@ public class ResPlayActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        
         super.onDestroy();
     }
 

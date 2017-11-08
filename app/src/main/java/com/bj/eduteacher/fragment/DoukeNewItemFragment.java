@@ -2,6 +2,7 @@ package com.bj.eduteacher.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -147,6 +148,7 @@ public class DoukeNewItemFragment extends LazyFragment {
                     List<ArticleInfo> dataList = new ArrayList<>();
                     int pageSize = PAGE_SIZE;
                     for (int i = 0; i < NJARRAY.length; i++) {
+                        SystemClock.sleep(500);
                         // 记录当前加载到几年级了
                         currNianjiPosition = i;
                         List<ArticleInfo> njList = mService.getNewDoukeListFromAPI(xuekeName, NJARRAY[i], 0, pageSize);
