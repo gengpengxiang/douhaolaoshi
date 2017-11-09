@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/toolbar"
-    android:layout_width="match_parent"
-    android:layout_height="50dp"
-    android:background="?attr/colorPrimary"
-    android:fitsSystemWindows="true">
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="?attr/colorPrimary"
+                android:fitsSystemWindows="true">
 
     <LinearLayout
         android:id="@+id/header_ll_left"
@@ -21,7 +21,7 @@
             android:layout_marginLeft="12dp"
             android:scaleType="fitXY"
             android:src="@mipmap/icon_header_back"
-            android:visibility="gone" />
+            android:visibility="gone"/>
 
         <ImageView
             android:id="@+id/header_img_user"
@@ -30,7 +30,7 @@
             android:layout_marginLeft="12dp"
             android:scaleType="fitXY"
             android:src="@mipmap/ic_navigationbar_me"
-            android:visibility="gone" />
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/header_tv_title_left"
@@ -39,7 +39,7 @@
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:textColor="#FFF"
             android:textSize="@dimen/text_size_title_sub"
-            android:visibility="gone" />
+            android:visibility="gone"/>
     </LinearLayout>
 
     <LinearLayout
@@ -58,7 +58,15 @@
             android:layout_height="19dp"
             android:scaleType="fitXY"
             android:src="@mipmap/icon_header_search"
-            android:visibility="gone" />
+            android:visibility="gone"/>
+
+        <ImageView
+            android:id="@+id/header_iv_search"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/icon_header_search"
+            android:visibility="gone"/>
 
         <FrameLayout
             android:id="@+id/header_fl_notification"
@@ -73,7 +81,7 @@
                 android:layout_gravity="center"
                 android:scaleType="fitXY"
                 android:src="@mipmap/ic_notification"
-                android:visibility="gone" />
+                android:visibility="gone"/>
 
             <ImageView
                 android:id="@+id/header_img_notificationdot"
@@ -82,7 +90,7 @@
                 android:layout_gravity="right"
                 android:scaleType="fitXY"
                 android:src="@mipmap/ic_notificationdot"
-                android:visibility="gone" />
+                android:visibility="gone"/>
         </FrameLayout>
 
         <ImageView
@@ -91,7 +99,7 @@
             android:layout_height="19dp"
             android:scaleType="fitXY"
             android:src="@mipmap/icon_header_delete"
-            android:visibility="gone" />
+            android:visibility="gone"/>
 
         <ImageView
             android:id="@+id/header_img_fullScreen"
@@ -99,7 +107,7 @@
             android:layout_height="20dp"
             android:scaleType="fitXY"
             android:src="@mipmap/icon_header_full_screen"
-            android:visibility="gone" />
+            android:visibility="gone"/>
 
         <ImageView
             android:id="@+id/header_img_share"
@@ -107,7 +115,7 @@
             android:layout_height="20dp"
             android:scaleType="fitXY"
             android:src="@mipmap/icon_header_share"
-            android:visibility="gone" />
+            android:visibility="gone"/>
 
         <ImageView
             android:id="@+id/header_img_question"
@@ -115,7 +123,7 @@
             android:layout_height="24dp"
             android:scaleType="fitXY"
             android:src="@mipmap/ic_navigationbar_question"
-            android:visibility="gone" />
+            android:visibility="gone"/>
 
         <ImageView
             android:id="@+id/header_img_setting"
@@ -123,7 +131,7 @@
             android:layout_height="20dp"
             android:scaleType="fitXY"
             android:src="@mipmap/icon_header_setting"
-            android:visibility="gone" />
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/header_tv_right"
@@ -131,7 +139,7 @@
             android:layout_height="wrap_content"
             android:textColor="#FFF"
             android:textSize="@dimen/text_size_title_sub"
-            android:visibility="gone" />
+            android:visibility="gone"/>
     </LinearLayout>
 
     <LinearLayout
@@ -151,13 +159,13 @@
             android:lines="1"
             android:textColor="#FFF"
             android:textSize="@dimen/text_size_title"
-            android:visibility="gone" />
+            android:visibility="gone"/>
 
         <android.support.v7.widget.AppCompatSpinner
             android:id="@+id/header_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:scrollbars="none"
-            android:visibility="gone" />
+            android:visibility="gone"/>
     </LinearLayout>
 </RelativeLayout>

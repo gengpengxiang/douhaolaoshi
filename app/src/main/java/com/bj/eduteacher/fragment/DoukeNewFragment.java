@@ -1,5 +1,6 @@
 package com.bj.eduteacher.fragment;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -11,12 +12,15 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bj.eduteacher.BaseFragment;
 import com.bj.eduteacher.R;
+import com.bj.eduteacher.activity.DoukeNewSearchActivity;
 import com.bj.eduteacher.api.LmsDataService;
 import com.bj.eduteacher.utils.DensityUtils;
+import com.bj.eduteacher.utils.T;
 import com.shizhefei.view.indicator.IndicatorViewPager;
 import com.shizhefei.view.indicator.IndicatorViewPager.IndicatorFragmentPagerAdapter;
 import com.shizhefei.view.indicator.ScrollIndicatorView;
@@ -28,6 +32,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -51,6 +56,8 @@ public class DoukeNewFragment extends BaseFragment {
     ViewPager viewPager;
     @BindView(R.id.douke_course_indicator)
     ScrollIndicatorView indicator;
+    @BindView(R.id.header_iv_search)
+    ImageView ivSearch;
 
     private IndicatorViewPager indicatorViewPager;
     private LayoutInflater inflate;
@@ -101,6 +108,7 @@ public class DoukeNewFragment extends BaseFragment {
     private void initToolbar() {
         tvTitle.setVisibility(View.VISIBLE);
         tvTitle.setText(getString(R.string.bottom_tab_1));
+        ivSearch.setVisibility(View.VISIBLE);
     }
 
     private void initView() {
@@ -123,11 +131,18 @@ public class DoukeNewFragment extends BaseFragment {
         Observable.create(new ObservableOnSubscribe<List<String>>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<String>> e) throws Exception {
-                LmsDataService service = new LmsDataService();
-                List<String> dataList = service.getNewDoukeXuekeFromAPI();
-                if (!e.isDisposed()) {
-                    e.onNext(dataList);
-                    e.onComplete();
+                try {
+                    LmsDataService service = new LmsDataService();
+                    List<String> dataList = service.getNewDoukeXuekeFromAPI();
+                    if (!e.isDisposed()) {
+                        e.onNext(dataList);
+                        e.onComplete();
+                    }
+                } catch (Exception ex) {
+                    if (!e.isDisposed()) {
+                        e.onError(ex);
+                        return;
+                    }
                 }
             }
         }).subscribeOn(Schedulers.io())
@@ -147,7 +162,9 @@ public class DoukeNewFragment extends BaseFragment {
 
                     @Override
                     public void onError(@NonNull Throwable e) {
-
+                        if (getActivity() != null) {
+                            T.showShort(getActivity(), "服务器开小差了，请稍后重试！");
+                        }
                     }
 
                     @Override
@@ -217,5 +234,13 @@ public class DoukeNewFragment extends BaseFragment {
     public void onPause() {
         super.onPause();
         disposables.clear();
+    }
+
+    @OnClick(R.id.header_ll_right)
+    void clickSearch() {
+        // 跳转到逗课搜索页面
+        Intent intent = new Intent(getActivity(), DoukeNewSearchActivity.class);
+        startActivity(intent);
+        getActivity().overridePendingTransition(R.anim.act_alpha_in, R.anim.act_alpha_out);
     }
 }

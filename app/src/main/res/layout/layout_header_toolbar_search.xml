@@ -31,7 +31,6 @@
             android:layout_marginRight="15dp"
             android:background="@null"
             android:gravity="center_vertical"
-            android:hint="输入案例提交者姓名"
             android:maxLines="1"
             android:textColor="@color/text_color_standard"
             android:textColorHint="#9B9B9B"

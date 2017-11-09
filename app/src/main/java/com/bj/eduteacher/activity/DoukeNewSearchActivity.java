@@ -13,13 +13,11 @@ import com.andview.refreshview.XRefreshView;
 import com.andview.refreshview.XRefreshViewFooter;
 import com.bj.eduteacher.BaseActivity;
 import com.bj.eduteacher.R;
-import com.bj.eduteacher.adapter.AnnualCaseAllAdapter;
+import com.bj.eduteacher.adapter.DoukeNewAdapter;
 import com.bj.eduteacher.api.LmsDataService;
-import com.bj.eduteacher.api.MLProperties;
 import com.bj.eduteacher.entity.ArticleInfo;
 import com.bj.eduteacher.utils.KeyBoardUtils;
 import com.bj.eduteacher.utils.LL;
-import com.bj.eduteacher.utils.PreferencesUtils;
 import com.bj.eduteacher.utils.T;
 import com.bj.eduteacher.view.OnRecyclerItemClickListener;
 import com.bj.eduteacher.widget.manager.SaveGridLayoutManager;
@@ -43,7 +41,7 @@ import io.reactivex.schedulers.Schedulers;
  * Created by zz379 on 2017/10/18.
  */
 
-public class AnnualCaseSearchActivity extends BaseActivity {
+public class DoukeNewSearchActivity extends BaseActivity {
 
     private static final int PAGE_SIZE = 18;
 
@@ -56,13 +54,11 @@ public class AnnualCaseSearchActivity extends BaseActivity {
     RecyclerView mRecyclerView;
 
     private List<ArticleInfo> mDataList = new ArrayList<>();
-    private AnnualCaseAllAdapter mAdapter;
+    private DoukeNewAdapter mAdapter;
     private int currentPage = 1;
     private LmsDataService mService = new LmsDataService();
 
     private String searchContent;
-    private String huodongID, bannerPath;
-    private String teacherPhoneNumber;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -79,11 +75,8 @@ public class AnnualCaseSearchActivity extends BaseActivity {
     @Override
     protected void initToolBar() {
         super.initToolBar();
-        huodongID = getIntent().getStringExtra("HuodongID");
-        bannerPath = getIntent().getStringExtra("HuodongBanner");
-
         edtSearch.setSingleLine();
-        edtSearch.setHint("输入案例提交者姓名");
+        edtSearch.setHint("输入逗课的标题");
         edtSearch.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
         edtSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -102,7 +95,7 @@ public class AnnualCaseSearchActivity extends BaseActivity {
     protected void initView() {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new SaveGridLayoutManager(this, 3));
-        mAdapter = new AnnualCaseAllAdapter(mDataList);
+        mAdapter = new DoukeNewAdapter(mDataList);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.addOnItemTouchListener(new OnRecyclerItemClickListener(mRecyclerView) {
             @Override
@@ -139,7 +132,6 @@ public class AnnualCaseSearchActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
     }
 
     @Override
@@ -151,18 +143,13 @@ public class AnnualCaseSearchActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
     }
 
     private void actionOnItemClick(ArticleInfo item) {
-        Intent intent = new Intent(this, AnnualCaseDetailActivity.class);
-        intent.putExtra("ID", item.getArticleID());
+        // 跳转到逗课详情页面
+        Intent intent = new Intent(this, DoukeNewDetailActivity.class);
         intent.putExtra("Title", item.getTitle());
-        intent.putExtra("Author", item.getAuthor());
-        intent.putExtra("Diqu", item.getContent());
-        intent.putExtra("AnliTPNum", item.getAgreeNumber());
-        intent.putExtra("AnliTPStatus", item.getCommentNumber());
-        intent.putExtra("HuodongBanner", bannerPath);
+        intent.putExtra("ID", item.getArticleID());
         startActivity(intent);
     }
 
@@ -194,7 +181,7 @@ public class AnnualCaseSearchActivity extends BaseActivity {
         Observable.create(new ObservableOnSubscribe<List<ArticleInfo>>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<ArticleInfo>> e) throws Exception {
-                List<ArticleInfo> dataList = mService.getAnliListFromAPI(huodongID, teacherPhoneNumber, content, pageIndex, PAGE_SIZE);
+                List<ArticleInfo> dataList = mService.getNewDoukeListFromAPI("数学", "四年级", 0, PAGE_SIZE);
                 e.onNext(dataList);
                 e.onComplete();
             }
@@ -214,7 +201,7 @@ public class AnnualCaseSearchActivity extends BaseActivity {
                     @Override
                     public void onError(@NonNull Throwable e) {
                         cleanXRefreshView();
-                        T.showShort(AnnualCaseSearchActivity.this, "服务器开小差了，请重试");
+                        T.showShort(DoukeNewSearchActivity.this, "服务器开小差了，请重试");
                     }
 
                     @Override
@@ -231,7 +218,7 @@ public class AnnualCaseSearchActivity extends BaseActivity {
             mXRefreshView.setPullLoadEnable(true);
             mXRefreshView.setAutoLoadMore(true);
             if (list.size() == 0) {
-                T.showShort(this, "没有找到他的相关案例");
+                T.showShort(this, "没有找到相关逗课");
             }
         } else {
             mXRefreshView.stopLoadMore();

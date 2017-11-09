@@ -196,6 +196,11 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateVisible"/>
         <activity
+            android:name=".activity.DoukeNewSearchActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateVisible"/>
+        <activity
             android:name=".activity.SubjectDetailActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"/>
@@ -295,7 +300,7 @@
         <!-- debug:1150170511115892#testdouhaojiaoyu -->
         <meta-data
             android:name="EASEMOB_APPKEY"
-            android:value="1150170511115892#wwwgamepkudhjy"/>
+            android:value="1150170511115892#testdouhaojiaoyu"/>
         <!-- 声明SDK所需的service SDK核心功能-->
         <service
             android:name="com.hyphenate.chat.EMChatService"

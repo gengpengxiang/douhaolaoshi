@@ -43,6 +43,7 @@ import com.bj.eduteacher.zzokhttp.OkHttpUtils;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.umeng.analytics.MobclickAgent;
 
+import java.io.InterruptedIOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -395,6 +396,11 @@ public class HomeFragment extends BaseFragment {
                     if (!emitter.isDisposed()) {
                         emitter.onNext(resultList);
                         emitter.onComplete();
+                    }
+                } catch (InterruptedIOException ex) {
+                    if (!emitter.isDisposed()) {
+                        emitter.onError(ex);
+                        return;
                     }
                 } catch (InterruptedException ex) {
                     if (!emitter.isDisposed()) {

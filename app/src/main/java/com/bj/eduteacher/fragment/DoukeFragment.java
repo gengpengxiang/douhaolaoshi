@@ -69,6 +69,7 @@ import com.youth.banner.BannerConfig;
 import com.youth.banner.Transformer;
 import com.youth.banner.listener.OnBannerListener;
 
+import java.io.InterruptedIOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -595,6 +596,11 @@ public class DoukeFragment extends BaseFragment {
                         e.onNext(dataList);
                         e.onComplete();
                     }
+                } catch (InterruptedIOException ex) {
+                    if (!e.isDisposed()) {
+                        e.onError(ex);
+                        return;
+                    }
                 } catch (InterruptedException ex) {
                     if (!e.isDisposed()) {
                         e.onError(ex);
@@ -613,6 +619,11 @@ public class DoukeFragment extends BaseFragment {
                     if (!e.isDisposed()) {
                         e.onNext(dataList);
                         e.onComplete();
+                    }
+                } catch (InterruptedIOException ex) {
+                    if (!e.isDisposed()) {
+                        e.onError(ex);
+                        return;
                     }
                 } catch (InterruptedException ex) {
                     if (!e.isDisposed()) {
@@ -633,6 +644,11 @@ public class DoukeFragment extends BaseFragment {
                         e.onNext(dataList);
                         e.onComplete();
                     }
+                } catch (InterruptedIOException ex) {
+                    if (!e.isDisposed()) {
+                        e.onError(ex);
+                        return;
+                    }
                 } catch (InterruptedException ex) {
                     if (!e.isDisposed()) {
                         e.onError(ex);
@@ -651,6 +667,11 @@ public class DoukeFragment extends BaseFragment {
                     if (!e.isDisposed()) {
                         e.onNext(dataList);
                         e.onComplete();
+                    }
+                } catch (InterruptedIOException ex) {
+                    if (!e.isDisposed()) {
+                        e.onError(ex);
+                        return;
                     }
                 } catch (InterruptedException ex) {
                     if (!e.isDisposed()) {
@@ -678,6 +699,11 @@ public class DoukeFragment extends BaseFragment {
                         e.onNext(dataList);
                         e.onComplete();
                     }
+                } catch (InterruptedIOException ex) {
+                    if (!e.isDisposed()) {
+                        e.onError(ex);
+                        return;
+                    }
                 } catch (InterruptedException ex) {
                     if (!e.isDisposed()) {
                         e.onError(ex);
@@ -697,6 +723,11 @@ public class DoukeFragment extends BaseFragment {
                         e.onNext(dataList);
                         e.onComplete();
                     }
+                } catch (InterruptedIOException ex) {
+                    if (!e.isDisposed()) {
+                        e.onError(ex);
+                        return;
+                    }
                 } catch (InterruptedException ex) {
                     if (!e.isDisposed()) {
                         e.onError(ex);
@@ -715,6 +746,11 @@ public class DoukeFragment extends BaseFragment {
                     if (!e.isDisposed()) {
                         e.onNext(liveList);
                         e.onComplete();
+                    }
+                } catch (InterruptedIOException ex) {
+                    if (!e.isDisposed()) {
+                        e.onError(ex);
+                        return;
                     }
                 } catch (InterruptedException ex) {
                     if (!e.isDisposed()) {

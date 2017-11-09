@@ -2,7 +2,6 @@ package com.bj.eduteacher.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -13,15 +12,14 @@ import com.bj.eduteacher.R;
 import com.bj.eduteacher.activity.DoukeNewDetailActivity;
 import com.bj.eduteacher.adapter.DoukeNewAdapter;
 import com.bj.eduteacher.api.LmsDataService;
-import com.bj.eduteacher.api.MLProperties;
 import com.bj.eduteacher.entity.ArticleInfo;
 import com.bj.eduteacher.utils.LL;
-import com.bj.eduteacher.utils.PreferencesUtils;
 import com.bj.eduteacher.utils.ScreenUtils;
 import com.bj.eduteacher.utils.T;
 import com.bj.eduteacher.widget.manager.SaveGridLayoutManager;
 import com.shizhefei.fragment.LazyFragment;
 
+import java.io.InterruptedIOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,7 +50,6 @@ public class DoukeNewItemFragment extends LazyFragment {
     private RecyclerView mRecyclerView;
 
     private List<ArticleInfo> mDataList = new ArrayList<>();
-    private String teacherPhoneNumber;
     private DoukeNewAdapter mAdapter;
     private GridLayoutManager layoutManager;
 
@@ -121,8 +118,6 @@ public class DoukeNewItemFragment extends LazyFragment {
     }
 
     private void initData() {
-        teacherPhoneNumber = PreferencesUtils.getString(getApplicationContext(), MLProperties.PREFER_KEY_USER_ID, "");
-
         mXRefreshView.startRefresh();
     }
 
@@ -143,12 +138,11 @@ public class DoukeNewItemFragment extends LazyFragment {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<ArticleInfo>> e) throws Exception {
                 try {
-
                     LmsDataService mService = new LmsDataService();
                     List<ArticleInfo> dataList = new ArrayList<>();
                     int pageSize = PAGE_SIZE;
                     for (int i = 0; i < NJARRAY.length; i++) {
-                        SystemClock.sleep(500);
+                        // SystemClock.sleep(500);
                         // 记录当前加载到几年级了
                         currNianjiPosition = i;
                         List<ArticleInfo> njList = mService.getNewDoukeListFromAPI(xuekeName, NJARRAY[i], 0, pageSize);
@@ -187,6 +181,11 @@ public class DoukeNewItemFragment extends LazyFragment {
                     if (!e.isDisposed()) {
                         e.onNext(dataList);
                         e.onComplete();
+                    }
+                } catch (InterruptedIOException ex) {
+                    if (!e.isDisposed()) {
+                        e.onError(ex);
+                        return;
                     }
                 } catch (InterruptedException ex) {
                     if (!e.isDisposed()) {
@@ -318,6 +317,11 @@ public class DoukeNewItemFragment extends LazyFragment {
                     if (!e.isDisposed()) {
                         e.onNext(dataList);
                         e.onComplete();
+                    }
+                } catch (InterruptedIOException ex) {
+                    if (!e.isDisposed()) {
+                        e.onError(ex);
+                        return;
                     }
                 } catch (InterruptedException ex) {
                     if (!e.isDisposed()) {
