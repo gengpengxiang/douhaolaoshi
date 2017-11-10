@@ -283,7 +283,7 @@ public class UserServerHelper {
             int code = response.getInt("errorCode");
             String errorInfo = response.getString("errorInfo");
             RequestBackInfo ret = new RequestBackInfo(code, errorInfo);
-            Log.v("way", "上报录制信息...reporNewtRecordInfo->rsp:" + ret.errorCode + "|" + ret.getErrorInfo());
+            Log.v("way", "上报录制信息结果...reporNewtRecordInfo->rsp:" + ret.errorCode + "|" + ret.getErrorInfo() + " -- 返回结果：" + res);
             return ret;
         } catch (JSONException e) {
             e.printStackTrace();
