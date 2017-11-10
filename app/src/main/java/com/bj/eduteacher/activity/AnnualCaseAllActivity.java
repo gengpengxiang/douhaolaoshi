@@ -17,6 +17,7 @@ import com.bj.eduteacher.api.MLProperties;
 import com.bj.eduteacher.entity.ArticleInfo;
 import com.bj.eduteacher.utils.LL;
 import com.bj.eduteacher.utils.PreferencesUtils;
+import com.bj.eduteacher.utils.ScreenUtils;
 import com.bj.eduteacher.utils.T;
 import com.bj.eduteacher.view.OnRecyclerItemClickListener;
 import com.bj.eduteacher.widget.manager.SaveGridLayoutManager;
@@ -44,7 +45,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public class AnnualCaseAllActivity extends BaseActivity {
 
-    private static final int PAGE_SIZE = 18;
+    private static final int PAGE_SIZE = 30;
 
     @BindView(R.id.mXRefreshView)
     XRefreshView mXRefreshView;
@@ -65,11 +66,15 @@ public class AnnualCaseAllActivity extends BaseActivity {
     private String teacherPhoneNumber;
     private String bannerPath = "";
 
+    private int columnNum;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_annual_case_all);
         ButterKnife.bind(this);
+        columnNum = ScreenUtils.isPadDevice(this) ? 5 : 3;
+        
         initStatus();
         // 初始化页面
         initToolBar();
@@ -87,7 +92,7 @@ public class AnnualCaseAllActivity extends BaseActivity {
     @Override
     protected void initView() {
         mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new SaveGridLayoutManager(this, 3));
+        mRecyclerView.setLayoutManager(new SaveGridLayoutManager(this, columnNum));
         mAdapter = new AnnualCaseAllAdapter(mDataList);
         headerView = mAdapter.setHeaderView(R.layout.recycler_item_annual_case_header, mRecyclerView);
         initHeaderView();

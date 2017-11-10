@@ -116,8 +116,8 @@ public class UserServerHelper {
             SxbLog.d(TAG, "postReq->url:" + url);
             SxbLog.d(TAG, "postReq->data:" + json);
         }
-        LL.i("postReq->url:" + url);
-        LL.i("postReq->data:" + json);
+        LL.i(TAG, "postReq->url:" + url);
+        LL.i(TAG, "postReq->data:" + json);
         RequestBody body = RequestBody.create(JSON, json);
         Request request = new Request.Builder()
                 .url(url)
@@ -129,7 +129,7 @@ public class UserServerHelper {
             if (bDebug) {
                 SxbLog.d(TAG, "postRsp->rsp: " + rsp);
             }
-            LL.i("返回结果：" + rsp);
+            LL.i(TAG, "返回结果：" + rsp);
             return rsp;
         } else {
             return "";
@@ -276,14 +276,14 @@ public class UserServerHelper {
      */
     public RequestBackInfo reporNewtRecordInfo(String inputJson) {
         try {
-            Log.v(TAG, "reporNewtRecordInfo->" + inputJson);
+            Log.v("way", "上报录制信息...reporNewtRecordInfo->" + inputJson);
             String res = post(REPORT_RECORD, inputJson);
             JSONTokener jsonParser = new JSONTokener(res);
             JSONObject response = (JSONObject) jsonParser.nextValue();
             int code = response.getInt("errorCode");
             String errorInfo = response.getString("errorInfo");
             RequestBackInfo ret = new RequestBackInfo(code, errorInfo);
-            Log.v(TAG, "reporNewtRecordInfo->rsp:" + ret.errorCode + "|" + ret.getErrorInfo());
+            Log.v("way", "上报录制信息...reporNewtRecordInfo->rsp:" + ret.errorCode + "|" + ret.getErrorInfo());
             return ret;
         } catch (JSONException e) {
             e.printStackTrace();

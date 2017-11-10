@@ -57,6 +57,7 @@ import com.bj.eduteacher.tool.Constants;
 import com.bj.eduteacher.tool.LogConstants;
 import com.bj.eduteacher.tool.SxbLog;
 import com.bj.eduteacher.tool.UIUtils;
+import com.bj.eduteacher.utils.LL;
 import com.bj.eduteacher.utils.PreferencesUtils;
 import com.bj.eduteacher.utils.ScreenUtils;
 import com.bj.eduteacher.utils.StringUtils;
@@ -186,6 +187,7 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
             // 如果是观众需要查看是否有发送弹幕的权限
             teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
             mLiveHelper.checkPermission(teacherPhoneNumber);
+            // 如果是观众需要查看房间的点赞数量
             mLiveHelper.operateRoomGoodNum(String.valueOf(CurLiveInfo.getRoomNum()), "search");
         }
     }
@@ -686,7 +688,13 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
                     public void onSuccess(TIMMessage data) {
                         //如果是直播，发消息
                         if (null != mLiveHelper) {
+                            // 取消录制
+                            if (mRecord) {
+                                stopRecordLive();
+                            }
+                            // 退出房间
                             callExitRoom();
+                            // 取消推流
                             if (isPushed) {
                                 mLiveHelper.stopPush();
                             }
@@ -860,6 +868,9 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
                 SharedPreferences.Editor editor = getSharedPreferences("data", MODE_PRIVATE).edit();
                 editor.putBoolean("living", true);
                 editor.apply();
+
+                // 打开直播录制
+                startRecordLive();
             } else {
                 // 更新控制栏
                 changeCtrlView(false);
@@ -1545,17 +1556,41 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
         pushBtn.setText(R.string.live_btn_push);
     }
 
+    /**
+     * 准备录制视频
+     */
+    private void startRecordLive() {
+        LL.i("打开直播录制..." + CurLiveInfo.getTitle());
+        // 如果是主播则开启直播录制的功能
+        ILiveRecordOption option = new ILiveRecordOption();
+        option.fileName(CurLiveInfo.getTitle());
+        option.classId(0);
+        option.recordType(TIMAvManager.RecordType.VIDEO);
+        mLiveHelper.startRecord(option);
+        mLiveHelper.notifyNewRecordInfo(CurLiveInfo.getTitle());
+    }
+
+    /**
+     * 停止录制视频
+     */
+    private void stopRecordLive() {
+        LL.i("结束直播录制...");
+        mLiveHelper.stopRecord();
+    }
+
     @Override
     public void startRecordCallback(boolean isSucc) {
+        LL.i("开始直播录制成功..." + isSucc);
         mRecord = true;
-        recordBtn.setText(R.string.live_btn_stop_record);
+        // recordBtn.setText(R.string.live_btn_stop_record);
     }
 
     @Override
     public void stopRecordCallback(boolean isSucc, List<String> files) {
         if (isSucc == true) {
             mRecord = false;
-            recordBtn.setText(R.string.live_btn_record);
+            LL.i("结束直播录制成功..." + isSucc);
+            // recordBtn.setText(R.string.live_btn_record);
         }
     }
 
