@@ -2980,6 +2980,52 @@ public class LmsDataService {
     }
 
     /**
+     * 查询逗课
+     *
+     * @param key
+     * @param pageIndex
+     * @param pageSize
+     * @return
+     * @throws Exception
+     */
+    public List<ArticleInfo> getNewDoukeListByNameFromAPI(String key, int pageIndex, int pageSize) throws Exception {
+        List<ArticleInfo> dataList = new ArrayList<>();
+
+        String parseUrl = "jsmaster/kthemenamekey";
+        HashMap<String, String> params = new HashMap<>();
+        params.put("namekey", key);
+        params.put("type", "all");
+        params.put("limit", String.valueOf(pageSize));
+        params.put("offset", String.valueOf((pageIndex - 1) * pageSize));
+
+        String result = getJsonByPostUrl(parseUrl, params);
+        JSONObject resultObj = new JSONObject(result);
+        String errorCode = resultObj.optString("ret");
+        String errorMsg = resultObj.optString("msg");
+        String data = resultObj.optString("data");
+
+        if (!StringUtils.isEmpty(errorCode) && errorCode.equals("1")
+                && !StringUtils.isEmpty(data)) {
+            JSONArray dataArray = new JSONArray(data);
+            ArticleInfo info;
+            for (int i = 0; i < dataArray.length(); i++) {
+                JSONObject item = dataArray.optJSONObject(i);
+                info = new ArticleInfo();
+                info.setArticleID(item.optString("id", ""));
+                info.setAuthImg(HttpUtilService.BASE_RESOURCE_URL + item.optString("img", ""));
+                info.setTitle(item.optString("name", ""));
+                info.setAgreeNumber(item.optString("keshi", "0"));
+                info.setCommentNumber(item.optString("krnum", "0"));
+
+                info.setShowType(ArticleInfo.SHOW_TYPE_ZHUANJIA_RES);
+                dataList.add(info);
+            }
+        }
+
+        return dataList;
+    }
+
+    /**
      * 清空教师关联的所有班级的数据
      *
      * @param phone
@@ -3060,6 +3106,78 @@ public class LmsDataService {
                 info.setShowType(ArticleInfo.SHOW_TYPE_LIVE);
                 dataList.add(info);
             }
+        }
+
+        return dataList;
+    }
+
+    /**
+     * 获取直播的权限
+     *
+     * @return
+     * @throws Exception
+     */
+    public TeacherInfo getTeacherLiveDanmuPermissionsFromAPI(String phone) throws Exception {
+        TeacherInfo info = new TeacherInfo();
+
+        String parseUrl = "jssuixinbo/zbdmquan";
+        HashMap<String, String> params = new HashMap<>();
+        params.put("phone", phone);
+
+        String result = getJsonByPostUrl(parseUrl, params);
+        JSONObject resultObj = new JSONObject(result);
+        String errorCode = resultObj.optString("ret");
+        String errorMsg = resultObj.optString("msg");
+        String data = resultObj.optString("data");
+
+        if (!StringUtils.isEmpty(errorCode) && errorCode.equals("1")
+                && !StringUtils.isEmpty(data)) {
+            JSONObject dataObj = new JSONObject(data);
+            info.setSxbStatus(resultObj.optString("sxbstatus"));
+            info.setSxbUser(resultObj.optString("sxbuser"));
+            info.setSxbTitle(resultObj.optString("suixinbotitle"));
+            String sxbPic = resultObj.optString("suixinbocover");
+            if (!StringUtils.isEmpty(sxbPic)) {
+                sxbPic = HttpUtilService.BASE_RESOURCE_URL + sxbPic;
+            }
+            info.setSxbPicture(sxbPic);
+            info.setSxbPermissions(dataObj.optString("zhiboquan"));
+            info.setSxbDanmuPermissions(dataObj.optString("danmuquan"));
+        }
+
+        return info;
+    }
+
+    /**
+     * 查询或点赞
+     *
+     * @return
+     * @throws Exception
+     */
+    public String[] operateLiveRoomGoodNumber(String roomID, String operate) throws Exception {
+        String[] dataList = new String[3];
+
+        String parseUrl = "jssuixinbo/roomdianzan";
+        HashMap<String, String> params = new HashMap<>();
+        params.put("roomid", roomID);
+        params.put("caozuo", operate);
+
+        String result = getJsonByPostUrl(parseUrl, params);
+        JSONObject resultObj = new JSONObject(result);
+        String errorCode = resultObj.optString("ret");
+        String errorMsg = resultObj.optString("msg");
+        String data = resultObj.optString("data");
+
+        if (!StringUtils.isEmpty(errorCode) && errorCode.equals("1")
+                && !StringUtils.isEmpty(data)) {
+            JSONObject dataObj = new JSONObject(data);
+            dataList[0] = errorCode;
+            dataList[1] = errorMsg;
+            dataList[2] = dataObj.optString("zannum");
+        } else {
+            dataList[0] = errorCode;
+            dataList[1] = errorMsg;
+            dataList[2] = "0";
         }
 
         return dataList;

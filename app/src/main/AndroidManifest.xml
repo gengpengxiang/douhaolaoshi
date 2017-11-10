@@ -269,7 +269,8 @@
             android:name=".activity.LiveActivity"
             android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateHidden"/>
 
         <!-- EaseUI -->
         <!-- 显示下载大图页面 android:theme="@style/horizontal_slide" -->

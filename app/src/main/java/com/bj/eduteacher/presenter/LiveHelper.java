@@ -12,6 +12,7 @@ import com.bj.eduteacher.R;
 import com.bj.eduteacher.api.HttpUtilService;
 import com.bj.eduteacher.api.LmsDataService;
 import com.bj.eduteacher.api.MLProperties;
+import com.bj.eduteacher.entity.TeacherInfo;
 import com.bj.eduteacher.model.CurLiveInfo;
 import com.bj.eduteacher.model.MemberID;
 import com.bj.eduteacher.model.MySelfInfo;
@@ -65,6 +66,8 @@ import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.bj.eduteacher.model.CurLiveInfo.hostID;
+
 
 /**
  * 直播控制类
@@ -78,8 +81,7 @@ public class LiveHelper extends Presenter implements ILiveRoomOption.onRoomDisco
     private boolean flashLgihtStatus = false;
     private long streamChannelID;
     private ApplyCreateRoom createRoomProcess;
-
-
+    private LmsDataService service = new LmsDataService();
     //获取
     private GetMemberListTask mGetMemListTask;
     private final String teacherPhoneNumber;
@@ -121,7 +123,6 @@ public class LiveHelper extends Presenter implements ILiveRoomOption.onRoomDisco
             }
         }
     }
-
 
     /**
      * 申请房间
@@ -169,6 +170,90 @@ public class LiveHelper extends Presenter implements ILiveRoomOption.onRoomDisco
         MessageEvent.getInstance().deleteObserver(this);
         ILVLiveManager.getInstance().quitRoom(null);
     }
+
+    /**
+     * 检查弹幕的权限
+     */
+    public void checkPermission(final String phone) {
+        io.reactivex.Observable.create(new ObservableOnSubscribe<TeacherInfo>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<TeacherInfo> e) throws Exception {
+                TeacherInfo info = service.getTeacherLiveDanmuPermissionsFromAPI(phone);
+                if (!e.isDisposed()) {
+                    e.onNext(info);
+                    e.onComplete();
+                }
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new io.reactivex.Observer<TeacherInfo>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull TeacherInfo teacherInfo) {
+                        mLiveView.permisstionsResult("1", "", teacherInfo);
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        mLiveView.permisstionsResult("0", "服务器开小差了，请稍后重试", null);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    /**
+     * 点赞或者查询点赞数量
+     *
+     * @param hostID
+     * @param operate
+     */
+    public void operateRoomGoodNum(final String roomID, final String operate) {
+        io.reactivex.Observable.create(new ObservableOnSubscribe<String[]>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<String[]> e) throws Exception {
+                String[] result = service.operateLiveRoomGoodNumber(roomID, operate);
+                if (!e.isDisposed()) {
+                    e.onNext(result);
+                    e.onComplete();
+                }
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new io.reactivex.Observer<String[]>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull String[] result) {
+                        if ("add".equals(operate)) {
+                            mLiveView.addLiveRoomGoodNumberResult(result);
+                        } else {
+                            mLiveView.searchLiveRoomGoodNumberResult(result);
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
 
     /**
      * 进入房间
@@ -527,7 +612,6 @@ public class LiveHelper extends Presenter implements ILiveRoomOption.onRoomDisco
         io.reactivex.Observable.create(new ObservableOnSubscribe<String[]>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<String[]> e) throws Exception {
-                LmsDataService service = new LmsDataService();
                 String[] result = service.notifyNewRoomInfoFromAPI(teacherPhoneNumber, MySelfInfo.getInstance().getMyRoomNum(),
                         CurLiveInfo.getTitle(), CurLiveInfo.getCoverurl());
                 e.onNext(result);

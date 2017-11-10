@@ -18,6 +18,7 @@ import com.bj.eduteacher.api.LmsDataService;
 import com.bj.eduteacher.entity.ArticleInfo;
 import com.bj.eduteacher.utils.KeyBoardUtils;
 import com.bj.eduteacher.utils.LL;
+import com.bj.eduteacher.utils.ScreenUtils;
 import com.bj.eduteacher.utils.T;
 import com.bj.eduteacher.view.OnRecyclerItemClickListener;
 import com.bj.eduteacher.widget.manager.SaveGridLayoutManager;
@@ -43,7 +44,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public class DoukeNewSearchActivity extends BaseActivity {
 
-    private static final int PAGE_SIZE = 18;
+    private static final int PAGE_SIZE = 30;
 
     @BindView(R.id.header_edt_search)
     EditText edtSearch;
@@ -59,12 +60,14 @@ public class DoukeNewSearchActivity extends BaseActivity {
     private LmsDataService mService = new LmsDataService();
 
     private String searchContent;
+    private int columnNum;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_annual_case_search);
         ButterKnife.bind(this);
+        columnNum = ScreenUtils.isPadDevice(this) ? 5 : 3;
 
         // 初始化页面
         initToolBar();
@@ -94,7 +97,7 @@ public class DoukeNewSearchActivity extends BaseActivity {
     @Override
     protected void initView() {
         mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new SaveGridLayoutManager(this, 3));
+        mRecyclerView.setLayoutManager(new SaveGridLayoutManager(this, columnNum));
         mAdapter = new DoukeNewAdapter(mDataList);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.addOnItemTouchListener(new OnRecyclerItemClickListener(mRecyclerView) {
@@ -181,7 +184,7 @@ public class DoukeNewSearchActivity extends BaseActivity {
         Observable.create(new ObservableOnSubscribe<List<ArticleInfo>>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<ArticleInfo>> e) throws Exception {
-                List<ArticleInfo> dataList = mService.getNewDoukeListFromAPI("数学", "四年级", 0, PAGE_SIZE);
+                List<ArticleInfo> dataList = mService.getNewDoukeListByNameFromAPI(content, pageIndex, PAGE_SIZE);
                 e.onNext(dataList);
                 e.onComplete();
             }

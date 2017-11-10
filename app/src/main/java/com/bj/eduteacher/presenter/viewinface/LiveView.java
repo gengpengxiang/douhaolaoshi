@@ -1,9 +1,10 @@
 package com.bj.eduteacher.presenter.viewinface;
 
 
-import com.tencent.ilivesdk.data.ILivePushRes;
+import com.bj.eduteacher.entity.TeacherInfo;
 import com.bj.eduteacher.model.LiveInfoJson;
 import com.bj.eduteacher.model.MemberID;
+import com.tencent.ilivesdk.data.ILivePushRes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,4 +57,10 @@ public interface LiveView extends MvpView {
     void forceQuitRoom(String strMessage);
 
     void exitErrorRoom();
+
+    void permisstionsResult(String errorCode, String errorMsg, TeacherInfo data);
+
+    void addLiveRoomGoodNumberResult(String[] result);
+
+    void searchLiveRoomGoodNumberResult(String[] result);
 }

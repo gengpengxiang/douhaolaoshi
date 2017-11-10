@@ -23,7 +23,15 @@ public class TeacherInfo {
     private String sxbTitle;        // 直播标题
     private String sxbPicture;      // 直播房间图片
     private String sxbPermissions;  // 直播权限 1 : 允许开直播， 0 : 不允许开直播
+    private String sxbDanmuPermissions;
 
+    public String getSxbDanmuPermissions() {
+        return sxbDanmuPermissions;
+    }
+
+    public void setSxbDanmuPermissions(String sxbDanmuPermissions) {
+        this.sxbDanmuPermissions = sxbDanmuPermissions;
+    }
 
     public String getTeacherNickname() {
         return teacherNickname;

@@ -42,6 +42,7 @@ import com.bj.eduteacher.R;
 import com.bj.eduteacher.adapter.ChatMsgListAdapter;
 import com.bj.eduteacher.api.HttpUtilService;
 import com.bj.eduteacher.api.MLProperties;
+import com.bj.eduteacher.entity.TeacherInfo;
 import com.bj.eduteacher.manager.ShareHelp;
 import com.bj.eduteacher.model.ChatEntity;
 import com.bj.eduteacher.model.CurLiveInfo;
@@ -59,6 +60,7 @@ import com.bj.eduteacher.tool.UIUtils;
 import com.bj.eduteacher.utils.PreferencesUtils;
 import com.bj.eduteacher.utils.ScreenUtils;
 import com.bj.eduteacher.utils.StringUtils;
+import com.bj.eduteacher.utils.T;
 import com.bj.eduteacher.widget.HeartLayout;
 import com.bj.eduteacher.widget.dialog.InputTextMsgDialog;
 import com.bj.eduteacher.widget.dialog.MembersDialog;
@@ -155,6 +157,9 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
     private Dialog mDetailDialog;
 
     private TILFilter mUDFilter; //美颜处理器
+    private String teacherPhoneNumber;
+    private TextView tvMsgInput;
+    private View msgInputInterval;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,6 +181,12 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
             mLiveHelper.comeBackRoom();
         } else {
             mLiveHelper.startEnterRoom();
+        }
+        if (MySelfInfo.getInstance().getIdStatus() != Constants.HOST) {
+            // 如果是观众需要查看是否有发送弹幕的权限
+            teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
+            mLiveHelper.checkPermission(teacherPhoneNumber);
+            mLiveHelper.operateRoomGoodNum(String.valueOf(CurLiveInfo.getRoomNum()), "search");
         }
     }
 
@@ -433,8 +444,10 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
             tvAdmires.setVisibility(View.VISIBLE);
 
             findViewById(R.id.member_fullscreen_btn).setOnClickListener(this);
-            findViewById(R.id.member_message_input).setOnClickListener(this);
             findViewById(R.id.member_send_good).setOnClickListener(this);
+            msgInputInterval = findViewById(R.id.member_message_interval);
+            tvMsgInput = (TextView) findViewById(R.id.member_message_input);
+            tvMsgInput.setOnClickListener(this);
 
             List<String> ids = new ArrayList<>();
             ids.add(CurLiveInfo.getHostID());
@@ -466,7 +479,7 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
         mListViewMsgItems.setAdapter(mChatMsgListAdapter);
 
         tvMembers.setText("" + CurLiveInfo.getMembers());
-        tvAdmires.setText("" + CurLiveInfo.getAdmires());
+        // tvAdmires.setText("" + CurLiveInfo.getAdmires());
 
         //TODO 获取渲染层
         mRootView = (AVRootView) findViewById(R.id.av_root_view);
@@ -1084,6 +1097,7 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
                 mHeartLayout.addFavor();
                 if (checkInterval()) {
                     mLiveHelper.sendGroupCmd(Constants.AVIMCMD_PRAISE, "");
+                    mLiveHelper.operateRoomGoodNum(String.valueOf(CurLiveInfo.getRoomNum()), "add");
                     CurLiveInfo.setAdmires(CurLiveInfo.getAdmires() + 1);
                     tvAdmires.setText("" + CurLiveInfo.getAdmires());
                 }
@@ -1578,6 +1592,40 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
             }
         }
         return "";
+    }
+
+    @Override
+    public void permisstionsResult(String errorCode, String errorMsg, TeacherInfo data) {
+        // 检查用户是否有发弹幕的权限
+        if ("1".equals(errorCode)) {
+            if ("1".equals(data.getSxbDanmuPermissions())) {
+                tvMsgInput.setVisibility(View.VISIBLE);
+                msgInputInterval.setVisibility(View.VISIBLE);
+            } else {
+                tvMsgInput.setVisibility(View.GONE);
+                msgInputInterval.setVisibility(View.GONE);
+            }
+        } else {
+            T.showShort(this, errorMsg);
+        }
+    }
+
+    @Override
+    public void addLiveRoomGoodNumberResult(String[] result) {
+        if (!StringUtils.isEmpty(result[0]) && "1".equals(result)) {
+            // 添加点赞的时候啥都不算
+        }
+    }
+
+    @Override
+    public void searchLiveRoomGoodNumberResult(String[] result) {
+        if (!StringUtils.isEmpty(result[0]) && "1".equals(result[0])) {
+            // 进来的时候手动查询当前直播的点赞数量
+            CurLiveInfo.setAdmires(Integer.parseInt(result[2]));
+            tvAdmires.setText("" + CurLiveInfo.getAdmires());
+        } else {
+            tvAdmires.setText("" + CurLiveInfo.getAdmires());
+        }
     }
 
     /***************************************************************************************/
