@@ -49,6 +49,7 @@ import com.bj.eduteacher.utils.LeakedUtils;
 import com.bj.eduteacher.utils.PreferencesUtils;
 import com.bj.eduteacher.utils.ScreenUtils;
 import com.bj.eduteacher.utils.StringUtils;
+import com.bj.eduteacher.utils.T;
 import com.bj.eduteacher.widget.CustomViewPager;
 import com.bj.eduteacher.widget.dialog.NotifyDialog;
 import com.hyphenate.EMMessageListener;
@@ -190,6 +191,7 @@ public class MainActivity extends BaseActivity implements ChangeBottomTabListene
         }, 1000);
 
         LL.i("是否是PAD：" + ScreenUtils.isPadDevice(this) + " -- 是否包含虚拟键：" + ScreenUtils.isNavigationBarShow(this));
+        T.showLong(this, "是否是PAD：" + ScreenUtils.isPadDevice(this) + " -- 是否包含虚拟键：" + ScreenUtils.isNavigationBarShow(this) + " -- 屏幕最小宽度：" + ScreenUtils.getSmallestScreenWidth(this));
     }
 
     @Override

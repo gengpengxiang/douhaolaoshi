@@ -278,12 +278,13 @@ public class UserServerHelper {
         try {
             Log.v("way", "上报录制信息...reporNewtRecordInfo->" + inputJson);
             String res = post(REPORT_RECORD, inputJson);
+            Log.v("way", "上报录制信息结果...返回结果：" + res);
             JSONTokener jsonParser = new JSONTokener(res);
             JSONObject response = (JSONObject) jsonParser.nextValue();
             int code = response.getInt("errorCode");
             String errorInfo = response.getString("errorInfo");
             RequestBackInfo ret = new RequestBackInfo(code, errorInfo);
-            Log.v("way", "上报录制信息结果...reporNewtRecordInfo->rsp:" + ret.errorCode + "|" + ret.getErrorInfo() + " -- 返回结果：" + res);
+            Log.v("way", "上报录制信息结果...reporNewtRecordInfo->rsp:" + ret.errorCode + "|" + ret.getErrorInfo());
             return ret;
         } catch (JSONException e) {
             e.printStackTrace();

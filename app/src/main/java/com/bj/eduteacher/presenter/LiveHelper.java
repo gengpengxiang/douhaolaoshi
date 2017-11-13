@@ -23,6 +23,7 @@ import com.bj.eduteacher.tool.SxbLog;
 import com.bj.eduteacher.utils.LL;
 import com.bj.eduteacher.utils.PreferencesUtils;
 import com.bj.eduteacher.utils.StringUtils;
+import com.bj.eduteacher.zzokhttp.utils.Exceptions;
 import com.tencent.TIMConversationType;
 import com.tencent.TIMCustomElem;
 import com.tencent.TIMElem;
@@ -700,7 +701,10 @@ public class LiveHelper extends Presenter implements ILiveRoomOption.onRoomDisco
                     recordInfo.put("name", name);
                     recordInfo.put("type", 0);
                     recordInfo.put("cover", CurLiveInfo.getCoverurl());
+                    Thread.sleep(2000);
                 } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 if (recordInfo != null) {

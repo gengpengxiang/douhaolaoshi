@@ -21,6 +21,7 @@ import com.bj.eduteacher.utils.KeyBoardUtils;
 import com.bj.eduteacher.utils.LL;
 import com.bj.eduteacher.utils.PreferencesUtils;
 import com.bj.eduteacher.utils.ScreenUtils;
+import com.bj.eduteacher.utils.StringUtils;
 import com.bj.eduteacher.utils.T;
 import com.bj.eduteacher.view.OnRecyclerItemClickListener;
 import com.bj.eduteacher.widget.manager.SaveGridLayoutManager;
@@ -184,6 +185,10 @@ public class AnnualCaseSearchActivity extends BaseActivity {
 
     private void searchData(String content) {
         KeyBoardUtils.closeKeybord(edtSearch, this);
+        if (StringUtils.isEmpty(content)) {
+            T.showShort(this, "搜索内容不能为空！");
+            return;
+        }
         // 搜索相关内容
         currentPage = 1;
         getRefreshDataList(content, currentPage);

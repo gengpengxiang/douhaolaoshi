@@ -915,6 +915,8 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
             editor.putBoolean("living", false);
             editor.apply();
             clearOldData();
+            // 上报录制房间信息
+            mLiveHelper.notifyNewRecordInfo(CurLiveInfo.getTitle());
             finish();
         } else {
             clearOldData();
@@ -1567,7 +1569,7 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
         option.classId(0);
         option.recordType(TIMAvManager.RecordType.VIDEO);
         mLiveHelper.startRecord(option);
-        mLiveHelper.notifyNewRecordInfo(CurLiveInfo.getTitle());
+        // mLiveHelper.notifyNewRecordInfo(CurLiveInfo.getTitle());
     }
 
     /**
