@@ -34,6 +34,7 @@ import com.tencent.TIMMessage;
 import com.tencent.av.sdk.AVRoomMulti;
 import com.tencent.av.sdk.AVVideoCtrl;
 import com.tencent.av.sdk.AVView;
+import com.tencent.cos.task.TaskType;
 import com.tencent.ilivesdk.ILiveCallBack;
 import com.tencent.ilivesdk.ILiveConstants;
 import com.tencent.ilivesdk.ILiveSDK;
@@ -116,12 +117,40 @@ public class LiveHelper extends Presenter implements ILiveRoomOption.onRoomDisco
         @Override
         protected void onPostExecute(UserServerHelper.RequestBackInfo result) {
             if (result != null && result.getErrorCode() == 0) {
-                Log.i("way", MySelfInfo.getInstance().toString());
+                Log.i("way", "ApplyCreateRoom: " + MySelfInfo.getInstance().toString());
                 MySelfInfo.getInstance().writeToCache(mContext);
                 createRoom();
             } else {
                 Log.i(TAG, "ApplyCreateRoom onPostExecute: " + (null != result ? result.getErrorInfo() : "empty"));
+                if (result.getErrorCode() == 10009) {
+                    // Token 过期
+                    LL.i("Token 过期，重新登录");
+                    StandardLoginTask task = new StandardLoginTask();
+                    task.execute(MySelfInfo.getInstance().getId(), MySelfInfo.getInstance().getId());
+                }
             }
+        }
+    }
+
+    class StandardLoginTask extends AsyncTask<String, Integer, UserServerHelper.RequestBackInfo> {
+
+        @Override
+        protected UserServerHelper.RequestBackInfo doInBackground(String... strings) {
+
+            return UserServerHelper.getInstance().loginId(strings[0], strings[1]);
+        }
+
+        @Override
+        protected void onPostExecute(UserServerHelper.RequestBackInfo result) {
+
+            if (result != null) {
+                if (result.getErrorCode() == 0) {
+                    MySelfInfo.getInstance().writeToCache(mContext);
+                    //登录
+                    startCreateRoom();
+                }
+            }
+
         }
     }
 
@@ -844,6 +873,12 @@ public class LiveHelper extends Presenter implements ILiveRoomOption.onRoomDisco
             public void onError(String module, int errCode, String errMsg) {
                 ILiveLog.d(TAG, "ILVB-SXB|createRoom->create room failed:" + module + "|" + errCode + "|" + errMsg + "|roomid:" + MySelfInfo.getInstance().getMyRoomNum());
                 // showToast("sendCmd->failed:" + module + "|" + errCode + "|" + errMsg);
+                if (errCode == 10021) {
+                    // group id has be used!
+                    LL.i("10021....group id has be used!,重新新建一个Room");
+                    createRoom();
+                    return;
+                }
                 if (null != mLiveView) {
                     mLiveView.quiteRoomComplete(MySelfInfo.getInstance().getIdStatus(), true, null);
                 }

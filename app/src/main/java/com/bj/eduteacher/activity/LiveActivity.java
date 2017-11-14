@@ -916,7 +916,10 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
             editor.apply();
             clearOldData();
             // 上报录制房间信息
-            mLiveHelper.notifyNewRecordInfo(CurLiveInfo.getTitle());
+            if (mRecord) {
+                mLiveHelper.notifyNewRecordInfo(CurLiveInfo.getTitle());
+                mRecord = false;
+            }
             finish();
         } else {
             clearOldData();
@@ -1590,7 +1593,6 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
     @Override
     public void stopRecordCallback(boolean isSucc, List<String> files) {
         if (isSucc == true) {
-            mRecord = false;
             LL.i("结束直播录制成功..." + isSucc);
             // recordBtn.setText(R.string.live_btn_record);
         }
