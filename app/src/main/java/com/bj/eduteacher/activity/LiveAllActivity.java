@@ -215,10 +215,17 @@ public class LiveAllActivity extends BaseActivity {
                 checkJoinLive();
             }
         } else {
-            // 已经结束的直播不进入直播间
-            TipsAlertDialog2 dialog = new TipsAlertDialog2(LiveAllActivity.this);
-            dialog.setContentText("本直播已结束，暂不开放直播回看，敬请期待后续开放!");
-            dialog.show();
+            if (StringUtils.isEmpty(item.getPlayUrl())) {
+                // 已经结束的直播不进入直播间
+                TipsAlertDialog2 dialog = new TipsAlertDialog2(LiveAllActivity.this);
+                dialog.setContentText("本直播已结束，暂未发现直播录像");
+                dialog.show();
+            } else {
+                Intent intent = new Intent(this, LivePlayBackActivity.class);
+                intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_NAME, item.getTitle());
+                intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_PREVIEW_URL, item.getPlayUrl());
+                startActivity(intent);
+            }
         }
     }
 

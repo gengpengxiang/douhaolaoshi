@@ -226,6 +226,11 @@
             android:hardwareAccelerated="true"
             android:screenOrientation="portrait"/>
         <activity
+            android:name=".activity.LivePlayBackActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:hardwareAccelerated="true"
+            android:screenOrientation="portrait"/>
+        <activity
             android:name=".activity.LiveAllActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"/>

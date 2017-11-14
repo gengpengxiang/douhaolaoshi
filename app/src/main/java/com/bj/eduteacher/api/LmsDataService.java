@@ -3102,6 +3102,8 @@ public class LmsDataService {
 
                 info.setAgreeNumber(item.optString("price", "0"));
                 info.setCommentNumber(item.optString("paystatus", "0")); // 0 未购买，1 已购买
+
+                info.setPlayUrl(item.optString("playurl", ""));
                 info.setPreviewType(type);
                 info.setShowType(ArticleInfo.SHOW_TYPE_LIVE);
                 dataList.add(info);

@@ -701,7 +701,7 @@ public class LiveHelper extends Presenter implements ILiveRoomOption.onRoomDisco
                     recordInfo.put("name", name);
                     recordInfo.put("type", 0);
                     recordInfo.put("cover", CurLiveInfo.getCoverurl());
-                    Thread.sleep(2000);
+                    Thread.sleep(5000);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 } catch (Exception e) {

@@ -105,6 +105,12 @@ public class LiveAllAdapter extends BaseRecyclerAdapter<RecyclerView.ViewHolder>
                     holder.tvPrice.setText("已购");
                 }
             }
+            // 如果是已经结束的直播并且拥有直播录像的话
+            if ("2".equals(itemInfo.getPreviewType()) && !StringUtils.isEmpty(itemInfo.getPlayUrl())) {
+                holder.tvPlayback.setVisibility(View.VISIBLE);
+            } else {
+                holder.tvPlayback.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -134,6 +140,7 @@ public class LiveAllAdapter extends BaseRecyclerAdapter<RecyclerView.ViewHolder>
         private ImageView ivLiveIcon;
         private TextView tvLiveTime;
         private TextView tvPrice;
+        private TextView tvPlayback;
 
         public ViewHolderDouke(View itemView, boolean isItem) {
             super(itemView);
@@ -146,6 +153,7 @@ public class LiveAllAdapter extends BaseRecyclerAdapter<RecyclerView.ViewHolder>
                 ivLiveIcon = (ImageView) itemView.findViewById(R.id.iv_iconLive);
                 tvLiveTime = (TextView) itemView.findViewById(R.id.tv_liveTime);
                 tvPrice = (TextView) itemView.findViewById(R.id.tv_price);
+                tvPlayback = (TextView) itemView.findViewById(R.id.tv_playback);
             }
         }
     }

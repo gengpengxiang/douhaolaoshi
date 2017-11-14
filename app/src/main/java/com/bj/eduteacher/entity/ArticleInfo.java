@@ -43,6 +43,15 @@ public class ArticleInfo {
     private List<ArticleInfo> replyList;
 
     private String previewType;
+    private String playUrl;
+
+    public String getPlayUrl() {
+        return playUrl;
+    }
+
+    public void setPlayUrl(String playUrl) {
+        this.playUrl = playUrl;
+    }
 
     public String getNickname() {
         return nickname;
