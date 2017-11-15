@@ -36,7 +36,8 @@
             android:paddingTop="1dp"
             android:text="直播录像"
             android:textColor="#FFFFFF"
-            android:textSize="8sp"/>
+            android:textSize="8sp"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/tv_liveTitle"

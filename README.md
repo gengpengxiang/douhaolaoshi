@@ -6,6 +6,12 @@ Step Product APK
 5. tool/Constants -->> 修改腾讯云直播的SDK_APPID 和 ACCOUNT_TYPE
 
 ##########################################
+start develop 3.3
+1. 直播回放
+2. 限制发送弹幕
+3. 点赞数量累积
+4. 逗课搜索
+
 start develop 3.0.1
 1. 不需要登录直接进入app
 2. 昵称修改
