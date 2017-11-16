@@ -4,7 +4,7 @@ android {
     useLibrary 'org.apache.http.legacy'
 
     compileSdkVersion 25
-    buildToolsVersion '25.0.2'
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "com.bj.eduteacher"
         minSdkVersion 17
@@ -47,12 +47,13 @@ android {
             path "CMakeLists.txt"
         }
     }
+    flavorDimensions "default"
     productFlavors {
-        wandoujia {}
-        baidu {}
-        xiaomi {}
-        yingyongbao {}
-        huawei {}
+        wandoujia {dimension "default"}
+        baidu {dimension "default"}
+        xiaomi {dimension "default"}
+        yingyongbao {dimension "default"}
+        huawei {dimension "default"}
         productFlavors.all { flavor ->
             flavor.manifestPlaceholders = [UMENG_CHANNEL_VALUE: name]
         }
@@ -60,6 +61,7 @@ android {
 }
 repositories {
     flatDir { dirs 'libs' }
+    google()
 }
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
