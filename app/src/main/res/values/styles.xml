@@ -21,6 +21,14 @@
         <item name="android:padding">5dp</item>
     </style>
 
+    <style name="AppDialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowEnterAnimation">@anim/fade_in</item>
+        <item name="android:windowExitAnimation">@anim/fade_out</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
     <style name="common_dlg" parent="@android:style/Theme.Holo.Light.Dialog">
         <item name="android:windowNoTitle">false</item>
         <item name="android:windowCloseOnTouchOutside">true</item>

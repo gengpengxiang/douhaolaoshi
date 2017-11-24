@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent">
+
+    <View
+        android:id="@+id/hpplay_back_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/layout_title_height_400dp"
+        android:layout_alignParentBottom="true"
+        android:background="@android:color/transparent">
+
+        <LinearLayout
+            android:id="@+id/hpplay_positivebutton"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/layout_title_height_57dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="@dimen/layout_title_height_5dp"
+            android:layout_marginTop="@dimen/layout_title_height_5dp"
+            android:background="@drawable/hpplay_custom_dialog_button_bg"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/hpplay_button_cal"
+                android:textColor="#0076FF"
+                android:textSize="@dimen/activity_title_size_20sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/content_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/hpplay_positivebutton"
+            android:background="@android:color/transparent">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/hpplay_custom_dialog_bg">
+
+                <LinearLayout
+                    android:id="@+id/hpplay_window_device_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/layout_title_height_46dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:text="@string/device_choose_title"
+                            android:textColor="#505050"
+                            android:textSize="@dimen/activity_title_size_16sp" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/layout_title_height_1dp"
+                            android:layout_alignParentBottom="true"
+                            android:background="#cdced2" />
+                    </RelativeLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:orientation="horizontal"
+                        android:visibility="visible">
+
+                        <ListView
+                            android:id="@+id/hpplay_listview"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:divider="@null"
+                            android:scrollbars="none" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:id="@+id/seaching_device_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/layout_title_height_200dp"
+                    android:layout_centerHorizontal="true"
+                    android:orientation="vertical"
+                    android:visibility="visible">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/layout_title_height_46dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:text="@string/happly_title"
+                            android:textColor="@android:color/black"
+                            android:textSize="@dimen/activity_title_size_16sp" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/layout_title_height_1dp"
+                            android:layout_alignParentBottom="true"
+                            android:background="#cdced2" />
+                    </RelativeLayout>
+
+                    <LinearLayout
+                        android:id="@+id/seacher_device_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <ProgressBar
+                            android:id="@+id/processbar_discovery_device"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:indeterminateBehavior="repeat"
+                            android:indeterminateDrawable="@drawable/hpplay_progressbg"
+                            android:indeterminateOnly="true" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/search_device_happly_tv"
+                            android:textColor="@color/aplha_back_50"
+                            android:textSize="@dimen/activity_title_size_16sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/not_seach_device_layout"
+                        android:layout_width="@dimen/layout_title_height_225dp"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="@dimen/layout_title_height"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical"
+                        android:visibility="visible">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/device_choose_dialog"
+                            android:textColor="@android:color/black"
+                            android:textSize="@dimen/activity_title_size_15sp" />
+
+                        <TextView
+                            android:id="@+id/not_seach_device_tx"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/layout_title_height_10dp"
+                            android:gravity="center"
+                            android:text="@string/device_choose_dwon"
+                            android:textColor="@color/aplha_back_50"
+                            android:textSize="@dimen/activity_title_size_14sp" />
+
+                        <Button
+                            android:id="@+id/hpplay_push_cusre_bt"
+                            android:layout_width="@dimen/layout_title_height_112dp"
+                            android:layout_height="@dimen/layout_title_height_36dp"
+                            android:layout_marginTop="@dimen/activity_vertical_margin_20dp"
+                            android:background="@drawable/hpplay_cusre_button_selector"
+                            android:text="@string/downing_happly_tv"
+                            android:textColor="@android:color/white"
+                            android:textSize="@dimen/activity_title_size_14sp" />
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+        </LinearLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

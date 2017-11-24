@@ -5,6 +5,7 @@ package com.bj.eduteacher.api;
  */
 public class MLProperties {
     public static final String APP_DOUHAO_TEACHER_ID = "wx7e56305cbb24d576";
+    public static final String LE_BO_KEY = "5bb26b62d28f9b4b65b8eff9434b480a";
 
     public static final String PREFER_KEY_LOGIN_STATUS = "loginStatus";
     public static final String PREFER_KEY_LOGIN_Time = "loginTime";

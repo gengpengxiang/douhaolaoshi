@@ -3,6 +3,7 @@ package com.bj.eduteacher.activity;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -11,8 +12,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -25,22 +24,21 @@ import com.bj.eduteacher.api.MLProperties;
 import com.bj.eduteacher.entity.ArticleInfo;
 import com.bj.eduteacher.entity.BaseDataInfo;
 import com.bj.eduteacher.manager.IntentManager;
-import com.bj.eduteacher.media.IjkVideoManager;
-import com.bj.eduteacher.media.controller.MediaController;
-import com.bj.eduteacher.media.videoview.IjkVideoView;
 import com.bj.eduteacher.utils.LL;
 import com.bj.eduteacher.utils.NetUtils;
 import com.bj.eduteacher.utils.PreferencesUtils;
 import com.bj.eduteacher.utils.ScreenUtils;
 import com.bj.eduteacher.utils.StringUtils;
 import com.bj.eduteacher.utils.T;
-import com.hpplay.callback.ExecuteResultCallBack;
-import com.hpplay.link.HpplayLinkControl;
+import com.bj.eduteacher.view.MyJZView;
 import com.umeng.analytics.MobclickAgent;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.jzvd.JZVideoPlayer;
+import cn.jzvd.JZVideoPlayerManager;
+import cn.jzvd.JZVideoPlayerStandard;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -54,7 +52,7 @@ import io.reactivex.schedulers.Schedulers;
  * Created by zz379 on 2017/8/30.
  */
 
-public class ResPlayActivity extends BaseActivity implements MediaController.OnTopBackButtonClickListener, MediaController.OnFullScreenChangeListener {
+public class ResPlay2Activity extends BaseActivity {
 
     private static final String ARTICLE_AGREE_TYPE_YES = "add";
     private static final String ARTICLE_AGREE_TYPE_NO = "del";
@@ -71,30 +69,29 @@ public class ResPlayActivity extends BaseActivity implements MediaController.OnT
     @BindView(R.id.ll_bottomBar)
     LinearLayout llBottomBar;
 
+    private MyJZView mPlayer;
+
     private String resID;
     private String resUrl;
     private String resName;
     private LmsDataService service;
     private String teacherPhoneNumber;
 
-    private IjkVideoView mIjkVideoView;
-    private MediaController mediaController;
-    private static final int LEBO_CONTROLLER_VOLUME_UP_PORT = 43;
-    private static final int LEBO_CONTROLLER_VOLUME_DOWN_PORT = 44;
-    private static final int LEBO_CONTROLLER_VOLUME_MUTE_PORT = 45;
-    private static final int LEBO_STOP_PLAY_PORT = 50;
-
+    // JZVideoPlayer.JZAutoFullscreenListener mSensorEventListener;
     AutoFullScreenListener mSensorEventListener;
     SensorManager mSensorManager;
 
+    private boolean isPlayOnTV;
+
     @Override
+
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // 设置状态栏颜色
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(ContextCompat.getColor(this, android.R.color.black));
         }
-        setContentView(R.layout.activity_res_play_bilibili);
+        setContentView(R.layout.layout_jz_player);
         ButterKnife.bind(this);
         service = new LmsDataService();
         initStatus();
@@ -119,26 +116,24 @@ public class ResPlayActivity extends BaseActivity implements MediaController.OnT
         resName = getIntent().getStringExtra(MLProperties.BUNDLE_KEY_MASTER_RES_NAME);
         resUrl = getIntent().getStringExtra(MLProperties.BUNDLE_KEY_MASTER_RES_PREVIEW_URL);
 
-        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        mSensorEventListener = new AutoFullScreenListener();
-
-        mIjkVideoView = (IjkVideoView) findViewById(R.id.video_view);
-        mediaController = new MediaController(this);
-        mediaController.setVideoName(resName);    // 设置标题
-        mediaController.setShowThumb(true);
-        mediaController.setPreparedPlay(true);
-        mediaController.setTopBackButtonClickListener(this);    // 设置返回按钮监听
-        mediaController.setFullScreenChangeListener(this);
-        mIjkVideoView.setMediaController(mediaController);
-
-        mIjkVideoView.setVideoPath(resUrl);
-        // 自动播放
-        mediaController.mBtnPlay.post(new Runnable() {
+        mPlayer = (MyJZView) findViewById(R.id.mPlayer);
+        mPlayer.setBackListener(new MyJZView.BackListener() {
             @Override
-            public void run() {
-                mediaController.mBtnPlay.performClick();
+            public void onBackClick() {
+                onBackPressed();
             }
         });
+        
+        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        // mSensorEventListener = new JZVideoPlayer.JZAutoFullscreenListener();
+        mSensorEventListener = new AutoFullScreenListener();
+
+        mPlayer.setUp(resUrl, JZVideoPlayerStandard.SCREEN_LAYOUT_NORMAL, resName);
+        // 设置全屏前后的屏幕方向
+        JZVideoPlayer.FULLSCREEN_ORIENTATION = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+        JZVideoPlayer.NORMAL_ORIENTATION = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+        JZVideoPlayer.SAVE_PROGRESS = false;
+        mPlayer.startButton.performClick();
     }
 
     @Override
@@ -160,6 +155,10 @@ public class ResPlayActivity extends BaseActivity implements MediaController.OnT
             // 查询是否点赞
             getArticleAgreeNumber(ARTICLE_AGREE_TYPE_SEARCH);
         }
+
+        if (mPlayer.currentState != JZVideoPlayer.CURRENT_STATE_PLAYING && mPlayer.currentState != JZVideoPlayer.CURRENT_STATE_ERROR) {
+            mPlayer.startButton.performClick();
+        }
         // 注册重力监听
         Sensor accelerometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mSensorManager.registerListener(mSensorEventListener, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
@@ -180,31 +179,22 @@ public class ResPlayActivity extends BaseActivity implements MediaController.OnT
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        if (mediaController.isPlayingOnTV) {
-            mediaController.isPlayingOnTV = false;
-            HpplayLinkControl.getInstance().stopPlay(new ExecuteResultCallBack() {
-                @Override
-                public void onResultDate(Object o, int i) {
-                    Log.i("way", "结束播放：" + (Boolean) o + "...端口号：" + i);
-                }
-            }, LEBO_STOP_PLAY_PORT);
+        if (JZVideoPlayer.backPress()) {
+            return;
         }
+        super.onBackPressed();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        IjkVideoManager.getInstance().pause();
+        JZVideoPlayer.releaseAllVideos();
         mSensorManager.unregisterListener(mSensorEventListener);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        IjkVideoManager.getInstance().release();
-        // 释放整个SDK
-        HpplayLinkControl.getInstance().castDisconnectDevice();
     }
 
     private void getResPreviewNumber() {
@@ -369,61 +359,7 @@ public class ResPlayActivity extends BaseActivity implements MediaController.OnT
         });
     }
 
-    @Override
-    public void onFullScreenChange(boolean fullscreen) {
-        if (fullscreen) {
-            // 隐藏状态栏
-            int options = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-            getWindow().getDecorView().setSystemUiVisibility(options);
-            llBottomBar.setVisibility(View.GONE);
-        } else {
-            // 显示状态栏
-            getWindow().getDecorView().setSystemUiVisibility(0);
-            llBottomBar.setVisibility(View.VISIBLE);
-        }
-    }
-
-    @Override
-    public void onTopBackClick() {
-        onBackPressed();
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        Log.i("way", "Activity...onKeyDown()...按键监听：" + keyCode);
-        // 处理电视音量
-        if (mediaController.isPlayingOnTV && keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-            HpplayLinkControl.getInstance().castDeviceVolume(new ExecuteResultCallBack() {
-                @Override
-                public void onResultDate(Object o, int i) {
-                    Log.i("way", "增加音量：" + (Boolean) o + "...端口号：" + i);
-                }
-            }, LEBO_CONTROLLER_VOLUME_UP_PORT, true);
-            return true;
-        } else if (mediaController.isPlayingOnTV && keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-            HpplayLinkControl.getInstance().castDeviceVolume(new ExecuteResultCallBack() {
-                @Override
-                public void onResultDate(Object o, int i) {
-                    Log.i("way", "减少音量：" + (Boolean) o + "...端口号：" + i);
-                }
-            }, LEBO_CONTROLLER_VOLUME_DOWN_PORT, false);
-            return true;
-        } else if (mediaController.isPlayingOnTV && keyCode == KeyEvent.KEYCODE_VOLUME_MUTE) {
-            HpplayLinkControl.getInstance().castDeviceVolume(new ExecuteResultCallBack() {
-                @Override
-                public void onResultDate(Object o, int i) {
-                    Log.i("way", "静音：" + (Boolean) o + "...端口号：" + i);
-                }
-            }, LEBO_CONTROLLER_VOLUME_MUTE_PORT, 0);
-        }
-
-        return super.onKeyDown(keyCode, event);
-    }
-
-    public class AutoFullScreenListener implements SensorEventListener {
+    public static class AutoFullScreenListener implements SensorEventListener {
         private static final int _DATA_X = 0;
         private static final int _DATA_Y = 1;
         private static final int _DATA_Z = 2;
@@ -468,10 +404,15 @@ public class ResPlayActivity extends BaseActivity implements MediaController.OnT
                 return;
             } else if (orientation > 225 && orientation < 315) {
                 LL.i("··········横屏··········");
-                mediaController.startFullScreen();
+                if (JZVideoPlayerManager.getCurrentJzvd() != null && System.currentTimeMillis() - JZVideoPlayer.lastAutoFullscreenTime > 2000L) {
+                    JZVideoPlayerManager.getCurrentJzvd().autoFullscreen(X);
+                    JZVideoPlayer.lastAutoFullscreenTime = System.currentTimeMillis();
+                }
             } else if ((orientation > 315 && orientation < 360) || (orientation > 0 && orientation < 45)) {
                 LL.i("··········竖屏··········");
-                mediaController.quitFullScreen();
+                if (JZVideoPlayerManager.getCurrentJzvd() != null) {
+                    JZVideoPlayerManager.getCurrentJzvd().autoQuitFullscreen();
+                }
             }
         }
 

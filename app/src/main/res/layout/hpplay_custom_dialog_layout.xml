@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent" >
+
+    <LinearLayout
+        android:id="@+id/positiveputton"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/layout_title_height_57dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="@dimen/layout_title_height_5dp"
+        android:layout_marginBottom="@dimen/layout_title_height_5dp"
+        android:visibility="gone"
+        android:background="@drawable/hpplay_custom_dialog_button_bg"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/hpplay_button_cal"
+            android:textColor="#0076FF"
+            android:layout_marginTop="@dimen/layout_title_height_10dp"
+            android:layout_gravity="center_horizontal"
+            android:textSize="@dimen/activity_title_size_20sp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/down_seccuse_happly_tv"
+            android:textColor="#878787"
+            android:layout_marginTop="@dimen/layout_title_height_1dp"
+            android:layout_gravity="center_horizontal"
+            android:textSize="@dimen/activity_title_size_12sp"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/content_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/positiveputton"
+        android:background="@android:color/transparent" >
+
+        <RelativeLayout
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent" >
+
+            <TextView
+                android:id="@+id/message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:singleLine="false"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/activity_title_size_16sp" />
+        </RelativeLayout>
+    </LinearLayout>
+
+</RelativeLayout>

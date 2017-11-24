@@ -7,6 +7,7 @@
     <string name="dialog_waiting">加载中</string>
 
     <string name="toast_home_exit_system">再按一次退出</string>
+    <string name="toast_home_exit_system_mirror">正在投屏中，是否确认退出</string>
 
     <string name="custome_service_phonenumber">15201635868</string>
     <string name="invite_parents_content">邀请使用逗号教育app，下载链接：http://t.cn/RXxyYu7</string>

@@ -52,6 +52,8 @@ import com.bj.eduteacher.utils.T;
 import com.bj.eduteacher.zzimgselector.view.ImageSelectorActivity;
 import com.bj.eduteacher.zzokhttp.OkHttpUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.hpplay.callback.HpplayWindowPlayCallBack;
+import com.hpplay.link.HpplayLinkControl;
 import com.hyphenate.chat.EMClient;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.umeng.analytics.MobclickAgent;
@@ -339,6 +341,32 @@ public class UserFragment extends BaseFragment implements LogoutView {
     void clickFindTeacherLive() {
         Intent intent = new Intent(getActivity(), LiveAllActivity.class);
         startActivity(intent);
+    }
+
+    @OnClick(R.id.rl_lebo)
+    void clickStartMirror() {
+        if (System.currentTimeMillis() - currMillis > 1000) {
+            // 显示lebo投屏页面
+            HpplayLinkControl control = HpplayLinkControl.getInstance();
+            control.initHpplayLink(getActivity(), MLProperties.LE_BO_KEY);
+            control.showHpplayWindow(getActivity(), new HpplayWindowPlayCallBack() {
+                @Override
+                public void onHpplayWindowDismiss() {
+                    
+                }
+
+                @Override
+                public void onIsConnect(boolean b) {
+
+                }
+
+                @Override
+                public void onIsPlaySuccess(boolean b) {
+
+                }
+            });
+            currMillis = System.currentTimeMillis();
+        }
     }
 
     @OnClick(R.id.rl_question)

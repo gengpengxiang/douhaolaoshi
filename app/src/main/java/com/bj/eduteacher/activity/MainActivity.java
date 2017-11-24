@@ -51,6 +51,8 @@ import com.bj.eduteacher.utils.ScreenUtils;
 import com.bj.eduteacher.utils.StringUtils;
 import com.bj.eduteacher.widget.CustomViewPager;
 import com.bj.eduteacher.widget.dialog.NotifyDialog;
+import com.hpplay.callback.ExecuteResultCallBack;
+import com.hpplay.link.HpplayLinkControl;
 import com.hyphenate.EMMessageListener;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMConversation;
@@ -274,10 +276,31 @@ public class MainActivity extends BaseActivity implements ChangeBottomTabListene
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if ((System.currentTimeMillis() - exitTime) <= 2000) {
                 // 退出APP
+                if (HpplayLinkControl.getInstance().isConnect()) {
+                    HpplayLinkControl.getInstance().stopPlay(new ExecuteResultCallBack() {
+                        @Override
+                        public void onResultDate(Object o, int i) {
+                            boolean b = (boolean) o;
+                            // b 发送到电视端指令是否成功，true为成功，false为失败
+                            if (b) {
+                                LL.i("stopPlay()..." + "停止播放成功");
+                            } else {
+                                LL.i("stopPlay()..." + "停止播放失败");
+                            }
+                        }
+                    }, 0);
+                }
+                if (HpplayLinkControl.getInstance().getMirrorState()) {
+                    HpplayLinkControl.getInstance().castStopMirror();
+                }
                 finishSelf();
                 // getActivity().exitApp();
             } else {
-                Toast.makeText(this, getString(R.string.toast_home_exit_system), Toast.LENGTH_SHORT).show();
+                if (HpplayLinkControl.getInstance().getMirrorState()) {
+                    Toast.makeText(this, getString(R.string.toast_home_exit_system_mirror), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, getString(R.string.toast_home_exit_system), Toast.LENGTH_SHORT).show();
+                }
                 exitTime = System.currentTimeMillis();
             }
             return true;
@@ -300,7 +323,8 @@ public class MainActivity extends BaseActivity implements ChangeBottomTabListene
     protected void onDestroy() {
         LeakedUtils.fixTextLineCacheLeak();
         IMMLeaks.fixFocusedViewLeak(getApplication());
-
+        // 退出的时候，释放Lebo占用的资源
+        HpplayLinkControl.getInstance().castDisconnectDevice();
         if (instance != null) instance = null;
         super.onDestroy();
     }

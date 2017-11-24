@@ -49,11 +49,11 @@ android {
     }
     flavorDimensions "default"
     productFlavors {
-        wandoujia {dimension "default"}
-        baidu {dimension "default"}
-        xiaomi {dimension "default"}
-        yingyongbao {dimension "default"}
-        huawei {dimension "default"}
+        wandoujia { dimension "default" }
+        baidu { dimension "default" }
+        xiaomi { dimension "default" }
+        yingyongbao { dimension "default" }
+        huawei { dimension "default" }
         productFlavors.all { flavor ->
             flavor.manifestPlaceholders = [UMENG_CHANNEL_VALUE: name]
         }
@@ -134,5 +134,12 @@ dependencies {
 
     // 环信SDK
     compile 'com.hyphenate:hyphenate-sdk-lite:3.3.4'
+    // 乐播投屏SDK
+    compile(name: 'hpplay-link-2415', ext: 'aar')
 
+    // required, enough for most devices.
+    compile 'tv.danmaku.ijk.media:ijkplayer-java:0.8.4'
+    compile 'tv.danmaku.ijk.media:ijkplayer-armv7a:0.8.4'
+    compile 'tv.danmaku.ijk.media:ijkplayer-exo:0.8.4'
+    compile 'com.danikula:videocache:2.7.0'
 }

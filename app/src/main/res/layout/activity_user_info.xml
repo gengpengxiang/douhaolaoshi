@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:fresco="http://schemas.android.com/apk/res-auto"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <include layout="@layout/layout_header_toolbar"/>
+    <include layout="@layout/layout_header_toolbar" />
 
     <ScrollView
         android:id="@+id/sv_content"
@@ -27,7 +27,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 fresco:placeholderImageScaleType="focusCrop"
-                fresco:viewAspectRatio="2.72"/>
+                fresco:viewAspectRatio="2.72" />
 
             <RelativeLayout
                 android:layout_width="wrap_content"
@@ -45,7 +45,7 @@
                     fresco:placeholderImageScaleType="focusCrop"
                     fresco:roundAsCircle="true"
                     fresco:roundingBorderColor="@color/colorPrimary"
-                    fresco:roundingBorderWidth="2dp"/>
+                    fresco:roundingBorderWidth="2dp" />
 
                 <ImageView
                     android:layout_width="28dp"
@@ -53,7 +53,7 @@
                     android:layout_alignBottom="@+id/img_kidPhoto"
                     android:layout_alignEnd="@+id/img_kidPhoto"
                     android:layout_alignRight="@+id/img_kidPhoto"
-                    android:src="@mipmap/ic_avatarpicture"/>
+                    android:src="@mipmap/ic_avatarpicture" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -70,7 +70,7 @@
                     android:layout_marginTop="36px"
                     android:text="昵称"
                     android:textColor="#4A4A4A"
-                    android:textSize="17sp"/>
+                    android:textSize="17sp" />
 
                 <ImageView
                     android:id="@+id/img_3"
@@ -81,7 +81,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginRight="27px"
                     android:scaleType="fitXY"
-                    android:src="@mipmap/ic_chevron_right"/>
+                    android:src="@mipmap/ic_chevron_right" />
 
                 <TextView
                     android:id="@+id/tv_nickname"
@@ -92,13 +92,13 @@
                     android:layout_toStartOf="@+id/img_3"
                     android:textColor="#4A4A4A"
                     android:textSize="15sp"
-                    tools:text="刘天奇"/>
+                    tools:text="刘天奇" />
             </RelativeLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="3px"
-                android:background="#D8D8D8"/>
+                android:background="#D8D8D8" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -113,7 +113,7 @@
                     android:layout_marginTop="36px"
                     android:text="姓名"
                     android:textColor="#4A4A4A"
-                    android:textSize="17sp"/>
+                    android:textSize="17sp" />
 
                 <TextView
                     android:id="@+id/tv_user_name"
@@ -125,13 +125,13 @@
                     android:layout_marginRight="43px"
                     android:textColor="#4A4A4A"
                     android:textSize="15sp"
-                    tools:text="刘天奇"/>
+                    tools:text="刘天奇" />
             </RelativeLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="3px"
-                android:background="#D8D8D8"/>
+                android:background="#D8D8D8" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -146,7 +146,7 @@
                     android:layout_marginTop="36px"
                     android:text="手机号"
                     android:textColor="#4A4A4A"
-                    android:textSize="17sp"/>
+                    android:textSize="17sp" />
 
                 <TextView
                     android:id="@+id/tv_user_phone_number"
@@ -158,13 +158,13 @@
                     android:layout_marginRight="43px"
                     android:textColor="#4A4A4A"
                     android:textSize="15sp"
-                    tools:text="18988888888"/>
+                    tools:text="18988888888" />
             </RelativeLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="3px"
-                android:background="#D8D8D8"/>
+                android:background="#D8D8D8" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -179,7 +179,7 @@
                     android:layout_marginTop="36px"
                     android:text="学校"
                     android:textColor="#4A4A4A"
-                    android:textSize="17sp"/>
+                    android:textSize="17sp" />
 
                 <TextView
                     android:id="@+id/tv_schoolName"
@@ -191,7 +191,7 @@
                     android:layout_marginRight="43px"
                     android:textColor="#4A4A4A"
                     android:textSize="15sp"
-                    tools:text="杨镇中心小学"/>
+                    tools:text="杨镇中心小学" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -211,7 +211,7 @@
                     android:layout_marginTop="36px"
                     android:text="发现直播"
                     android:textColor="#4A4A4A"
-                    android:textSize="17sp"/>
+                    android:textSize="17sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -226,7 +226,7 @@
                     android:paddingTop="2dp"
                     android:text="New"
                     android:textColor="#FFFFFF"
-                    android:textSize="8sp"/>
+                    android:textSize="8sp" />
 
                 <ImageView
                     android:layout_width="24dp"
@@ -236,7 +236,56 @@
                     android:layout_centerVertical="true"
                     android:layout_marginRight="27px"
                     android:scaleType="fitXY"
-                    android:src="@mipmap/ic_chevron_right"/>
+                    android:src="@mipmap/ic_chevron_right" />
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="3px"
+                android:background="#D8D8D8" />
+
+            <RelativeLayout
+                android:id="@+id/rl_lebo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/selector_item_click"
+                android:clickable="true">
+
+                <TextView
+                    android:id="@+id/tv_lebo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="36px"
+                    android:layout_marginLeft="48px"
+                    android:layout_marginTop="36px"
+                    android:text="一键投屏"
+                    android:textColor="#4A4A4A"
+                    android:textSize="17sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toRightOf="@+id/tv_lebo"
+                    android:background="@drawable/shape_bg_text_teacher_news"
+                    android:paddingBottom="2dp"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:paddingTop="2dp"
+                    android:text="New"
+                    android:textColor="#FFFFFF"
+                    android:textSize="8sp" />
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="27px"
+                    android:scaleType="fitXY"
+                    android:src="@mipmap/ic_chevron_right" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -255,7 +304,7 @@
                     android:layout_marginTop="36px"
                     android:text="问题咨询"
                     android:textColor="#4A4A4A"
-                    android:textSize="17sp"/>
+                    android:textSize="17sp" />
 
                 <ImageView
                     android:id="@+id/img_1"
@@ -266,7 +315,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginRight="27px"
                     android:scaleType="fitXY"
-                    android:src="@mipmap/ic_chevron_right"/>
+                    android:src="@mipmap/ic_chevron_right" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -276,13 +325,13 @@
                     android:layout_toStartOf="@+id/img_1"
                     android:text="拨打客服热线"
                     android:textColor="#4A4A4A"
-                    android:textSize="15sp"/>
+                    android:textSize="15sp" />
             </RelativeLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="3px"
-                android:background="#D8D8D8"/>
+                android:background="#D8D8D8" />
 
             <RelativeLayout
                 android:id="@+id/rl_inviteTeachers"
@@ -299,7 +348,7 @@
                     android:layout_marginTop="36px"
                     android:text="邀请老师"
                     android:textColor="#4A4A4A"
-                    android:textSize="17sp"/>
+                    android:textSize="17sp" />
 
                 <ImageView
                     android:layout_width="24dp"
@@ -309,13 +358,13 @@
                     android:layout_centerVertical="true"
                     android:layout_marginRight="27px"
                     android:scaleType="fitXY"
-                    android:src="@mipmap/ic_chevron_right"/>
+                    android:src="@mipmap/ic_chevron_right" />
             </RelativeLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="3px"
-                android:background="#D8D8D8"/>
+                android:background="#D8D8D8" />
 
             <RelativeLayout
                 android:id="@+id/rl_inviteParents"
@@ -332,7 +381,7 @@
                     android:layout_marginTop="36px"
                     android:text="邀请家长"
                     android:textColor="#4A4A4A"
-                    android:textSize="17sp"/>
+                    android:textSize="17sp" />
 
                 <ImageView
                     android:layout_width="24dp"
@@ -342,13 +391,13 @@
                     android:layout_centerVertical="true"
                     android:layout_marginRight="27px"
                     android:scaleType="fitXY"
-                    android:src="@mipmap/ic_chevron_right"/>
+                    android:src="@mipmap/ic_chevron_right" />
             </RelativeLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="3px"
-                android:background="#D8D8D8"/>
+                android:background="#D8D8D8" />
 
             <RelativeLayout
                 android:id="@+id/rl_clearclass"
@@ -366,7 +415,7 @@
                     android:layout_marginTop="36px"
                     android:text="重置班级评价数据"
                     android:textColor="#4A4A4A"
-                    android:textSize="17sp"/>
+                    android:textSize="17sp" />
 
                 <ImageView
                     android:layout_width="24dp"
@@ -376,7 +425,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginRight="27px"
                     android:scaleType="fitXY"
-                    android:src="@mipmap/ic_chevron_right"/>
+                    android:src="@mipmap/ic_chevron_right" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -395,7 +444,7 @@
                     android:layout_marginTop="36px"
                     android:text="关于逗号老师"
                     android:textColor="#4A4A4A"
-                    android:textSize="17sp"/>
+                    android:textSize="17sp" />
 
                 <ImageView
                     android:layout_width="24dp"
@@ -405,13 +454,13 @@
                     android:layout_centerVertical="true"
                     android:layout_marginRight="27px"
                     android:scaleType="fitXY"
-                    android:src="@mipmap/ic_chevron_right"/>
+                    android:src="@mipmap/ic_chevron_right" />
             </RelativeLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="3px"
-                android:background="#D8D8D8"/>
+                android:background="#D8D8D8" />
 
             <RelativeLayout
                 android:id="@+id/rl_check_version"
@@ -428,7 +477,7 @@
                     android:layout_marginTop="36px"
                     android:text="检查新版本"
                     android:textColor="#4A4A4A"
-                    android:textSize="17sp"/>
+                    android:textSize="17sp" />
 
                 <ImageView
                     android:layout_width="24dp"
@@ -439,7 +488,7 @@
                     android:layout_marginRight="27px"
                     android:scaleType="fitXY"
                     android:src="@mipmap/ic_chevron_right"
-                    android:visibility="gone"/>
+                    android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/tv_versionName"
@@ -451,13 +500,13 @@
                     android:layout_marginRight="43px"
                     android:textColor="#4A4A4A"
                     android:textSize="15sp"
-                    tools:text="V1.4.0"/>
+                    tools:text="V1.4.0" />
             </RelativeLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="3px"
-                android:background="#D8D8D8"/>
+                android:background="#D8D8D8" />
 
             <com.facebook.drawee.view.SimpleDraweeView
                 android:id="@+id/btn_logout"
@@ -468,7 +517,7 @@
                 android:layout_marginTop="45dp"
                 fresco:placeholderImage="@mipmap/btn_logout"
                 fresco:placeholderImageScaleType="focusCrop"
-                fresco:viewAspectRatio="5.73"/>
+                fresco:viewAspectRatio="5.73" />
         </LinearLayout>
     </ScrollView>
 

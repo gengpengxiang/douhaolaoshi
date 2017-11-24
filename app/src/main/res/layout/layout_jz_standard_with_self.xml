@@ -146,6 +146,16 @@
             android:textSize="18sp"
             tools:text="杨镇中心小学" />
 
+        <ImageView
+            android:id="@+id/playTV"
+            android:layout_width="52.5dp"
+            android:layout_height="fill_parent"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="14dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/video_mirro_button"
+            android:visibility="visible" />
+
         <LinearLayout
             android:id="@+id/battery_time_layout"
             android:layout_width="wrap_content"
@@ -203,7 +213,6 @@
             android:src="@drawable/jz_click_play_selector" />
     </LinearLayout>
 
-
     <TextView
         android:id="@+id/retry_text"
         android:layout_width="wrap_content"
@@ -215,4 +224,51 @@
         android:textColor="#ffffff"
         android:textSize="12sp"
         android:visibility="invisible" />
+
+    <LinearLayout
+        android:id="@+id/layout_playTV"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/layout_bottom"
+        android:layout_below="@+id/layout_top"
+        android:background="#000"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tv_playTVState"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#EFEFEF"
+            android:textSize="16sp"
+            tools:text="正在投屏中" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_stopPlay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_shape_lebo_quit"
+                android:text="退出投屏"
+                android:textColor="#FFF"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tv_exchangeTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="2dp"
+                android:background="@drawable/bg_shape_lebo_exchange"
+                android:text="切换设备"
+                android:textColor="#FFF"
+                android:textSize="14sp"
+                android:visibility="gone" />
+        </LinearLayout>
+    </LinearLayout>
 </RelativeLayout>
