@@ -3,10 +3,10 @@ package com.bj.eduteacher.activity;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -84,8 +84,8 @@ public class ResPlayActivity extends BaseActivity implements MediaController.OnT
     private static final int LEBO_CONTROLLER_VOLUME_MUTE_PORT = 45;
     private static final int LEBO_STOP_PLAY_PORT = 50;
 
-    AutoFullScreenListener mSensorEventListener;
-    SensorManager mSensorManager;
+    // AutoFullScreenListener mSensorEventListener;
+    // SensorManager mSensorManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -119,8 +119,8 @@ public class ResPlayActivity extends BaseActivity implements MediaController.OnT
         resName = getIntent().getStringExtra(MLProperties.BUNDLE_KEY_MASTER_RES_NAME);
         resUrl = getIntent().getStringExtra(MLProperties.BUNDLE_KEY_MASTER_RES_PREVIEW_URL);
 
-        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        mSensorEventListener = new AutoFullScreenListener();
+        // mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        // mSensorEventListener = new AutoFullScreenListener();
 
         mIjkVideoView = (IjkVideoView) findViewById(R.id.video_view);
         mediaController = new MediaController(this);
@@ -161,8 +161,8 @@ public class ResPlayActivity extends BaseActivity implements MediaController.OnT
             getArticleAgreeNumber(ARTICLE_AGREE_TYPE_SEARCH);
         }
         // 注册重力监听
-        Sensor accelerometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        mSensorManager.registerListener(mSensorEventListener, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        // Sensor accelerometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        // mSensorManager.registerListener(mSensorEventListener, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @OnClick(R.id.ll_commentNumber)
@@ -196,7 +196,7 @@ public class ResPlayActivity extends BaseActivity implements MediaController.OnT
     protected void onPause() {
         super.onPause();
         IjkVideoManager.getInstance().pause();
-        mSensorManager.unregisterListener(mSensorEventListener);
+        // mSensorManager.unregisterListener(mSensorEventListener);
     }
 
     @Override
@@ -371,8 +371,14 @@ public class ResPlayActivity extends BaseActivity implements MediaController.OnT
 
     @Override
     public void onFullScreenChange(boolean fullscreen) {
-        if (fullscreen) {
-            // 隐藏状态栏
+        
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            // T.showShort(this, "横屏");
             int options = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     | View.SYSTEM_UI_FLAG_FULLSCREEN
@@ -380,7 +386,7 @@ public class ResPlayActivity extends BaseActivity implements MediaController.OnT
             getWindow().getDecorView().setSystemUiVisibility(options);
             llBottomBar.setVisibility(View.GONE);
         } else {
-            // 显示状态栏
+            // T.showShort(this, "竖屏");
             getWindow().getDecorView().setSystemUiVisibility(0);
             llBottomBar.setVisibility(View.VISIBLE);
         }

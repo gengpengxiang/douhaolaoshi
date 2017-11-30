@@ -50,7 +50,7 @@ import com.bj.eduteacher.media.LeboDevicesAdapter;
 import com.bj.eduteacher.media.util.CommonUtils;
 import com.bj.eduteacher.media.util.LoggerUtils;
 import com.bj.eduteacher.media.util.NetworkUtils;
-import com.bj.eduteacher.media.util.OrientationUtils;
+import com.bj.eduteacher.media.util.OrientationUtils2;
 import com.bj.eduteacher.media.util.SimpleTransitionListener;
 import com.bj.eduteacher.media.videoview.IVideoView;
 import com.bj.eduteacher.media.videoview.IjkVideoView;
@@ -74,7 +74,7 @@ import java.util.Locale;
  * Created on 2017/8/10 上午10:46.
  * leo linxiaotao1993@vip.qq.com
  */
-public class MediaController extends FrameLayout implements IMediaController, OrientationUtils.Callback {
+public class MediaController extends FrameLayout implements IMediaController, OrientationUtils2.Callback {
 
     private static final String TAG = "MediaController";
 
@@ -265,7 +265,7 @@ public class MediaController extends FrameLayout implements IMediaController, Or
     // 内部变量
     ///////////////////////////////////////////////////////////////////////////
 
-    private OrientationUtils mOrientationUtils;
+    private OrientationUtils2 mOrientationUtils;
     private IVideoView mVideoView;
     private Activity mContext;
     /**
@@ -748,7 +748,6 @@ public class MediaController extends FrameLayout implements IMediaController, Or
         switch (screenOrientation) {
             case ActivityInfo.SCREEN_ORIENTATION_PORTRAIT://竖屏
                 mFullscreen = false;
-                lockScreen = false;
                 mBtnFullscreen.setImageResource(R.drawable.video_enlarge);
                 break;
             case ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE://横屏
@@ -814,7 +813,7 @@ public class MediaController extends FrameLayout implements IMediaController, Or
     public void toggleScreenOrientation() {
         if (mFullScreenMode == FULLSCREEN_ORIENTATION) {
             //当前为旋转屏幕的全屏模式
-            mOrientationUtils.toggleScreenOrientation();
+            mOrientationUtils.resolveByClick();
         }
     }
 
@@ -850,7 +849,8 @@ public class MediaController extends FrameLayout implements IMediaController, Or
         debug("当前屏幕尺寸：" + mScreenWidth + "，" + mScreenHeight);
 
 
-        mOrientationUtils = new OrientationUtils(mContext);
+        mOrientationUtils = new OrientationUtils2(mContext, this)
+                .setRotateWithSystem(false);
         mOrientationUtils.setCallback(this);
         mOrientationUtils.setEnable(mEnableOrientation);
 
@@ -1346,6 +1346,21 @@ public class MediaController extends FrameLayout implements IMediaController, Or
         handleControllLayout();
     }
 
+    public ImageView getFullscreenButton() {
+        if (mBtnFullscreen != null) {
+            return mBtnFullscreen;
+        }
+        return null;
+    }
+
+    public int getShrinkImageRes() {
+        return R.drawable.video_shrink;
+    }
+
+    public int getEnlargeImageRes() {
+        return R.drawable.video_enlarge;
+    }
+
     public boolean isPlayingOnTV = false;
 
     /**
@@ -1411,19 +1426,21 @@ public class MediaController extends FrameLayout implements IMediaController, Or
                 return;
             }
             if (mFullScreenMode == FULLSCREEN_ORIENTATION) {
-                mOrientationUtils.toggleScreenOrientation();
+                mOrientationUtils.resolveByClick();
             } else {
                 if (!mFullscreen) {
-                    lockScreen = true;
                     addFullScreenView();
+                    lockScreen = true;
                 } else {
                     removeFullScreenView();
+                    lockScreen = false;
                 }
             }
         }
     };
 
     public void startFullScreen() {
+        Log.i("way", "进入全屏...是否手动禁止自动旋转：" + lockScreen);
         if (!mEnabled) {
             showInfo(NOT_READY_INFO);
             return;
@@ -1433,13 +1450,14 @@ public class MediaController extends FrameLayout implements IMediaController, Or
         }
 
         if (mFullScreenMode == FULLSCREEN_ORIENTATION) {
-            mOrientationUtils.toggleScreenOrientation();
+            mOrientationUtils.resolveByClick();
         } else {
             addFullScreenView();
         }
     }
 
     public void quitFullScreen() {
+        Log.i("way", "退出全屏...是否手动禁止自动旋转：" + lockScreen);
         if (!mEnabled) {
             showInfo(NOT_READY_INFO);
             return;
@@ -1449,7 +1467,7 @@ public class MediaController extends FrameLayout implements IMediaController, Or
         }
 
         if (mFullScreenMode == FULLSCREEN_ORIENTATION) {
-            mOrientationUtils.toggleScreenOrientation();
+            mOrientationUtils.resolveByClick();
         } else {
             removeFullScreenView();
         }
@@ -1673,7 +1691,6 @@ public class MediaController extends FrameLayout implements IMediaController, Or
             IjkVideoManager.getInstance().refreshRenderView();
         }
         mFullscreen = false;
-        lockScreen = false;
     }
 
     private void exitFullscreen() {

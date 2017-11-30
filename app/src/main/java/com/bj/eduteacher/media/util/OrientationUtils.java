@@ -2,6 +2,7 @@ package com.bj.eduteacher.media.util;
 
 import android.app.Activity;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.OrientationEventListener;
 
 import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
@@ -15,20 +16,27 @@ import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCA
 
 public final class OrientationUtils {
 
-
     ///////////////////////////////////////////////////////////////////////////
     // 常量区
     ///////////////////////////////////////////////////////////////////////////
 
     private final Activity mContent;
     private OrientationEventListener mOrientationEventListener;
-    /** 当前屏幕模式 */
+    /**
+     * 当前屏幕模式
+     */
     private int mScreenOrientation = SCREEN_ORIENTATION_PORTRAIT;
-    /** 是否跟随系统 */
+    /**
+     * 是否跟随系统
+     */
     private boolean mRotateWithSystem = true;
-    /** 是否启用 */
+    /**
+     * 是否启用
+     */
     private boolean mEnable = true;
-    /** 是否为手动切换 */
+    /**
+     * 是否为手动切换
+     */
     private boolean mManual;
     private Callback mCallback;
 
@@ -52,13 +60,18 @@ public final class OrientationUtils {
         return this;
     }
 
-    /** 切换屏幕模式 */
+    /**
+     * 切换屏幕模式
+     */
     public void toggleScreenOrientation() {
-        mManual = true;
         if (mScreenOrientation == SCREEN_ORIENTATION_PORTRAIT) {
+            mManual = true;
+            Log.i("way", "toggleScreenOrientation()...切换横屏");
             //切换为横屏
             setScreenOrientation(SCREEN_ORIENTATION_LANDSCAPE);
         } else {
+            mManual = false;
+            Log.i("way", "toggleScreenOrientation()...切换竖屏");
             //切换为竖屏
             setScreenOrientation(SCREEN_ORIENTATION_PORTRAIT);
         }
@@ -80,11 +93,14 @@ public final class OrientationUtils {
             public void onOrientationChanged(int orientation) {
 
                 boolean autoRotateOn = (Settings.System.getInt(mContent.getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 0) == 1);
+                Log.i("way", "autoRotateOn：" + autoRotateOn);
                 if (!autoRotateOn && mRotateWithSystem) {
+                    Log.i("way", "直接退出OrientationEventListener逻辑");
                     return;
                 }
 
                 if (((orientation >= 0) && (orientation <= 30)) || (orientation >= 330)) {
+                    Log.i("way", "自动设置竖屏");
                     //设置竖屏
                     if (mManual && mScreenOrientation == SCREEN_ORIENTATION_PORTRAIT) {
                         mManual = false;
@@ -96,6 +112,7 @@ public final class OrientationUtils {
                         setScreenOrientation(SCREEN_ORIENTATION_PORTRAIT);
                     }
                 } else if (((orientation >= 230) && (orientation <= 310))) {
+                    Log.i("way", "自动设置横屏");
                     //设置横屏
                     if (mManual && mScreenOrientation == SCREEN_ORIENTATION_LANDSCAPE) {
                         mManual = false;
@@ -107,6 +124,7 @@ public final class OrientationUtils {
                         setScreenOrientation(SCREEN_ORIENTATION_LANDSCAPE);
                     }
                 } else if (((orientation > 30) && (orientation < 95))) {
+                    Log.i("way", "自动设置反向横屏");
                     if (mManual && mScreenOrientation == SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
                         mManual = false;
                         return;
@@ -146,7 +164,6 @@ public final class OrientationUtils {
     }
 
     public interface Callback {
-
         void screenOrientationChangle(int screenOrientation);
     }
 

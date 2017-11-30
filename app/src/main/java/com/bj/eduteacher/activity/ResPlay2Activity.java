@@ -123,7 +123,7 @@ public class ResPlay2Activity extends BaseActivity {
                 onBackPressed();
             }
         });
-        
+
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         // mSensorEventListener = new JZVideoPlayer.JZAutoFullscreenListener();
         mSensorEventListener = new AutoFullScreenListener();
