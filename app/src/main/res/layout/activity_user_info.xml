@@ -22,12 +22,26 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <com.facebook.drawee.view.SimpleDraweeView
-                android:id="@+id/img_schoolBg"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                fresco:placeholderImageScaleType="focusCrop"
-                fresco:viewAspectRatio="2.72" />
+                android:layout_height="wrap_content">
+
+                <com.facebook.drawee.view.SimpleDraweeView
+                    android:id="@+id/img_schoolBg"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    fresco:placeholderImageScaleType="focusCrop"
+                    fresco:viewAspectRatio="2.72" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="39dp"
+                    android:text="一切为了提升老师的生活质量"
+                    android:textColor="@color/white_fff"
+                    android:textSize="15sp" />
+            </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="wrap_content"
@@ -98,12 +112,14 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="3px"
-                android:background="#D8D8D8" />
+                android:background="#D8D8D8"
+                android:visibility="gone" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#FFF">
+                android:background="#FFF"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -164,12 +180,14 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="3px"
-                android:background="#D8D8D8" />
+                android:background="#D8D8D8"
+                android:visibility="gone" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#FFF">
+                android:background="#FFF"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -364,14 +382,16 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="3px"
-                android:background="#D8D8D8" />
+                android:background="#D8D8D8"
+                android:visibility="gone" />
 
             <RelativeLayout
                 android:id="@+id/rl_inviteParents"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/selector_item_click"
-                android:clickable="true">
+                android:clickable="true"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -397,7 +417,8 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="3px"
-                android:background="#D8D8D8" />
+                android:background="#D8D8D8"
+                android:visibility="gone" />
 
             <RelativeLayout
                 android:id="@+id/rl_clearclass"
@@ -405,7 +426,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="90px"
                 android:background="@drawable/selector_item_click"
-                android:clickable="true">
+                android:clickable="true"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="wrap_content"

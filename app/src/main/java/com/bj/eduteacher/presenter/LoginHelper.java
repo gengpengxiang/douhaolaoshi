@@ -13,6 +13,7 @@ import com.bj.eduteacher.model.MySelfInfo;
 import com.bj.eduteacher.presenter.viewinface.LoginView;
 import com.bj.eduteacher.presenter.viewinface.LogoutView;
 import com.bj.eduteacher.tool.SxbLog;
+import com.bj.eduteacher.utils.LL;
 import com.bj.eduteacher.utils.PreferencesUtils;
 import com.bj.eduteacher.utils.StringUtils;
 import com.tencent.TIMManager;
@@ -160,8 +161,10 @@ public class LoginHelper extends Presenter {
     public void checkSxbLiveStatus(String sxbStatus, String phoneNum) {
         // 如果 sxbstatus 为0，需要注册腾讯云的托管账号，为1，需要进行登录
         if (!StringUtils.isEmpty(sxbStatus) && "1".equals(sxbStatus)) {
+            LL.i("已存在腾讯云托管账号，直接登录");
             standardLogin("sxb" + phoneNum, "sxb" + phoneNum);
         } else {
+            LL.i("先注册腾讯云托管账号");
             standardRegister("sxb" + phoneNum, "sxb" + phoneNum);
         }
     }

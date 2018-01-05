@@ -107,8 +107,10 @@ public class Guide3Fragment extends Fragment {
                 }
             }).start();
         }
-        // 环信登录状态被取消
-        login2Ease(userPhoneNumber);
+
+        intentToMainActivity();
+        // 跳过环信登录检测
+        // login2Ease(userPhoneNumber);
     }
 
     private void login2Ease(String userPhoneNumber) {

@@ -29,10 +29,8 @@ import com.bj.eduteacher.api.LmsDataService;
 import com.bj.eduteacher.api.MLConfig;
 import com.bj.eduteacher.api.MLProperties;
 import com.bj.eduteacher.fragment.ChangeBottomTabListener;
-import com.bj.eduteacher.fragment.ConversationListFragment;
 import com.bj.eduteacher.fragment.DoukeFragment;
 import com.bj.eduteacher.fragment.DoukeNewFragment;
-import com.bj.eduteacher.fragment.HomeFragment;
 import com.bj.eduteacher.fragment.UserFragment;
 import com.bj.eduteacher.manager.IntentManager;
 import com.bj.eduteacher.manager.UMPushManager;
@@ -53,18 +51,12 @@ import com.bj.eduteacher.widget.CustomViewPager;
 import com.bj.eduteacher.widget.dialog.NotifyDialog;
 import com.hpplay.callback.ExecuteResultCallBack;
 import com.hpplay.link.HpplayLinkControl;
-import com.hyphenate.EMMessageListener;
-import com.hyphenate.chat.EMClient;
-import com.hyphenate.chat.EMConversation;
-import com.hyphenate.chat.EMMessage;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.tencent.TIMCallBack;
 import com.tencent.TIMFriendshipManager;
 import com.tencent.ilivesdk.ILiveSDK;
 import com.tencent.livesdk.ILVLiveManager;
 import com.umeng.analytics.MobclickAgent;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.BindViews;
@@ -81,20 +73,20 @@ import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends BaseActivity implements ChangeBottomTabListener {
 
-    private static final int TAB_NUMBER = 5;
+    private static final int TAB_NUMBER = 3;
 
     @BindView(R.id.mViewPager)
     CustomViewPager mViewPager;
-    @BindView(R.id.iv_notification)
-    View ivNotification;
+    // @BindView(R.id.iv_notification)
+    // View ivNotification;
     @BindView(R.id.ll_bottomBar)
     LinearLayout llBottomBar;
-    @BindViews({R.id.iv_tab1, R.id.iv_tab2, R.id.iv_tab3, R.id.iv_tab4, R.id.iv_tab5})
+    @BindViews({R.id.iv_tab1, R.id.iv_tab2, R.id.iv_tab5})
     ImageView[] ivTabs;
-    @BindViews({R.id.tv_tab1, R.id.tv_tab2, R.id.tv_tab3, R.id.tv_tab4, R.id.tv_tab5})
+    @BindViews({R.id.tv_tab1, R.id.tv_tab2, R.id.tv_tab5})
     TextView[] tvTabs;
-    int[] resTabImageSelect = {R.mipmap.ic_tab_home_selected, R.mipmap.ic_tab_read_selected, R.mipmap.ic_tab_class_teacher, R.drawable.ic_tab_communication, R.mipmap.ic_tab_person_selected};
-    int[] resTabImageUnSelect = {R.mipmap.ic_tab_home, R.mipmap.ic_tab_read, R.mipmap.ic_tab_class_unselected, R.drawable.ic_tab_communication_unselected, R.mipmap.ic_tab_person};
+    int[] resTabImageSelect = {R.mipmap.ic_tab_home_selected, R.mipmap.ic_tab_read_selected, R.mipmap.ic_tab_person_selected};
+    int[] resTabImageUnSelect = {R.mipmap.ic_tab_home, R.mipmap.ic_tab_read, R.mipmap.ic_tab_person};
     private Fragment[] mTabFragments;
     private long exitTime = 0;
 
@@ -111,8 +103,8 @@ public class MainActivity extends BaseActivity implements ChangeBottomTabListene
 
     private DoukeFragment doukeFragment;
     private DoukeNewFragment doukeNewFragment;
-    private HomeFragment homeFragment;
-    private ConversationListFragment conversationListFragment;
+    // private HomeFragment homeFragment;
+    // private ConversationListFragment conversationListFragment;
     private UserFragment userFragment;
 
     @Override
@@ -154,16 +146,16 @@ public class MainActivity extends BaseActivity implements ChangeBottomTabListene
         doukeFragment = new DoukeFragment();
         doukeFragment.setBottomTabListener(this);
         doukeNewFragment = new DoukeNewFragment();
-        homeFragment = new HomeFragment();
-        conversationListFragment = new ConversationListFragment();
+        // homeFragment = new HomeFragment();
+        // conversationListFragment = new ConversationListFragment();
         userFragment = new UserFragment();
         userFragment.setBottomTabListener(this);
 
         mTabFragments[0] = doukeFragment;
         mTabFragments[1] = doukeNewFragment;
-        mTabFragments[2] = homeFragment;
-        mTabFragments[3] = conversationListFragment;
-        mTabFragments[4] = userFragment;
+        // mTabFragments[2] = homeFragment;
+        // mTabFragments[3] = conversationListFragment;
+        mTabFragments[2] = userFragment;
 
         mAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(mAdapter);
@@ -198,8 +190,8 @@ public class MainActivity extends BaseActivity implements ChangeBottomTabListene
     @Override
     protected void initData() {
         teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
-        updateUnreadLabel();
-        EMClient.getInstance().chatManager().addMessageListener(messageListener);
+        // updateUnreadLabel();
+        // EMClient.getInstance().chatManager().addMessageListener(messageListener);
         // 添加标签
         String schoolID = PreferencesUtils.getString(this, MLProperties.BUNDLE_KEY_SCHOOL_CODE, "");
         if (!StringUtils.isEmpty(schoolID)) {
@@ -233,16 +225,16 @@ public class MainActivity extends BaseActivity implements ChangeBottomTabListene
         actionTabItemSelect(1);
     }
 
-    @OnClick(R.id.ll_tab3)
-    void clickTab3() {
-        actionTabItemSelect(2);
-    }
-
-    @OnClick(R.id.ll_tab4)
-    void clickTab4() {
-        actionTabItemSelect(3);
-        ivNotification.setVisibility(View.GONE);
-    }
+//    @OnClick(R.id.ll_tab3)
+//    void clickTab3() {
+//        actionTabItemSelect(2);
+//    }
+//
+//    @OnClick(R.id.ll_tab4)
+//    void clickTab4() {
+//        actionTabItemSelect(3);
+//        ivNotification.setVisibility(View.GONE);
+//    }
 
     @OnClick(R.id.ll_tab5)
     void clickTab5() {
@@ -250,7 +242,7 @@ public class MainActivity extends BaseActivity implements ChangeBottomTabListene
             IntentManager.toLoginActivity(this, IntentManager.LOGIN_SUCC_ACTION_MAINACTIVITY);
             return;
         }
-        actionTabItemSelect(4);
+        actionTabItemSelect(2);
     }
 
     private void actionTabItemSelect(int position) {
@@ -337,82 +329,81 @@ public class MainActivity extends BaseActivity implements ChangeBottomTabListene
 
     @Override
     protected void onStop() {
-        EMClient.getInstance().chatManager().removeMessageListener(messageListener);
+        // EMClient.getInstance().chatManager().removeMessageListener(messageListener);
         super.onStop();
     }
 
-    EMMessageListener messageListener = new EMMessageListener() {
+//    EMMessageListener messageListener = new EMMessageListener() {
+//
+//        @Override
+//        public void onMessageReceived(List<EMMessage> messages) {
+//            refreshUIWithMessage();
+//        }
+//
+//        @Override
+//        public void onCmdMessageReceived(List<EMMessage> messages) {
+//            //red packet code : 处理红包回执透传消息
+//        }
+//
+//        @Override
+//        public void onMessageRead(List<EMMessage> messages) {
+//        }
+//
+//        @Override
+//        public void onMessageDelivered(List<EMMessage> message) {
+//        }
+//
+//        @Override
+//        public void onMessageRecalled(List<EMMessage> list) {
+//
+//        }
+//
+//        @Override
+//        public void onMessageChanged(EMMessage message, Object change) {
+//        }
+//    };
 
-        @Override
-        public void onMessageReceived(List<EMMessage> messages) {
-            refreshUIWithMessage();
-        }
-
-        @Override
-        public void onCmdMessageReceived(List<EMMessage> messages) {
-            //red packet code : 处理红包回执透传消息
-        }
-
-        @Override
-        public void onMessageRead(List<EMMessage> messages) {
-        }
-
-        @Override
-        public void onMessageDelivered(List<EMMessage> message) {
-        }
-
-        @Override
-        public void onMessageRecalled(List<EMMessage> list) {
-
-        }
-
-        @Override
-        public void onMessageChanged(EMMessage message, Object change) {
-        }
-    };
-
-    private void refreshUIWithMessage() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                // refresh unread count
-                updateUnreadLabel();
-                // refresh conversation list
-                if (mTabFragments[1] != null) {
-                    ((ConversationListFragment) mTabFragments[1]).refresh();
-                }
-            }
-        });
-    }
+//    private void refreshUIWithMessage() {
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                // refresh unread count
+//                updateUnreadLabel();
+//                // refresh conversation list
+//                if (mTabFragments[1] != null) {
+//                    ((ConversationListFragment) mTabFragments[1]).refresh();
+//                }
+//            }
+//        });
+//    }
 
     /**
      * update unread message count
      */
-    private void updateUnreadLabel() {
-        int count = getUnreadMsgCountTotal();
-        if (currentPageIndex != 1 && count > 0) {
-            ivNotification.setVisibility(View.VISIBLE);
-        } else {
-            ivNotification.setVisibility(View.GONE);
-        }
-    }
+//    private void updateUnreadLabel() {
+//        int count = getUnreadMsgCountTotal();
+//        if (currentPageIndex != 1 && count > 0) {
+//            ivNotification.setVisibility(View.VISIBLE);
+//        } else {
+//            ivNotification.setVisibility(View.GONE);
+//        }
+//    }
 
     /**
      * get unread message count
      *
      * @return
      */
-    public int getUnreadMsgCountTotal() {
-        int unreadMsgCountTotal = 0;
-        int chatroomUnreadMsgCount = 0;
-        unreadMsgCountTotal = EMClient.getInstance().chatManager().getUnreadMessageCount();
-        for (EMConversation conversation : EMClient.getInstance().chatManager().getAllConversations().values()) {
-            if (conversation.getType() == EMConversation.EMConversationType.ChatRoom)
-                chatroomUnreadMsgCount = chatroomUnreadMsgCount + conversation.getUnreadMsgCount();
-        }
-        return unreadMsgCountTotal - chatroomUnreadMsgCount;
-    }
-
+//    public int getUnreadMsgCountTotal() {
+//        int unreadMsgCountTotal = 0;
+//        int chatroomUnreadMsgCount = 0;
+//        unreadMsgCountTotal = EMClient.getInstance().chatManager().getUnreadMessageCount();
+//        for (EMConversation conversation : EMClient.getInstance().chatManager().getAllConversations().values()) {
+//            if (conversation.getType() == EMConversation.EMConversationType.ChatRoom)
+//                chatroomUnreadMsgCount = chatroomUnreadMsgCount + conversation.getUnreadMsgCount();
+//        }
+//        return unreadMsgCountTotal - chatroomUnreadMsgCount;
+//    }
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -516,7 +507,7 @@ public class MainActivity extends BaseActivity implements ChangeBottomTabListene
         if (StringUtils.isEmpty(teacherPhoneNumber)) {
             // 退出登录的时候需要手动刷新Homefragment的数据
             doukeFragment.cleanNotice();
-            homeFragment.resetDataByHand();
+            // homeFragment.resetDataByHand();
         }
     }
 
@@ -568,7 +559,7 @@ public class MainActivity extends BaseActivity implements ChangeBottomTabListene
 
     @Override
     protected void onNewIntent(Intent intent) {
-        LL.i("MainActivity -- onNewIntent()");
+        LL.i("MainActivity -- onNewIntent() 再次进入MainActivity");
         // 设置昵称
         String userName = PreferencesUtils.getString(this, MLProperties.BUNDLE_KEY_CLASS_NAME);
         String nickname = PreferencesUtils.getString(this, MLProperties.BUNDLE_KEY_TEACHER_NICK);

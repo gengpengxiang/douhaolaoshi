@@ -13,8 +13,8 @@
     <string name="invite_parents_content">邀请使用逗号教育app，下载链接：http://t.cn/RXxyYu7</string>
     <string name="invite_teachers_content">邀请使用逗号老师app，下载链接：http://t.cn/RXxy9cI；附赠体验账户：18988888888，验证码：123456</string>
 
-    <string name="str_setting_slogan">一串快乐的教育</string>
-    <string name="str_setting_desc">逗号老师云集了国内权威的教育领域专家名师，是教师发展的社区型资源平台，同时提供了学生发展激励与数据管理工具支持教师实施创新性教学。\n我们致力于让学习更科学更快乐。</string>
+    <string name="str_setting_slogan">一切为了提升老师的生活质量</string>
+    <string name="str_setting_desc">来这里，分享自己的教学精彩，找到志同道合的朋友，结识顶尖专家大咖，获得前沿理念和教学资源，赢得多样实在的游戏奖励。逗号老师让你教学更轻松，学习更愉快，生活充满惊喜！</string>
 
     <string name="errcode_success">发送成功</string>
     <string name="errcode_cancel">发送取消</string>

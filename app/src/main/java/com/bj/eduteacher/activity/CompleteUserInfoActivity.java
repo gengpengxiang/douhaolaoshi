@@ -374,7 +374,9 @@ public class CompleteUserInfoActivity extends BaseActivity implements LoginView 
     @Override
     public void loginSucc() {
         // 检查环信是否登录
-        checkIsLoginEase();
+        // checkIsLoginEase();
+        // 去掉环信功能，所以需要跳过环信的登录检测
+        loginSuccess();
     }
 
     @Override

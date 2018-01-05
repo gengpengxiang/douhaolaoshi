@@ -74,7 +74,8 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <ImageView
                 android:id="@+id/iv_tab3"
@@ -96,7 +97,8 @@
             android:id="@+id/ll_tab4"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:visibility="gone">
 
             <LinearLayout
                 android:id="@+id/ll_tab2Content"

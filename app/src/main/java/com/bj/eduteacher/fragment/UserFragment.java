@@ -54,7 +54,6 @@ import com.bj.eduteacher.zzokhttp.OkHttpUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.hpplay.callback.HpplayWindowPlayCallBack;
 import com.hpplay.link.HpplayLinkControl;
-import com.hyphenate.chat.EMClient;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.umeng.analytics.MobclickAgent;
 
@@ -166,7 +165,7 @@ public class UserFragment extends BaseFragment implements LogoutView {
         tvTitle.setVisibility(View.VISIBLE);
         tvTitle.setText(getString(R.string.bottom_tab_2));
         // 头图
-        imgSchoolBg.setImageURI(Uri.parse("res:///" + R.mipmap.bg_user_banner));
+        imgSchoolBg.setImageURI(Uri.parse("res:///" + R.mipmap.bg_user_banner_2));
         // 版本信息
         tvVersionName.setText("V" + AppUtils.getVersionName(getActivity()));
     }
@@ -352,7 +351,7 @@ public class UserFragment extends BaseFragment implements LogoutView {
             control.showHpplayWindow(getActivity(), new HpplayWindowPlayCallBack() {
                 @Override
                 public void onHpplayWindowDismiss() {
-                    
+
                 }
 
                 @Override
@@ -631,7 +630,7 @@ public class UserFragment extends BaseFragment implements LogoutView {
         // 清空缓存
         cleanAllPreferencesData();
         // 退出环信
-        EMClient.getInstance().logout(true);
+        // EMClient.getInstance().logout(true);
         // 推出腾讯
         logoutHelper.standardLogout("sxb" + userPhoneNumber);
     }

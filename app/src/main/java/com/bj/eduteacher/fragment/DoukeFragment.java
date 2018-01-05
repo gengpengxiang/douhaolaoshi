@@ -1,10 +1,12 @@
 package com.bj.eduteacher.fragment;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,8 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -34,22 +34,26 @@ import com.bj.eduteacher.activity.LiveAllActivity;
 import com.bj.eduteacher.activity.PayProtocolActivity;
 import com.bj.eduteacher.activity.ResPlayActivity;
 import com.bj.eduteacher.activity.ResReviewActivity;
-import com.bj.eduteacher.activity.ThanksNotifiActivity;
 import com.bj.eduteacher.activity.WebviewActivity;
 import com.bj.eduteacher.activity.ZhuanjiaAllActivity;
 import com.bj.eduteacher.activity.ZhuanjiaDetailActivity;
 import com.bj.eduteacher.adapter.DoukeListAdapter;
 import com.bj.eduteacher.api.LmsDataService;
+import com.bj.eduteacher.api.MLConfig;
 import com.bj.eduteacher.api.MLProperties;
 import com.bj.eduteacher.dialog.TipsAlertDialog3;
+import com.bj.eduteacher.dialog.UpdateAPPAlertDialog;
+import com.bj.eduteacher.entity.AppVersionInfo;
 import com.bj.eduteacher.entity.ArticleInfo;
 import com.bj.eduteacher.entity.OrderInfo;
 import com.bj.eduteacher.entity.TradeInfo;
 import com.bj.eduteacher.manager.IntentManager;
 import com.bj.eduteacher.model.CurLiveInfo;
 import com.bj.eduteacher.model.MySelfInfo;
+import com.bj.eduteacher.service.DownloadAppService;
 import com.bj.eduteacher.tool.Constants;
 import com.bj.eduteacher.tool.ShowNameUtil;
+import com.bj.eduteacher.utils.AppUtils;
 import com.bj.eduteacher.utils.FrescoImageLoader;
 import com.bj.eduteacher.utils.LL;
 import com.bj.eduteacher.utils.NetUtils;
@@ -60,6 +64,8 @@ import com.bj.eduteacher.utils.T;
 import com.bj.eduteacher.view.OnRecyclerItemClickListener;
 import com.bj.eduteacher.widget.dialog.RadioGroupDialog;
 import com.bj.eduteacher.widget.manager.SaveGridLayoutManager;
+import com.bj.eduteacher.zzokhttp.OkHttpUtils;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
@@ -72,11 +78,9 @@ import com.youth.banner.listener.OnBannerListener;
 import java.io.InterruptedIOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -85,7 +89,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Action;
+import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function7;
 import io.reactivex.schedulers.Schedulers;
 
@@ -102,15 +106,15 @@ public class DoukeFragment extends BaseFragment {
     RecyclerView mRecyclerView;
     @BindView(R.id.header_tv_title)
     TextView tvTitle;
-    @BindView(R.id.header_fl_notification)
-    FrameLayout flHeaderNotifi;
-    @BindView(R.id.header_img_notification)
-    ImageView imgHeaderRightNotification;
-    @BindView(R.id.header_img_notificationdot)
-    ImageView imgHeaderRightNotificationdot;
+//    @BindView(R.id.header_fl_notification)
+//    FrameLayout flHeaderNotifi;
+//    @BindView(R.id.header_img_notification)
+//    ImageView imgHeaderRightNotification;
+//    @BindView(R.id.header_img_notificationdot)
+//    ImageView imgHeaderRightNotificationdot;
 
     private String teacherPhoneNumber, phoneNumberBack;
-    private boolean unReadMsg = false;
+//    private boolean unReadMsg = false;
 
     private DoukeListAdapter mAdapter;
     private int currentPage = 1;
@@ -194,9 +198,9 @@ public class DoukeFragment extends BaseFragment {
         tvTitle.setVisibility(View.VISIBLE);
         tvTitle.setText(R.string.app_name);
 
-        flHeaderNotifi.setVisibility(View.VISIBLE);
-        imgHeaderRightNotification.setVisibility(View.VISIBLE);
-        unReadMsg = true;
+//        flHeaderNotifi.setVisibility(View.VISIBLE);
+//        imgHeaderRightNotification.setVisibility(View.VISIBLE);
+//        unReadMsg = true;
     }
 
     private void initView() {
@@ -256,6 +260,16 @@ public class DoukeFragment extends BaseFragment {
                 getDoukeList();
             }
         });
+
+        // 检查新版本 如果是Wi-Fi环境下才进行检查
+        if (NetUtils.isConnected(getActivity()) && NetUtils.isWifi(getActivity())) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    checkAppNewVersion();
+                }
+            }, 3000);
+        }
     }
 
     /**
@@ -983,11 +997,11 @@ public class DoukeFragment extends BaseFragment {
             teacherPhoneNumber = phoneNumberBack;
             initData();
         }
-        if (!StringUtils.isEmpty(teacherPhoneNumber)) {
-            unReadMsg = false;
-            imgHeaderRightNotificationdot.setVisibility(View.GONE);
-            startGetUnReadMessageNumber();  // 开始轮询获取消息
-        }
+//        if (!StringUtils.isEmpty(teacherPhoneNumber)) {
+//            unReadMsg = false;
+//            imgHeaderRightNotificationdot.setVisibility(View.GONE);
+//            startGetUnReadMessageNumber();  // 开始轮询获取消息
+//        }
         // 查询订单
         if (!StringUtils.isEmpty(currTradeID)) {
             queryTheTradeStateFromAPI(currTradeID);
@@ -1017,8 +1031,8 @@ public class DoukeFragment extends BaseFragment {
     public void cleanNotice() {
         // 退出账号的时候 停止轮询
         disposables.clear();
-        unReadMsg = false;
-        imgHeaderRightNotificationdot.setVisibility(View.GONE);
+        // unReadMsg = false;
+        // imgHeaderRightNotificationdot.setVisibility(View.GONE);
     }
 
     @Override
@@ -1028,96 +1042,96 @@ public class DoukeFragment extends BaseFragment {
         disposables.clear();
     }
 
-    @OnClick(R.id.header_ll_right)
-    void actionHeaderRightClick() {
-        if (StringUtils.isEmpty(teacherPhoneNumber)) {
-            IntentManager.toLoginActivity(getActivity(), IntentManager.LOGIN_SUCC_ACTION_MAINACTIVITY);
-            return;
-        }
-        // 所有消息置为已读
-        unReadMsg = false;
-        imgHeaderRightNotificationdot.setVisibility(View.GONE);
-        // 跳转到感谢列表页面
-        Intent intent = new Intent(getActivity(), ThanksNotifiActivity.class);
-        startActivity(intent);
-    }
+//    @OnClick(R.id.header_ll_right)
+//    void actionHeaderRightClick() {
+//        if (StringUtils.isEmpty(teacherPhoneNumber)) {
+//            IntentManager.toLoginActivity(getActivity(), IntentManager.LOGIN_SUCC_ACTION_MAINACTIVITY);
+//            return;
+//        }
+//        // 所有消息置为已读
+//        unReadMsg = false;
+//        imgHeaderRightNotificationdot.setVisibility(View.GONE);
+//        // 跳转到感谢列表页面
+//        Intent intent = new Intent(getActivity(), ThanksNotifiActivity.class);
+//        startActivity(intent);
+//    }
 
     /**
      * 轮询查找未读消息
      */
-    private void startGetUnReadMessageNumber() {
-        LL.i("DoukeFragment -- onNext()................");
-        final LmsDataService service = new LmsDataService();
-        Observable.create(new ObservableOnSubscribe<Integer>() {
-            @Override
-            public void subscribe(@NonNull final ObservableEmitter<Integer> integer) throws Exception {
-                if (integer.isDisposed()) return;
-                Disposable disposable = Schedulers.io()
-                        .createWorker()
-                        .schedulePeriodically(new Runnable() {
-                            @Override
-                            public void run() {
-                                Integer result;
-                                try {
-                                    result = service.getTeacherUnReadMessageNumberFromAPI(teacherPhoneNumber);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                    LL.e(e);
-                                    result = 0;
-                                }
-                                if (!integer.isDisposed()) {
-                                    integer.onNext(result);
-                                }
-                            }
-                        }, 1, 5, TimeUnit.SECONDS);
-                disposables.add(disposable);
-            }
-        }).observeOn(AndroidSchedulers.mainThread())
-                .doOnDispose(new Action() {
-                    @Override
-                    public void run() throws Exception {
-                        LL.i("DoukeFragment -- 取消观察....");
-                    }
-                })
-                .subscribe(new Observer<Integer>() {
-
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        disposables.add(d);
-                    }
-
-                    @Override
-                    public void onNext(Integer integer) {
-                        if (StringUtils.isEmpty(teacherPhoneNumber)) {
-                            unReadMsg = false;
-                            imgHeaderRightNotificationdot.setVisibility(View.GONE);
-                            return;
-                        }
-                        if (integer > 0) {
-                            unReadMsg = true;
-                            imgHeaderRightNotificationdot.setVisibility(View.VISIBLE);
-                        } else {
-                            unReadMsg = false;
-                            imgHeaderRightNotificationdot.setVisibility(View.GONE);
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        LL.e(e);
-                        if (unReadMsg) {
-                            imgHeaderRightNotificationdot.setVisibility(View.VISIBLE);
-                        } else {
-                            imgHeaderRightNotificationdot.setVisibility(View.GONE);
-                        }
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
+//    private void startGetUnReadMessageNumber() {
+//        LL.i("DoukeFragment -- onNext()................");
+//        final LmsDataService service = new LmsDataService();
+//        Observable.create(new ObservableOnSubscribe<Integer>() {
+//            @Override
+//            public void subscribe(@NonNull final ObservableEmitter<Integer> integer) throws Exception {
+//                if (integer.isDisposed()) return;
+//                Disposable disposable = Schedulers.io()
+//                        .createWorker()
+//                        .schedulePeriodically(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                Integer result;
+//                                try {
+//                                    result = service.getTeacherUnReadMessageNumberFromAPI(teacherPhoneNumber);
+//                                } catch (Exception e) {
+//                                    e.printStackTrace();
+//                                    LL.e(e);
+//                                    result = 0;
+//                                }
+//                                if (!integer.isDisposed()) {
+//                                    integer.onNext(result);
+//                                }
+//                            }
+//                        }, 1, 5, TimeUnit.SECONDS);
+//                disposables.add(disposable);
+//            }
+//        }).observeOn(AndroidSchedulers.mainThread())
+//                .doOnDispose(new Action() {
+//                    @Override
+//                    public void run() throws Exception {
+//                        LL.i("DoukeFragment -- 取消观察....");
+//                    }
+//                })
+//                .subscribe(new Observer<Integer>() {
+//
+//                    @Override
+//                    public void onSubscribe(Disposable d) {
+//                        disposables.add(d);
+//                    }
+//
+//                    @Override
+//                    public void onNext(Integer integer) {
+//                        if (StringUtils.isEmpty(teacherPhoneNumber)) {
+//                            unReadMsg = false;
+//                            imgHeaderRightNotificationdot.setVisibility(View.GONE);
+//                            return;
+//                        }
+//                        if (integer > 0) {
+//                            unReadMsg = true;
+//                            imgHeaderRightNotificationdot.setVisibility(View.VISIBLE);
+//                        } else {
+//                            unReadMsg = false;
+//                            imgHeaderRightNotificationdot.setVisibility(View.GONE);
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+//                        LL.e(e);
+//                        if (unReadMsg) {
+//                            imgHeaderRightNotificationdot.setVisibility(View.VISIBLE);
+//                        } else {
+//                            imgHeaderRightNotificationdot.setVisibility(View.GONE);
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onComplete() {
+//
+//                    }
+//                });
+//    }
 
     /*************************** 支付 **************************************/
     private void initPopViewPayDetail(final String masterid, final String realPrice) {
@@ -1408,6 +1422,112 @@ public class DoukeFragment extends BaseFragment {
         });
         dialog.show();
     }
+
+    /**
+     * 检查新版本
+     */
+    private void checkAppNewVersion() {
+        Observable.create(new ObservableOnSubscribe<AppVersionInfo>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<AppVersionInfo> emitter) throws Exception {
+                if (emitter.isDisposed()) return;
+                if (getActivity() == null) emitter.onComplete();
+                LmsDataService mService = new LmsDataService();
+                AppVersionInfo info;
+                String versionName = AppUtils.getVersionName(getActivity());
+                String qudao = AppUtils.getMetaDataFromApplication(getActivity(), MLConfig.KEY_CHANNEL_NAME);
+                try {
+                    info = mService.checkNewVersion(versionName, qudao);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    LL.e(e);
+                    info = new AppVersionInfo();
+                    info.setErrorCode("0");
+                }
+                if (!emitter.isDisposed()) {
+                    emitter.onNext(info);
+                    emitter.onComplete();
+                }
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<AppVersionInfo>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        disposables.add(d);
+                    }
+
+                    @Override
+                    public void onNext(AppVersionInfo info) {
+                        if (StringUtils.isEmpty(info.getErrorCode()) || info.getErrorCode().equals("0")) {
+                            return;
+                        }
+                        if (info.getErrorCode().equals("1")) {
+                            showNewVersionDialog(info.getTitle(), info.getContent(), info.getDownloadUrl());
+                        } else if (info.getErrorCode().equals("2")) {
+                            // T.showShort(getActivity(), info.getMessage());
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    private void showNewVersionDialog(String title, String content, final String downloadUrl) {
+        createUpdateAppDialog(title, content, new UpdateAPPAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(final UpdateAPPAlertDialog sweetAlertDialog) {
+                // confirm
+                RxPermissions rxPermissions = new RxPermissions(getActivity());
+                rxPermissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        .subscribe(new Consumer<Boolean>() {
+                            @Override
+                            public void accept(@NonNull Boolean success) throws Exception {
+                                if (success) {
+                                    startDownloadAppService(downloadUrl);
+                                    sweetAlertDialog.startDownload();
+                                } else {
+                                    sweetAlertDialog.dismiss();
+                                }
+                            }
+                        });
+            }
+        }, new UpdateAPPAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(UpdateAPPAlertDialog sweetAlertDialog) {
+                // cancel
+                sweetAlertDialog.dismiss();
+            }
+        }, new UpdateAPPAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(UpdateAPPAlertDialog sweetAlertDialog) {
+                // cancel Download
+                sweetAlertDialog.dismiss();
+                stopDownloadAppService(downloadUrl);
+            }
+        });
+    }
+
+    private void startDownloadAppService(String downloadUrl) {
+        Intent intent = new Intent(getActivity(), DownloadAppService.class);
+        Bundle args = new Bundle();
+        args.putString(MLConfig.KEY_BUNDLE_DOWNLOAD_URL, downloadUrl);
+        intent.putExtras(args);
+        getActivity().startService(intent);
+    }
+
+    private void stopDownloadAppService(String downloadUrl) {
+        OkHttpUtils.getInstance().cancelTag(DownloadAppService.FILENAME);
+    }
+
 
     /********* 在fragment中切换tab *********/
 

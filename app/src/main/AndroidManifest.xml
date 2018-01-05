@@ -275,21 +275,22 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-
-        <!-- EaseUI -->
-        <!-- 显示下载大图页面 android:theme="@style/horizontal_slide" -->
+        
+        <!--&lt;!&ndash; EaseUI &ndash;&gt;
+        &lt;!&ndash; 显示下载大图页面 android:theme="@style/horizontal_slide" &ndash;&gt;
         <activity
             android:name=".zzeaseui.ui.EaseShowBigImageActivity"
             android:screenOrientation="portrait" />
-        <!-- 下载文件 android:theme="@style/horizontal_slide" -->
+        &lt;!&ndash; 下载文件 android:theme="@style/horizontal_slide" &ndash;&gt;
         <activity
             android:name=".zzeaseui.ui.EaseShowNormalFileActivity"
             android:screenOrientation="portrait" />
-        <!-- android:theme="@style/horizontal_slide" -->
+        &lt;!&ndash; android:theme="@style/horizontal_slide" &ndash;&gt;
         <activity
             android:name=".zzeaseui.ui.EaseShowVideoActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden" />
+            android:windowSoftInputMode="stateAlwaysHidden" />-->
+        
         <!--ImageSelector-->
         <activity
             android:name=".zzimgselector.view.ImageSelectorActivity"
@@ -300,13 +301,14 @@
         <activity
             android:name=".zzimgselector.view.ImageCropActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
-
-        <!-- 设置环信应用的AppKey product:1150170511115892#wwwgamepkudhjy-->
-        <!-- debug:1150170511115892#testdouhaojiaoyu -->
+        
+        <!--
+        &lt;!&ndash; 设置环信应用的AppKey product:1150170511115892#wwwgamepkudhjy&ndash;&gt;
+        &lt;!&ndash; debug:1150170511115892#testdouhaojiaoyu &ndash;&gt;
         <meta-data
             android:name="EASEMOB_APPKEY"
             android:value="1150170511115892#wwwgamepkudhjy" />
-        <!-- 声明SDK所需的service SDK核心功能-->
+        &lt;!&ndash; 声明SDK所需的service SDK核心功能&ndash;&gt;
         <service
             android:name="com.hyphenate.chat.EMChatService"
             android:exported="true" />
@@ -314,18 +316,18 @@
             android:name="com.hyphenate.chat.EMJobService"
             android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE" />
-        <!-- 声明SDK所需的receiver -->
+        &lt;!&ndash; 声明SDK所需的receiver &ndash;&gt;
         <receiver android:name="com.hyphenate.chat.EMMonitorReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_REMOVED" />
                 <data android:scheme="package" />
             </intent-filter>
-            <!-- 可选filter -->
+            &lt;!&ndash; 可选filter &ndash;&gt;
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.USER_PRESENT" />
             </intent-filter>
-        </receiver>
+        </receiver>-->
 
 
         <!-- AutoLayout meta data -->

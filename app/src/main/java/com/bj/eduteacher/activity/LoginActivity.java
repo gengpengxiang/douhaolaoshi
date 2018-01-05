@@ -331,7 +331,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     @Override
     public void loginSucc() {
         // 检查环信是否登录
-        checkIsLoginEase();
+        // checkIsLoginEase();
+        // 登录成功，跳过环信登录
+        loginSuccess();
     }
 
     @Override
@@ -437,6 +439,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
      * 登录成功后跳转到首页
      */
     private void loginSuccess() {
+        LL.i("登录流程成功，保存当前时间和登录状态，跳转到首页");
         PreferencesUtils.putLong(this, MLProperties.PREFER_KEY_LOGIN_Time, System.currentTimeMillis());
         PreferencesUtils.putInt(this, MLProperties.PREFER_KEY_LOGIN_STATUS, 1);
         if (loginSuccAction.equals(IntentManager.LOGIN_SUCC_ACTION_MAINACTIVITY)) {

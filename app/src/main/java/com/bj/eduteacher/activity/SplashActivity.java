@@ -9,6 +9,7 @@ import android.view.KeyEvent;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bj.eduteacher.BaseActivity;
 import com.bj.eduteacher.R;
@@ -35,6 +36,7 @@ public class SplashActivity extends BaseActivity {
     private LoginHelper loginHelper;
 
     private Handler mHandler = new Handler();
+    private boolean isShowGuideByAdmin = false;     // 管理员直接决定是否要显示导航页
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,11 +109,18 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void initView() {
         ImageView imgSplash = (ImageView) this.findViewById(R.id.img_splash);
+        TextView tvTitle = (TextView) this.findViewById(R.id.tv_title);
         Animation animation = new AlphaAnimation(0, 1.0f);
+        animation.setStartTime(0);
         animation.setDuration(1500);
-
         animation.setFillAfter(true);
         imgSplash.startAnimation(animation);
+
+        Animation animation2 = new AlphaAnimation(0, 1.0f);
+        animation2.setStartTime(500);
+        animation2.setDuration(1000);
+        animation2.setFillAfter(true);
+        tvTitle.startAnimation(animation2);
     }
 
     /**
@@ -120,6 +129,10 @@ public class SplashActivity extends BaseActivity {
      * @return
      */
     private boolean isShowGuide() {
+        // 如果管理员决定当前版本不再显示导航页，则直接跳过后面的检查
+        if (!isShowGuideByAdmin) {
+            return isShowGuideByAdmin;
+        }
         String oldVersion = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_VERSION_CODE, "");
         String currVersion = AppUtils.getVersionName(this);
         if (StringUtils.isEmpty(oldVersion) || !oldVersion.equals(currVersion)) {
@@ -159,8 +172,10 @@ public class SplashActivity extends BaseActivity {
                 }
             }).start();
         }
-        // 环信登录状态被取消
-        login2Ease(userPhoneNumber);
+        // 跳转到首页
+        intentToMainActivity();
+        // 由于环信功能的删除，直接跳过环信的登录检测
+        // login2Ease(userPhoneNumber);
     }
 
     private void login2Ease(String userPhoneNumber) {

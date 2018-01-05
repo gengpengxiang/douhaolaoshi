@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Build;
 import android.support.multidex.MultiDexApplication;
 
-import com.bj.eduteacher.manager.IMHelper;
 import com.bj.eduteacher.manager.UMPushManager;
 import com.bj.eduteacher.presenter.InitBusinessHelper;
 import com.bj.eduteacher.tool.SxbLogImpl;
@@ -39,7 +38,7 @@ public class MyApplication extends MultiDexApplication {
         // 初始化友盟的相关操作
         initUMPush();
         // 初始化EaseUI
-        IMHelper.getInstance().init(this);
+        // IMHelper.getInstance().init(this);
 
         if (shouldInit()) {
             SxbLogImpl.init(getApplicationContext());
