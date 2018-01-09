@@ -90,6 +90,7 @@ import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.functions.Function7;
 import io.reactivex.schedulers.Schedulers;
 
@@ -106,22 +107,15 @@ public class DoukeFragment extends BaseFragment {
     RecyclerView mRecyclerView;
     @BindView(R.id.header_tv_title)
     TextView tvTitle;
-//    @BindView(R.id.header_fl_notification)
-//    FrameLayout flHeaderNotifi;
-//    @BindView(R.id.header_img_notification)
-//    ImageView imgHeaderRightNotification;
-//    @BindView(R.id.header_img_notificationdot)
-//    ImageView imgHeaderRightNotificationdot;
 
     private String teacherPhoneNumber, phoneNumberBack;
-//    private boolean unReadMsg = false;
 
     private DoukeListAdapter mAdapter;
     private int currentPage = 1;
     public static long lastRefreshTime;
     private List<ArticleInfo> mDataList = new ArrayList<>();
     private List<ArticleInfo> mBannerList = new ArrayList<>();
-    private final CompositeDisposable disposables = new CompositeDisposable();
+    private CompositeDisposable disposables = new CompositeDisposable();
 
     private Banner banner;
     List<String> headerImages = new ArrayList<>();
@@ -197,10 +191,7 @@ public class DoukeFragment extends BaseFragment {
     private void initToolbar() {
         tvTitle.setVisibility(View.VISIBLE);
         tvTitle.setText(R.string.app_name);
-
-//        flHeaderNotifi.setVisibility(View.VISIBLE);
-//        imgHeaderRightNotification.setVisibility(View.VISIBLE);
-//        unReadMsg = true;
+        // testRxJavaError();
     }
 
     private void initView() {
@@ -256,19 +247,13 @@ public class DoukeFragment extends BaseFragment {
             public void onLoadMore(boolean isSilence) {
                 LL.i("加载更多数据");
                 currentPage++;
-
                 getDoukeList();
             }
         });
 
         // 检查新版本 如果是Wi-Fi环境下才进行检查
         if (NetUtils.isConnected(getActivity()) && NetUtils.isWifi(getActivity())) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    checkAppNewVersion();
-                }
-            }, 3000);
+            checkAppNewVersion();
         }
     }
 
@@ -462,6 +447,9 @@ public class DoukeFragment extends BaseFragment {
         }
     }
 
+    /**
+     * 直接回到直播房间
+     */
     private void returnBackRoom() {
         Intent intent = new Intent(getActivity(), LiveActivity.class);
         MySelfInfo.getInstance().setIdStatus(Constants.HOST);
@@ -478,6 +466,9 @@ public class DoukeFragment extends BaseFragment {
         startActivity(intent);
     }
 
+    /**
+     * 选择观看直播的模式：清晰 or 流畅
+     */
     private void checkJoinLive() {
         if (TextUtils.isEmpty(MySelfInfo.getInstance().getGuestRole())) {
             final String[] roles = new String[]{getString(R.string.str_video_sd), getString(R.string.str_video_ld)};
@@ -817,7 +808,7 @@ public class DoukeFragment extends BaseFragment {
                 .subscribe(new Observer<List<ArticleInfo>>() {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {
-
+                        disposables.add(d);
                     }
 
                     @Override
@@ -871,6 +862,9 @@ public class DoukeFragment extends BaseFragment {
         }
     }
 
+    /**
+     * RecyclerView 加载更多，获取更多逗课文章
+     */
     private void getDoukeList() {
         if (!NetUtils.isConnected(getActivity())) {
             T.showShort(getActivity(), "无法连接到网络，请检查您的网络设置");
@@ -880,17 +874,29 @@ public class DoukeFragment extends BaseFragment {
         Observable.create(new ObservableOnSubscribe<List<ArticleInfo>>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<ArticleInfo>> e) throws Exception {
-                LmsDataService mService = new LmsDataService();
-                List<ArticleInfo> dataList = mService.getDouKeListFromAPI(currentPage);
-                e.onNext(dataList);
-                e.onComplete();
+                try {
+                    LmsDataService mService = new LmsDataService();
+                    List<ArticleInfo> dataList = mService.getDouKeListFromAPI(currentPage);
+                    e.onNext(dataList);
+                    e.onComplete();
+                } catch (InterruptedIOException ex) {
+                    if (!e.isDisposed()) {
+                        e.onError(ex);
+                        return;
+                    }
+                } catch (InterruptedException ex) {
+                    if (!e.isDisposed()) {
+                        e.onError(ex);
+                        return;
+                    }
+                }
             }
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<List<ArticleInfo>>() {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {
-
+                        disposables.add(d);
                     }
 
                     @Override
@@ -942,6 +948,11 @@ public class DoukeFragment extends BaseFragment {
                         e.onNext(list);
                         e.onComplete();
                     }
+                } catch (InterruptedIOException ex) {
+                    if (!e.isDisposed()) {
+                        e.onError(ex);
+                        return;
+                    }
                 } catch (InterruptedException ex) {
                     if (!e.isDisposed()) {
                         e.onError(ex);
@@ -954,7 +965,7 @@ public class DoukeFragment extends BaseFragment {
                 .subscribe(new Observer<List<ArticleInfo>>() {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {
-
+                        disposables.add(d);
                     }
 
                     @Override
@@ -997,11 +1008,6 @@ public class DoukeFragment extends BaseFragment {
             teacherPhoneNumber = phoneNumberBack;
             initData();
         }
-//        if (!StringUtils.isEmpty(teacherPhoneNumber)) {
-//            unReadMsg = false;
-//            imgHeaderRightNotificationdot.setVisibility(View.GONE);
-//            startGetUnReadMessageNumber();  // 开始轮询获取消息
-//        }
         // 查询订单
         if (!StringUtils.isEmpty(currTradeID)) {
             queryTheTradeStateFromAPI(currTradeID);
@@ -1028,110 +1034,12 @@ public class DoukeFragment extends BaseFragment {
         MobclickAgent.onPageEnd("douke");
     }
 
-    public void cleanNotice() {
-        // 退出账号的时候 停止轮询
-        disposables.clear();
-        // unReadMsg = false;
-        // imgHeaderRightNotificationdot.setVisibility(View.GONE);
-    }
-
     @Override
     public void onPause() {
         super.onPause();
         // 停止轮询
         disposables.clear();
     }
-
-//    @OnClick(R.id.header_ll_right)
-//    void actionHeaderRightClick() {
-//        if (StringUtils.isEmpty(teacherPhoneNumber)) {
-//            IntentManager.toLoginActivity(getActivity(), IntentManager.LOGIN_SUCC_ACTION_MAINACTIVITY);
-//            return;
-//        }
-//        // 所有消息置为已读
-//        unReadMsg = false;
-//        imgHeaderRightNotificationdot.setVisibility(View.GONE);
-//        // 跳转到感谢列表页面
-//        Intent intent = new Intent(getActivity(), ThanksNotifiActivity.class);
-//        startActivity(intent);
-//    }
-
-    /**
-     * 轮询查找未读消息
-     */
-//    private void startGetUnReadMessageNumber() {
-//        LL.i("DoukeFragment -- onNext()................");
-//        final LmsDataService service = new LmsDataService();
-//        Observable.create(new ObservableOnSubscribe<Integer>() {
-//            @Override
-//            public void subscribe(@NonNull final ObservableEmitter<Integer> integer) throws Exception {
-//                if (integer.isDisposed()) return;
-//                Disposable disposable = Schedulers.io()
-//                        .createWorker()
-//                        .schedulePeriodically(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                Integer result;
-//                                try {
-//                                    result = service.getTeacherUnReadMessageNumberFromAPI(teacherPhoneNumber);
-//                                } catch (Exception e) {
-//                                    e.printStackTrace();
-//                                    LL.e(e);
-//                                    result = 0;
-//                                }
-//                                if (!integer.isDisposed()) {
-//                                    integer.onNext(result);
-//                                }
-//                            }
-//                        }, 1, 5, TimeUnit.SECONDS);
-//                disposables.add(disposable);
-//            }
-//        }).observeOn(AndroidSchedulers.mainThread())
-//                .doOnDispose(new Action() {
-//                    @Override
-//                    public void run() throws Exception {
-//                        LL.i("DoukeFragment -- 取消观察....");
-//                    }
-//                })
-//                .subscribe(new Observer<Integer>() {
-//
-//                    @Override
-//                    public void onSubscribe(Disposable d) {
-//                        disposables.add(d);
-//                    }
-//
-//                    @Override
-//                    public void onNext(Integer integer) {
-//                        if (StringUtils.isEmpty(teacherPhoneNumber)) {
-//                            unReadMsg = false;
-//                            imgHeaderRightNotificationdot.setVisibility(View.GONE);
-//                            return;
-//                        }
-//                        if (integer > 0) {
-//                            unReadMsg = true;
-//                            imgHeaderRightNotificationdot.setVisibility(View.VISIBLE);
-//                        } else {
-//                            unReadMsg = false;
-//                            imgHeaderRightNotificationdot.setVisibility(View.GONE);
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onError(Throwable e) {
-//                        LL.e(e);
-//                        if (unReadMsg) {
-//                            imgHeaderRightNotificationdot.setVisibility(View.VISIBLE);
-//                        } else {
-//                            imgHeaderRightNotificationdot.setVisibility(View.GONE);
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onComplete() {
-//
-//                    }
-//                });
-//    }
 
     /*************************** 支付 **************************************/
     private void initPopViewPayDetail(final String masterid, final String realPrice) {
@@ -1249,10 +1157,22 @@ public class DoukeFragment extends BaseFragment {
         Observable.create(new ObservableOnSubscribe<OrderInfo>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<OrderInfo> e) throws Exception {
-                LmsDataService mService = new LmsDataService();
-                OrderInfo info = mService.getTheOrderInfoFromAPI(masterresid, price, teacherPhoneNumber, payType);
-                if (!e.isDisposed()) {
-                    e.onNext(info);
+                try {
+                    LmsDataService mService = new LmsDataService();
+                    OrderInfo info = mService.getTheOrderInfoFromAPI(masterresid, price, teacherPhoneNumber, payType);
+                    if (!e.isDisposed()) {
+                        e.onNext(info);
+                    }
+                } catch (InterruptedIOException ex) {
+                    if (!e.isDisposed()) {
+                        e.onError(ex);
+                        return;
+                    }
+                } catch (InterruptedException ex) {
+                    if (!e.isDisposed()) {
+                        e.onError(ex);
+                        return;
+                    }
                 }
             }
         }).subscribeOn(Schedulers.io())
@@ -1260,7 +1180,7 @@ public class DoukeFragment extends BaseFragment {
                 .subscribe(new Observer<OrderInfo>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-                        // showLoadingDialog();
+                        disposables.add(d);
                     }
 
                     @Override
@@ -1293,10 +1213,22 @@ public class DoukeFragment extends BaseFragment {
         Observable.create(new ObservableOnSubscribe<OrderInfo>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<OrderInfo> e) throws Exception {
-                LmsDataService mService = new LmsDataService();
-                OrderInfo info = mService.getTheOrderInfoFromAPIForLive(masterresid, sxbroomuser, price, teacherPhoneNumber, payType);
-                if (!e.isDisposed()) {
-                    e.onNext(info);
+                try {
+                    LmsDataService mService = new LmsDataService();
+                    OrderInfo info = mService.getTheOrderInfoFromAPIForLive(masterresid, sxbroomuser, price, teacherPhoneNumber, payType);
+                    if (!e.isDisposed()) {
+                        e.onNext(info);
+                    }
+                } catch (InterruptedIOException ex) {
+                    if (!e.isDisposed()) {
+                        e.onError(ex);
+                        return;
+                    }
+                } catch (InterruptedException ex) {
+                    if (!e.isDisposed()) {
+                        e.onError(ex);
+                        return;
+                    }
                 }
             }
         }).subscribeOn(Schedulers.io())
@@ -1304,7 +1236,7 @@ public class DoukeFragment extends BaseFragment {
                 .subscribe(new Observer<OrderInfo>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-                        // showLoadingDialog();
+                        disposables.add(d);
                     }
 
                     @Override
@@ -1365,10 +1297,22 @@ public class DoukeFragment extends BaseFragment {
         Observable.create(new ObservableOnSubscribe<TradeInfo>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<TradeInfo> e) throws Exception {
-                LmsDataService mService = new LmsDataService();
-                TradeInfo info = mService.getTheTradeInfoFromAPI(tradeID);
-                if (!e.isDisposed()) {
-                    e.onNext(info);
+                try {
+                    LmsDataService mService = new LmsDataService();
+                    TradeInfo info = mService.getTheTradeInfoFromAPI(tradeID);
+                    if (!e.isDisposed()) {
+                        e.onNext(info);
+                    }
+                } catch (InterruptedIOException ex) {
+                    if (!e.isDisposed()) {
+                        e.onError(ex);
+                        return;
+                    }
+                } catch (InterruptedException ex) {
+                    if (!e.isDisposed()) {
+                        e.onError(ex);
+                        return;
+                    }
                 }
             }
         }).subscribeOn(Schedulers.io())
@@ -1376,7 +1320,7 @@ public class DoukeFragment extends BaseFragment {
                 .subscribe(new Observer<TradeInfo>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-
+                        disposables.add(d);
                     }
 
                     @Override
@@ -1448,6 +1392,7 @@ public class DoukeFragment extends BaseFragment {
                     emitter.onNext(info);
                     emitter.onComplete();
                 }
+
             }
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -1537,4 +1482,47 @@ public class DoukeFragment extends BaseFragment {
         this.bottomTabListener = bottomTabListener;
     }
 
+    /**
+     * 复现Rxjava出现RxCachedThreadScheduler-n导致app崩溃的问题
+     */
+    private void testRxJavaError() {
+        final Disposable disposable = Observable.create(new ObservableOnSubscribe<Integer>() {
+            @Override
+            public void subscribe(ObservableEmitter<Integer> e) throws Exception {
+                for (int i = 0; i < 10; i++) {
+                    e.onNext(i);
+                    Thread.sleep(1000);
+                }
+            }
+        }).map(new Function<Integer, String>() {
+            @Override
+            public String apply(Integer integer) throws Exception {
+                // throw new Exception("第 " + integer + " 秒");
+                return "第 " + integer + " 秒";
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<String>() {
+                    @Override
+                    public void accept(String s) throws Exception {
+                        LL.i("testrxjava", s);
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        LL.i("testrxjava", "onError(): " + throwable.getMessage());
+                    }
+                });
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                disposable.dispose();
+                if (disposable.isDisposed()) {
+                    LL.i("testrxjava", "已经取消订阅");
+                } else {
+                    LL.i("testrxjava", "没有取消订阅");
+                }
+            }
+        }, 8000);
+    }
 }

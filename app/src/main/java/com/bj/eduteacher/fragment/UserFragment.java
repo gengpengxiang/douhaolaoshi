@@ -58,6 +58,7 @@ import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.umeng.analytics.MobclickAgent;
 
 import java.io.File;
+import java.io.InterruptedIOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -296,17 +297,29 @@ public class UserFragment extends BaseFragment implements LogoutView {
         Observable.create(new ObservableOnSubscribe<String[]>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<String[]> e) throws Exception {
-                LmsDataService mService = new LmsDataService();
-                String[] result = mService.updateUserNickName(userPhoneNumber, nickname);
-                e.onNext(result);
-                e.onComplete();
+                try {
+                    LmsDataService mService = new LmsDataService();
+                    String[] result = mService.updateUserNickName(userPhoneNumber, nickname);
+                    e.onNext(result);
+                    e.onComplete();
+                } catch (InterruptedIOException ex) {
+                    if (!e.isDisposed()) {
+                        e.onError(ex);
+                        return;
+                    }
+                } catch (InterruptedException ex) {
+                    if (!e.isDisposed()) {
+                        e.onError(ex);
+                        return;
+                    }
+                }
             }
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<String[]>() {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {
-
+                        disposables.add(d);
                     }
 
                     @Override
@@ -571,16 +584,29 @@ public class UserFragment extends BaseFragment implements LogoutView {
         Observable.create(new ObservableOnSubscribe<String[]>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<String[]> e) throws Exception {
-                LmsDataService service = new LmsDataService();
-                String[] result = service.clearAllClassData(userPhoneNumber);
-                e.onNext(result);
-                e.onComplete();
+                try {
+                    LmsDataService service = new LmsDataService();
+                    String[] result = service.clearAllClassData(userPhoneNumber);
+                    e.onNext(result);
+                    e.onComplete();
+                } catch (InterruptedIOException ex) {
+                    if (!e.isDisposed()) {
+                        e.onError(ex);
+                        return;
+                    }
+                } catch (InterruptedException ex) {
+                    if (!e.isDisposed()) {
+                        e.onError(ex);
+                        return;
+                    }
+                }
             }
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<String[]>() {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {
+                        disposables.add(d);
                         showLoadingDialog();
                     }
 
@@ -834,11 +860,23 @@ public class UserFragment extends BaseFragment implements LogoutView {
         Observable.create(new ObservableOnSubscribe<TeacherInfo>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<TeacherInfo> emitter) throws Exception {
-                if (emitter.isDisposed()) return;
-                LmsDataService mService = new LmsDataService();
-                TeacherInfo teacherInfo = mService.getTeacherInfoFromAPI2(phoneNumber);
-                emitter.onNext(teacherInfo);
-                emitter.onComplete();
+                try {
+                    if (emitter.isDisposed()) return;
+                    LmsDataService mService = new LmsDataService();
+                    TeacherInfo teacherInfo = mService.getTeacherInfoFromAPI2(phoneNumber);
+                    emitter.onNext(teacherInfo);
+                    emitter.onComplete();
+                } catch (InterruptedIOException ex) {
+                    if (!emitter.isDisposed()) {
+                        emitter.onError(ex);
+                        return;
+                    }
+                } catch (InterruptedException ex) {
+                    if (!emitter.isDisposed()) {
+                        emitter.onError(ex);
+                        return;
+                    }
+                }
             }
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -882,7 +920,6 @@ public class UserFragment extends BaseFragment implements LogoutView {
     public void onDestroy() {
         logoutHelper.onDestory();
         super.onDestroy();
-        disposables.clear();
     }
 
     @Override
@@ -901,6 +938,7 @@ public class UserFragment extends BaseFragment implements LogoutView {
     protected void onInVisible() {
         super.onInVisible();
         MobclickAgent.onPageEnd("mine");
+        disposables.clear();
     }
 
     @Override

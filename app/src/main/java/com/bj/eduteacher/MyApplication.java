@@ -15,7 +15,12 @@ import com.bj.eduteacher.zzautolayout.config.AutoLayoutConifg;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.umeng.message.PushAgent;
 
+import java.io.InterruptedIOException;
+import java.net.SocketException;
 import java.util.List;
+
+import io.reactivex.functions.Consumer;
+import io.reactivex.plugins.RxJavaPlugins;
 
 /**
  * Created by zz379 on 2017/9/6.
@@ -45,6 +50,28 @@ public class MyApplication extends MultiDexApplication {
             //初始化APP
             InitBusinessHelper.initApp(context);
         }
+        setRxJavaErrorHandler();
+    }
+
+    /**
+     * RxJava2 当取消订阅后(dispose())，RxJava抛出的异常后续无法接收(此时后台线程仍在跑，可能会抛出IO等异常),全部由RxJavaPlugin接收，需要提前设置ErrorHandler
+     * * 主要针对：Get RxCachedThreadScheduler-n when calling Disposable.dispose() 这样的Exception
+     * * 详情：http://engineering.rallyhealth.com/mobile/rxjava/reactive/2017/03/15/migrating-to-rxjava-2.html#Error Handling
+     * * 解决办法：http://blog.csdn.net/sr_code_plus/article/details/77189478
+     */
+    private void setRxJavaErrorHandler() {
+        RxJavaPlugins.setErrorHandler(new Consumer<Throwable>() {
+            @Override
+            public void accept(Throwable throwable) throws Exception {
+                if (throwable instanceof InterruptedException) {
+                    LL.i("Thread interrupted");
+                } else if (throwable instanceof InterruptedIOException) {
+                    LL.i("Io interrupted");
+                } else if (throwable instanceof SocketException) {
+                    LL.i("Socket error");
+                }
+            }
+        });
     }
 
     private void initUMPush() {

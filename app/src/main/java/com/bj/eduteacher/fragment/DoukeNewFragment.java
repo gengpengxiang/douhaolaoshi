@@ -27,6 +27,7 @@ import com.shizhefei.view.indicator.ScrollIndicatorView;
 import com.shizhefei.view.indicator.slidebar.ColorBar;
 import com.shizhefei.view.indicator.transition.OnTransitionTextListener;
 
+import java.io.InterruptedIOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -138,7 +139,12 @@ public class DoukeNewFragment extends BaseFragment {
                         e.onNext(dataList);
                         e.onComplete();
                     }
-                } catch (Exception ex) {
+                } catch (InterruptedIOException ex) {
+                    if (!e.isDisposed()) {
+                        e.onError(ex);
+                        return;
+                    }
+                } catch (InterruptedException ex) {
                     if (!e.isDisposed()) {
                         e.onError(ex);
                         return;
