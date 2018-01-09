@@ -249,34 +249,6 @@
             android:name=".zzimgselector.view.ImageCropActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
 
-        <!--
-        &lt;!&ndash; 设置环信应用的AppKey product:1150170511115892#wwwgamepkudhjy&ndash;&gt;
-        &lt;!&ndash; debug:1150170511115892#testdouhaojiaoyu &ndash;&gt;
-        <meta-data
-            android:name="EASEMOB_APPKEY"
-            android:value="1150170511115892#wwwgamepkudhjy" />
-        &lt;!&ndash; 声明SDK所需的service SDK核心功能&ndash;&gt;
-        <service
-            android:name="com.hyphenate.chat.EMChatService"
-            android:exported="true" />
-        <service
-            android:name="com.hyphenate.chat.EMJobService"
-            android:exported="true"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
-        &lt;!&ndash; 声明SDK所需的receiver &ndash;&gt;
-        <receiver android:name="com.hyphenate.chat.EMMonitorReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.PACKAGE_REMOVED" />
-                <data android:scheme="package" />
-            </intent-filter>
-            &lt;!&ndash; 可选filter &ndash;&gt;
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.USER_PRESENT" />
-            </intent-filter>
-        </receiver>-->
-
-
         <!-- AutoLayout meta data -->
         <meta-data
             android:name="design_width"

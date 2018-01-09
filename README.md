@@ -2,17 +2,22 @@
 1. 项目文件名改为：DouhaoTea
 2. 包名仍然延续逗号老师的包名：com.bj.eduteacher
     由于包名修改涉及到：友盟推送功能、直播功能、微信分享、微信支付功能，所以决定新版逗号老师仍然延续之前的包名不动，仅修改项目文件名以作区分。
+3. 后续版本的逗号老师的开发都将会在这个项目内进行：社区平台，积分系统，抽奖功能
 
 
 ##########################################
 Step Product APK
 1. 修改版本号
 2. HttpUtilService.java -->> 修改正式版域名
-3. AndroidManifest.xml  -->> 修改环信 APP_KEY
-4. 首页 -->> 开始轮询获取消息
-5. tool/Constants -->> 修改腾讯云直播的SDK_APPID 和 ACCOUNT_TYPE
-
+3. tool/Constants -->> 修改腾讯云直播的SDK_APPID 和 ACCOUNT_TYPE
 ##########################################
+
+
+start develop 3.4
+1. 更换启动图标
+2. 剔除班级管理的相关功能，专注于教师培训和发展
+3. 转型成为一个完全 To C 的产品
+
 start develop 3.3
 1. 直播回放
 2. 限制发送弹幕
