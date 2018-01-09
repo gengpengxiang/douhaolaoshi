@@ -260,7 +260,6 @@
                 android:textSize="14sp" />
 
             <TextView
-                android:id="@+id/tv_exchangeTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="2dp"

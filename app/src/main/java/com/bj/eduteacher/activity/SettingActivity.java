@@ -13,6 +13,7 @@ import com.umeng.analytics.MobclickAgent;
 
 /**
  * Created by zz379 on 2017/1/5.
+ * 关于页面
  */
 
 public class SettingActivity extends BaseActivity {

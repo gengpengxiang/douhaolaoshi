@@ -221,6 +221,7 @@ public class LiveAllActivity extends BaseActivity {
                 dialog.setContentText("本直播已结束，暂未发现直播录像");
                 dialog.show();
             } else {
+                // 进入直播回放页面，观看直播页面
                 Intent intent = new Intent(this, LivePlayBackActivity.class);
                 intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_NAME, item.getTitle());
                 intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_PREVIEW_URL, item.getPlayUrl());

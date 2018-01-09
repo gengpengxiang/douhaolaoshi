@@ -69,6 +69,7 @@ import static com.bj.eduteacher.api.HttpUtilService.DOWNLOAD_PATH;
 
 /**
  * Created by zz379 on 20/07/2017.
+ * 资源预览页面，主要是文档类型资源
  */
 @SuppressLint("SetJavaScriptEnabled")
 public class ResReviewActivity extends BaseActivity {

@@ -29,12 +29,12 @@
 
     <application
         android:name=".MyApplication"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:replace="icon">
+        tools:replace="android:icon,android:allowBackup">
 
         <activity
             android:name=".activity.MainActivity"
@@ -92,50 +92,6 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".activity.StudentAllActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.StudentGradeActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:name=".activity.StudentDetailActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:name=".activity.BadgeDetailActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.BadgeProDetailActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.CommendDetailActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.ThanksDetailActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:name=".activity.RankListActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:name=".activity.ThanksNotifiActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.LevelDetailActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".activity.ProtocolActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
@@ -144,10 +100,6 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.ChatActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize" />
-        <activity
             android:name=".activity.DonationActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
@@ -155,11 +107,6 @@
             android:name=".activity.DonationProtocolActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.ReasonEditActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".activity.ZhuanjiaDetailActivity"
             android:launchMode="singleTop"
@@ -275,7 +222,7 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        
+
         <!--&lt;!&ndash; EaseUI &ndash;&gt;
         &lt;!&ndash; 显示下载大图页面 android:theme="@style/horizontal_slide" &ndash;&gt;
         <activity
@@ -290,7 +237,7 @@
             android:name=".zzeaseui.ui.EaseShowVideoActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" />-->
-        
+
         <!--ImageSelector-->
         <activity
             android:name=".zzimgselector.view.ImageSelectorActivity"
@@ -301,7 +248,7 @@
         <activity
             android:name=".zzimgselector.view.ImageCropActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
-        
+
         <!--
         &lt;!&ndash; 设置环信应用的AppKey product:1150170511115892#wwwgamepkudhjy&ndash;&gt;
         &lt;!&ndash; debug:1150170511115892#testdouhaojiaoyu &ndash;&gt;

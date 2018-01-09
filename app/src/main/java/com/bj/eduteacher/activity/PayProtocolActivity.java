@@ -30,6 +30,7 @@ import butterknife.OnClick;
 
 /**
  * Created by zz379 on 2017/5/4.
+ * 支付协议页面
  */
 
 public class PayProtocolActivity extends BaseActivity {

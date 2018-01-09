@@ -34,6 +34,7 @@ import cn.jzvd.JZVideoPlayerStandard;
 
 /**
  * Created by zz379 on 2017/8/30.
+ * 直播回放功能页面
  */
 
 public class LivePlayBackActivity extends BaseActivity {

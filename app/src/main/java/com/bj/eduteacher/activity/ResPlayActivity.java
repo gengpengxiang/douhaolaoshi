@@ -52,6 +52,7 @@ import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by zz379 on 2017/8/30.
+ * 资源播放页面 该页面使用的是bilibili开源播放器，目前正在使用
  */
 
 public class ResPlayActivity extends BaseActivity implements MediaController.OnTopBackButtonClickListener, MediaController.OnFullScreenChangeListener {

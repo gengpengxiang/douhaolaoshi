@@ -88,7 +88,6 @@
             android:paddingLeft="10dp">
 
             <ImageView
-                android:id="@+id/iv_comment"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:scaleType="fitXY"

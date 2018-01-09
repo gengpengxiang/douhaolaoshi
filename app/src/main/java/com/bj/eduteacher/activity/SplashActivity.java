@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -22,8 +21,6 @@ import com.bj.eduteacher.utils.AppUtils;
 import com.bj.eduteacher.utils.LL;
 import com.bj.eduteacher.utils.PreferencesUtils;
 import com.bj.eduteacher.utils.StringUtils;
-import com.hyphenate.EMCallBack;
-import com.hyphenate.chat.EMClient;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.umeng.analytics.MobclickAgent;
 
@@ -176,33 +173,6 @@ public class SplashActivity extends BaseActivity {
         intentToMainActivity();
         // 由于环信功能的删除，直接跳过环信的登录检测
         // login2Ease(userPhoneNumber);
-    }
-
-    private void login2Ease(String userPhoneNumber) {
-        String userEaseID = MLConfig.EASE_TEACHER_ID_PREFIX + userPhoneNumber;
-        EMClient.getInstance().login(userEaseID, "123456", new EMCallBack() {//回调
-            @Override
-            public void onSuccess() {
-                // 加载环信相关数据
-                EMClient.getInstance().groupManager().loadAllGroups();
-                EMClient.getInstance().chatManager().loadAllConversations();
-                Log.d("way", "登录聊天服务器成功！");
-
-                intentToMainActivity();
-            }
-
-            @Override
-            public void onProgress(int progress, String status) {
-
-            }
-
-            @Override
-            public void onError(int code, String message) {
-                Log.d("way", "登录聊天服务器失败！");
-                // 跳转到登录页面
-                intentToMainActivity();
-            }
-        });
     }
 
     /**

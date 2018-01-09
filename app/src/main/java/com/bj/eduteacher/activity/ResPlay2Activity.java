@@ -50,6 +50,7 @@ import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by zz379 on 2017/8/30.
+ * 同样是资源播放页面，但是该页面使用的是 jiaozi 播放器，目前已经不再使用
  */
 
 public class ResPlay2Activity extends BaseActivity {

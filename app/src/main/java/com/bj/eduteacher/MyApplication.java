@@ -42,8 +42,6 @@ public class MyApplication extends MultiDexApplication {
         AutoLayoutConifg.getInstance().useDeviceSize();
         // 初始化友盟的相关操作
         initUMPush();
-        // 初始化EaseUI
-        // IMHelper.getInstance().init(this);
 
         if (shouldInit()) {
             SxbLogImpl.init(getApplicationContext());

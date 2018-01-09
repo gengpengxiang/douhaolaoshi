@@ -35,6 +35,7 @@ import butterknife.OnClick;
 
 /**
  * 加载HTML页面
+ * 逗号老师（教育）试用申请表，申请信息填写
  */
 @SuppressLint("SetJavaScriptEnabled")
 public class LoginHelpActivity extends BaseActivity {

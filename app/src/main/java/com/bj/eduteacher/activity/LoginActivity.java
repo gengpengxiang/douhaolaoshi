@@ -22,7 +22,6 @@ import android.widget.TextView;
 import com.bj.eduteacher.BaseActivity;
 import com.bj.eduteacher.R;
 import com.bj.eduteacher.api.LmsDataService;
-import com.bj.eduteacher.api.MLConfig;
 import com.bj.eduteacher.api.MLProperties;
 import com.bj.eduteacher.dialog.HelpAlertDialog;
 import com.bj.eduteacher.manager.IntentManager;
@@ -36,13 +35,12 @@ import com.bj.eduteacher.utils.ScreenUtils;
 import com.bj.eduteacher.utils.StringUtils;
 import com.bj.eduteacher.utils.T;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.hyphenate.EMCallBack;
-import com.hyphenate.chat.EMClient;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.umeng.analytics.MobclickAgent;
 
 /**
  * Created by he on 2016/12/19.
+ * 登录页面
  */
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener, LoginView {
@@ -356,83 +354,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         Log.i("way", "modole: " + module + "-- errCode: " + errCode + " -- errMsg: " + errMsg);
         btnLogin.setClickable(true);
         mProgressDialog.dismiss();
-    }
-
-    /**
-     * 判断环信是否已经登录过，登录过就推出
-     */
-    private void checkIsLoginEase() {
-        final String phoneNum = edtPhoneNumber.getText().toString().trim();
-        // 登录环信，成功后 获取教师信息
-        if (EMClient.getInstance().isLoggedInBefore()) {
-            EMClient.getInstance().logout(true, new EMCallBack() {
-                @Override
-                public void onSuccess() {
-                    login2Ease(phoneNum);
-                }
-
-                @Override
-                public void onError(int code, String error) {
-
-                }
-
-                @Override
-                public void onProgress(int progress, String status) {
-
-                }
-            });
-        } else {
-            login2Ease(phoneNum);
-        }
-    }
-
-    /**
-     * 登录到环信
-     *
-     * @param userPhoneNumber
-     */
-    private void login2Ease(final String userPhoneNumber) {
-        final String userEaseID = MLConfig.EASE_TEACHER_ID_PREFIX + userPhoneNumber;
-        EMClient.getInstance().login(userEaseID, "123456", new EMCallBack() {//回调
-            @Override
-            public void onSuccess() {
-                // 加载环信相关数据
-                EMClient.getInstance().groupManager().loadAllGroups();
-                EMClient.getInstance().chatManager().loadAllConversations();
-                Log.d("way", userEaseID + "登录聊天服务器成功！");
-                // 登录成功, 跳转到首页
-                loginSuccess();
-            }
-
-            @Override
-            public void onProgress(int progress, String status) {
-
-            }
-
-            @Override
-            public void onError(final int code, String message) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        btnLogin.setClickable(true);
-                        if (mProgressDialog != null && mProgressDialog.isShowing()) {
-                            mProgressDialog.dismiss();
-                        }
-                        Log.d("way", userEaseID + "登录失败，请重新发送验证码" + " " + code);
-                        if (code == 200) {
-                            // 加载环信相关数据
-                            EMClient.getInstance().groupManager().loadAllGroups();
-                            EMClient.getInstance().chatManager().loadAllConversations();
-                            Log.d("way", "登录聊天服务器成功！");
-                            // 登录成功, 跳转到首页
-                            loginSuccess();
-                        } else {
-                            T.showShort(LoginActivity.this, "登录失败，请重新发送验证码" + " " + code);
-                        }
-                    }
-                });
-            }
-        });
     }
 
     /**

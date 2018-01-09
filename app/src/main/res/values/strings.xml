@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">逗号老师</string>
-    <string name="bottom_tab_0">班级</string>
     <string name="bottom_tab_1">逗课</string>
     <string name="bottom_tab_2">我的</string>
 
@@ -44,75 +43,7 @@
     <string name="save_ing">保存图片中…</string>
     <string name="mixture_textview_default_text">暂未获取到相关内容</string>
 
-    <string name="text_ack_msg">已读</string>
-    <string name="text_delivered_msg">送达</string>
-    <string name="button_pushtotalk">按住说话</string>
-    <string name="button_send">发送</string>
-    <string name="attach_picture">图片</string>
-    <string name="attach_take_pic">拍照</string>
-    <string name="move_up_to_cancel">手指上滑，取消发送</string>
-    <string name="release_to_cancel">松开手指，取消发送</string>
-    <string name="send_fail">发送消息失败,</string>
-    <string name="resend">重发</string>
-    <string name="confirm_resend">确认重发该信息？</string>
-    <string name="connect_failuer_toast">请检查网络或稍候重试</string>
-    <string name="ok">确定</string>
-    <string name="cancel">取消</string>
-    <string name="prompt">提示</string>
-    <string name="location_recv">[%1$s的位置]</string>
-    <string name="location_prefix">[我的位置]</string>
     <string name="picture">[图片]</string>
-    <string name="video">[视频]</string>
-    <string name="file">[文件]</string>
-    <string name="voice_prefix">[语音]</string>
-    <string name="voice_call">[语音通话]</string>
-    <string name="video_call">[视频通话]</string>
-    <string name="dynamic_expression">[动态表情]</string>
-    <string name="search_header">搜</string>
-    <string name="recoding_fail">录音失败，请重试！</string>
-    <string name="session">消息</string>
-    <string name="address_book">通讯录</string>
-    <string name="search">搜索</string>
-    <string name="downwaiting">正在下载文件请稍后</string>
-    <string name="unable_to_connect">不能连接到服务器</string>
-    <string name="not_download">未下载:</string>
-    <string name="is_down_please_wait">正在下载视频请稍候</string>
-    <string name="all_members">所有成员</string>
-
-    <string name="unable_to_get_loaction">无法获取到您的位置信息!</string>
-    <string name="sd_card_does_not_exist">SD卡不存在，不能拍照</string>
-    <string name="cant_find_pictures">找不到图片</string>
-    <string name="File_does_not_exist">文件不存在</string>
-    <string name="The_file_is_not_greater_than_10_m">文件不能大于10M</string>
-    <string name="Whether_to_empty_all_chats">是否清空所有聊天记录</string>
-    <string name="Send_voice_need_sdcard_support">发送语音需要sdcard支持</string>
-    <string name="Recording_without_permission">无录音权限</string>
-    <string name="The_recording_time_is_too_short">录音时间太短</string>
-    <string name="send_failure_please">发送失败，请检测服务器是否连接</string>
-    <string name="Move_into_blacklist_success">移入黑名单成功</string>
-    <string name="Move_into_blacklist_failure">移入黑名单失败</string>
-    <string name="you_are_group">你被群创建者从此群中移除</string>
-    <string name="the_current_group_destroyed">当前群聊已被群创建者解散</string>
-    <string name="the_current_chat_room_destroyed">当前聊天室已被创建者解散</string>
-    <string name="Cant_chat_with_yourself">不能和自己聊天</string>
-    <string name="Is_moved_into_blacklist">正在移入黑名单……</string>
-    <string name="can_not_connect_chat_server_connection">连接不到聊天服务器</string>
-    <string name="the_current_network">当前网络不可用，请检查网络设置</string>
-    <string name="Download_the_pictures">下载图片: 0%</string>
-    <string name="Download_the_pictures_new">下载图片:</string>
-    <string name="Failed_to_download_file">下载文件失败:</string>
-    <string name="Have_downloaded">已下载</string>
-    <string name="Did_not_download">未下载</string>
-    <string name="Is_download_voice_click_later">正在下载语音，稍后点击</string>
-    <string name="search_new">搜</string>
-    <string name="were_mentioned">[有人@我]</string>
-
-
-    <string name="no_more_messages">没有更多的消息了</string>
-    <string name="gorup_not_found">找不到这个群组</string>
-    <string name="error_send_invalid_content">你发送了不合法的消息内容</string>
-    <string name="error_send_not_in_the_group">你已经不在此群了</string>
-    <string name="quiting_the_chat_room">正在退出聊天室……</string>
 
 
     <!-- login re fragment-->
@@ -151,7 +82,6 @@
     <string name="live_btn_record">录制</string>
     <string name="live_btn_push">开启推流</string>
     <string name="live_btn_stop_push">关闭推流</string>
-    <string name="live_btn_stop_record">停录</string>
 
     <!-- pushstream -->
 
@@ -174,14 +104,8 @@
     <string name="text_publish">开始直播</string>
     <string name="text_live_preview">发布直播</string>
     <string name="text_live_title_input">输入直播标题</string>
-    <string name="text_live_default_title">我的直播我做主</string>
     <string name="text_live_add_title_tips">给你的直播设置一个满意的封面</string>
     <string name="tip_no_permission">权限不足</string>
-
-    <string name="host_sign">我的签名就是把我的世界直播给你们</string>
-    <string name="host_phone">iPhone6S Plus</string>
-    <string name="host_funs">粉丝数:9090</string>
-    <string name="host_admire">赞:11.3w</string>
 
 
     <string name="ping_ing">测速中</string>
@@ -207,7 +131,6 @@
     <string name="str_link_refuse_tips">已拒绝您的跨房连麦邀请!</string>
     <string name="str_qav_beauty">美颜</string>
     <string name="str_qav_white">美白</string>
-    <string name="str_btn_link">跨房连麦</string>
     <string name="str_dt_change_role">分辨率</string>
     <string name="str_dt_hd">高清</string>
     <string name="str_dt_sd">标清</string>

@@ -26,7 +26,6 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/header_ll_center"
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:layout_marginLeft="45dp"

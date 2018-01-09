@@ -25,6 +25,7 @@ import butterknife.ButterKnife;
 
 /**
  * Created by zz379 on 2017/8/11.
+ * 引导页，首次安装，以及每次版本更新时显示三张引导图
  */
 
 public class GuideActivity extends BaseActivity {

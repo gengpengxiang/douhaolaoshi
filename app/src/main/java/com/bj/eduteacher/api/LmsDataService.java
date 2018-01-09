@@ -18,9 +18,6 @@ import com.bj.eduteacher.entity.TeacherInfo;
 import com.bj.eduteacher.entity.TradeInfo;
 import com.bj.eduteacher.utils.LL;
 import com.bj.eduteacher.utils.StringUtils;
-import com.bj.eduteacher.zzeaseui.model.EaseConversation;
-import com.hyphenate.chat.EMClient;
-import com.hyphenate.chat.EMConversation;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -1468,52 +1465,6 @@ public class LmsDataService {
         dataInfo.setData(data);
 
         return dataInfo;
-    }
-
-    public List<EaseConversation> getConversationListFromAPI(String userPhone, int pageIndex) throws Exception {
-        List<EaseConversation> dataList = new ArrayList<>();
-        String parseUrl = "chat/userchatlogs";
-        HashMap<String, String> params = new HashMap<>();
-        params.put("userphone", userPhone);
-        params.put("usertype", MLConfig.KEY_CONVERSATION_TYPE);
-        params.put("limit", String.valueOf(PAGE_SIZE));
-        params.put("offset", String.valueOf((pageIndex - 1) * PAGE_SIZE));
-
-        String resultStr = getJsonByPostUrl(parseUrl, params);
-        JSONObject resultObj = new JSONObject(resultStr);
-
-        String errorCode = resultObj.optString("ret", "");
-        String errorMsg = resultObj.optString("msg");
-        String data = resultObj.optString("data");
-
-        if (!StringUtils.isEmpty(errorCode) && "1".equals(errorCode)) {
-            JSONArray dataArray = new JSONArray(data);
-            EaseConversation myConversation;
-            EMConversation conversation;
-            for (int i = 0; i < dataArray.length(); i++) {
-                JSONObject itemObj = dataArray.optJSONObject(i);
-                String parentPhone = itemObj.optString("jiazhang");
-                String parentPic = HttpUtilService.BASE_RESOURCE_URL + itemObj.optString("student_img");
-                String className = itemObj.optString("class_name");
-                String relation = StringUtils.isEmpty(itemObj.optString("jiazhang_juese")) ? "" : "的" + itemObj.optString("jiazhang_juese");
-                String parentName = itemObj.optString("student_name") + relation;
-
-                myConversation = new EaseConversation();
-                String teacherEaseID = "jiazhang" + parentPhone;
-                conversation = EMClient.getInstance().chatManager().getConversation(teacherEaseID, EMConversation.EMConversationType.Chat, true);
-                myConversation.setEmConversation(conversation);
-                myConversation.setUserEaseID(teacherEaseID);
-                myConversation.setUserPhoto(parentPic);
-                myConversation.setUserNick(parentName);
-                myConversation.setClassName(className);
-                myConversation.setRelation(relation);
-
-                dataList.add(myConversation);
-                conversation = null;
-                myConversation = null;
-            }
-        }
-        return dataList;
     }
 
     /**

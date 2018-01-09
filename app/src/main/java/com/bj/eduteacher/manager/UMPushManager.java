@@ -7,7 +7,6 @@ import android.util.Log;
 
 import com.bj.eduteacher.R;
 import com.bj.eduteacher.activity.DoukeDetailActivity;
-import com.bj.eduteacher.activity.RankListActivity;
 import com.bj.eduteacher.activity.SplashActivity;
 import com.bj.eduteacher.api.MLProperties;
 import com.bj.eduteacher.utils.LL;
@@ -230,11 +229,7 @@ public class UMPushManager {
         public void dealWithCustomAction(Context context, UMessage uMessage) {
             int loginStatus = PreferencesUtils.getInt(context, MLProperties.PREFER_KEY_LOGIN_STATUS, 0);
             if (loginStatus != 0) {
-                if (uMessage.custom != null && uMessage.custom.equals(UM_MESSAGE_TYPE_RANK)) {
-                    Intent intent = new Intent(context, RankListActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    context.startActivity(intent);
-                } else if (uMessage.custom != null && uMessage.custom.equals(UM_MESSAGE_TYPE_DOUKE)) {
+                if (uMessage.custom != null && uMessage.custom.equals(UM_MESSAGE_TYPE_DOUKE)) {
                     Intent intent = new Intent(context, DoukeDetailActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     // 设置文章的链接

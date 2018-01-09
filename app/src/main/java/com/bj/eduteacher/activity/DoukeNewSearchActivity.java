@@ -41,6 +41,7 @@ import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by zz379 on 2017/10/18.
+ * 新逗课搜索
  */
 
 public class DoukeNewSearchActivity extends BaseActivity {

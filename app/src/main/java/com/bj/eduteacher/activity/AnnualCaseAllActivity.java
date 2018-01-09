@@ -40,7 +40,7 @@ import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by zz379 on 2017/10/18.
- * 年会案例集合
+ * 年会案例集合，入口在首页的banner图中
  */
 
 public class AnnualCaseAllActivity extends BaseActivity {
@@ -74,7 +74,7 @@ public class AnnualCaseAllActivity extends BaseActivity {
         setContentView(R.layout.activity_annual_case_all);
         ButterKnife.bind(this);
         columnNum = ScreenUtils.isPadDevice(this) ? 5 : 3;
-        
+
         initStatus();
         // 初始化页面
         initToolBar();

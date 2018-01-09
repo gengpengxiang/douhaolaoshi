@@ -30,6 +30,7 @@ import butterknife.OnClick;
 
 /**
  * Created by zz379 on 2017/6/13.
+ * 赞助协议页面
  */
 
 public class DonationProtocolActivity extends BaseActivity {

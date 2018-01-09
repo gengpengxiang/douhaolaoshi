@@ -30,6 +30,7 @@ import butterknife.OnClick;
 
 /**
  * Created by zz379 on 2017/5/4.
+ * 用户协议页面
  */
 
 public class ProtocolActivity extends BaseActivity {

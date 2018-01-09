@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,8 +19,6 @@ import com.bj.eduteacher.tool.Constants;
 import com.bj.eduteacher.utils.LL;
 import com.bj.eduteacher.utils.PreferencesUtils;
 import com.bj.eduteacher.utils.StringUtils;
-import com.hyphenate.EMCallBack;
-import com.hyphenate.chat.EMClient;
 import com.umeng.analytics.MobclickAgent;
 
 import butterknife.ButterKnife;
@@ -111,33 +108,6 @@ public class Guide3Fragment extends Fragment {
         intentToMainActivity();
         // 跳过环信登录检测
         // login2Ease(userPhoneNumber);
-    }
-
-    private void login2Ease(String userPhoneNumber) {
-        String userEaseID = MLConfig.EASE_TEACHER_ID_PREFIX + userPhoneNumber;
-        EMClient.getInstance().login(userEaseID, "123456", new EMCallBack() {//回调
-            @Override
-            public void onSuccess() {
-                // 加载环信相关数据
-                EMClient.getInstance().groupManager().loadAllGroups();
-                EMClient.getInstance().chatManager().loadAllConversations();
-                Log.d("way", "登录聊天服务器成功！");
-
-                intentToMainActivity();
-            }
-
-            @Override
-            public void onProgress(int progress, String status) {
-
-            }
-
-            @Override
-            public void onError(int code, String message) {
-                Log.d("way", "登录聊天服务器失败！");
-                // 跳转到登录页面
-                intentToMainActivity();
-            }
-        });
     }
 
     private boolean isLoginAgain(long lastLoginTime) {

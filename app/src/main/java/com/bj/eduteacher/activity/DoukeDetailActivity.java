@@ -89,6 +89,7 @@ import io.reactivex.schedulers.Schedulers;
 
 /**
  * 加载HTML页面
+ * 逗课文章详情页面
  */
 @SuppressLint("SetJavaScriptEnabled")
 public class DoukeDetailActivity extends BaseActivity {

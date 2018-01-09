@@ -35,12 +35,10 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="status_bar_height">25dp</dimen>
 
-    <dimen name="text_size_large">21sp</dimen>
     <dimen name="text_size_title">18sp</dimen>
     <dimen name="text_size_title_sub">13sp</dimen>
     <dimen name="text_size_menu">16sp</dimen>
     <dimen name="text_size_standard">14sp</dimen>
-    <dimen name="text_size_small">12sp</dimen>
     <dimen name="header_height">135dp</dimen>
 
     <dimen name="titlebar_height">48dp</dimen>
@@ -56,10 +54,4 @@
     <dimen name="small_text_size">15sp</dimen>
     <dimen name="mini_text_size">13sp</dimen>
 
-    <dimen name="height_top_bar">50dp</dimen>
-    <dimen name="padding_search_bar">5dp</dimen>
-    <dimen name="size_avatar">48dp</dimen>
-    <dimen name="margin_chat_activity">5dp</dimen>
-    <dimen name="chat_nick_margin_left">12dp</dimen>
-    <dimen name="chat_nick_text_size">13sp</dimen>
 </resources>

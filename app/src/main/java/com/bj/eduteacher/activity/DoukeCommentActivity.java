@@ -44,6 +44,7 @@ import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by zz379 on 2017/2/3.
+ * 逗课文章评论页面
  */
 
 public class DoukeCommentActivity extends BaseActivity {

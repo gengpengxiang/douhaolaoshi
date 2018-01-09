@@ -59,6 +59,7 @@ import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by zz379 on 2017/6/13.
+ * 赞助页面
  */
 
 public class DonationActivity extends BaseActivity {

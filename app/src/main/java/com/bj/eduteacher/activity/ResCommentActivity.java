@@ -44,6 +44,7 @@ import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by zz379 on 2017/2/3.
+ * 资源评论页面
  */
 
 public class ResCommentActivity extends BaseActivity {
