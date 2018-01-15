@@ -67,6 +67,9 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
+/**
+ * 首页
+ */
 public class MainActivity extends BaseActivity implements ChangeBottomTabListener {
 
     private static final int TAB_NUMBER = 3;
