@@ -329,7 +329,7 @@ public class LmsDataService {
     public String[] uploadKidPhoto(String kidId, String filePath) throws Exception {
         String[] result = new String[2];
         // String parseUrl = "files/index/" + kidId;
-        String parseUrl = "js/timg";
+        String parseUrl = "js/imgteacher";
         LL.i("上传学生图片：" + parseUrl);
         String resultStr = HttpUtilService.postPictureByUrl(parseUrl, filePath, kidId);
 
@@ -1331,12 +1331,13 @@ public class LmsDataService {
      * @return
      * @throws Exception
      */
-    public List<ArticleInfo> getDouKeListFromAPI(int pageIndex) throws Exception {
+    public List<ArticleInfo> getDouKeListFromAPI(int pageIndex, String phone) throws Exception {
         List<ArticleInfo> dataList = new ArrayList<>();
         String parseUrl = "js/doukelist";
         HashMap<String, String> params = new HashMap<>();
         params.put("limit", String.valueOf(PAGE_SIZE));
         params.put("offset", String.valueOf((pageIndex - 1) * PAGE_SIZE));
+        params.put("usercode", phone);
 
         String result = getJsonByPostUrl(parseUrl, params);
         JSONObject resultObj = new JSONObject(result);
@@ -1359,8 +1360,8 @@ public class LmsDataService {
                 article.setAuthImg(HttpUtilService.BASE_RESOURCE_URL + item.optString("authorimg"));
                 article.setArticlePath(item.optString("url"));
                 article.setAuthDesc(item.optString("authorjianjie"));
-                article.setReadNumber(item.getString("pageview"));
-                article.setAgreeNumber(item.getString("dianzan"));
+                article.setReadNumber(item.optString("pageview"));
+                article.setAgreeNumber(item.optString("dianzan"));
                 article.setCommentNumber(item.optString("comment_num", "0"));
                 article.setShowType(ArticleInfo.SHOW_TYPE_DOUKE);
                 dataList.add(article);

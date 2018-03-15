@@ -6,7 +6,7 @@ package com.bj.eduteacher.api;
 
 public class MLConfig {
     //    public static final String HTTP_APP_KEY = "123456";
-    public static final String HTTP_APP_KEY = "douhao1p4";
+    public static final String HTTP_APP_KEY = "douhaolaoshi";
     public static final int KEEP_LOGIN_TIME_LENGTH = 15;
 
     public static final String KEY_STUDENT_ID = "StudID";

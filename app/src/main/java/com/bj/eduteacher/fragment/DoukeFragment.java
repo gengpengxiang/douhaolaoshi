@@ -577,7 +577,7 @@ public class DoukeFragment extends BaseFragment {
         getRefreshDataList();
     }
 
-    private void getRefreshDataList() {
+    public void getRefreshDataList() {
         if (!NetUtils.isConnected(getActivity())) {
             T.showShort(getActivity(), "无法连接到网络，请检查您的网络设置");
             cleanXRefreshView();
@@ -620,7 +620,7 @@ public class DoukeFragment extends BaseFragment {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<ArticleInfo>> e) throws Exception {
                 try {
-                    List<ArticleInfo> dataList = mService.getDouKeListFromAPI(currentPage);
+                    List<ArticleInfo> dataList = mService.getDouKeListFromAPI(currentPage, teacherPhoneNumber);
                     if (!e.isDisposed()) {
                         e.onNext(dataList);
                         e.onComplete();
@@ -876,7 +876,7 @@ public class DoukeFragment extends BaseFragment {
             public void subscribe(@NonNull ObservableEmitter<List<ArticleInfo>> e) throws Exception {
                 try {
                     LmsDataService mService = new LmsDataService();
-                    List<ArticleInfo> dataList = mService.getDouKeListFromAPI(currentPage);
+                    List<ArticleInfo> dataList = mService.getDouKeListFromAPI(currentPage, teacherPhoneNumber);
                     e.onNext(dataList);
                     e.onComplete();
                 } catch (InterruptedIOException ex) {

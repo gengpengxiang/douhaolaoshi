@@ -586,46 +586,6 @@ public class FamousTeacherDetailActivity extends BaseActivity {
         mAdapter.notifyDataSetChanged();
     }
 
-    private void getZhuanjiaDouke(String masterID) {
-        Observable.create(new ObservableOnSubscribe<List<ArticleInfo>>() {
-            @Override
-            public void subscribe(@NonNull ObservableEmitter<List<ArticleInfo>> e) throws Exception {
-                LmsDataService mService = new LmsDataService();
-                List<ArticleInfo> dataList = mService.getDouKeListFromAPI(currentPage);
-                e.onNext(dataList);
-                e.onComplete();
-            }
-        }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<List<ArticleInfo>>() {
-                    @Override
-                    public void onSubscribe(@NonNull Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(@NonNull List<ArticleInfo> result) {
-                        loadData(result);
-                    }
-
-                    @Override
-                    public void onError(@NonNull Throwable e) {
-                        T.showShort(FamousTeacherDetailActivity.this, "服务器开小差了，请重试");
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
-    private void loadData(List<ArticleInfo> list) {
-        // 更新数据
-        mDataList.addAll(list);
-        mAdapter.notifyDataSetChanged();
-    }
-
     /********************************* 分享功能 ***********************************************/
     void showShareDialog() {
         MobclickAgent.onEvent(FamousTeacherDetailActivity.this, "elect_expert");

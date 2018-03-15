@@ -36,8 +36,10 @@ public class HttpUtilService {
 //    public static final String BASE_RESOURCE_URL = "http://testdouhao.gamepku.com/files/";
 //    public static final String BASE_FILES_UPLOAD_URL = "http://testdouhao.gamepku.com/";
 //    public static final String BASE_URL = "http://testdouhao1p4.gamepku.com/";
+
+    // public static final String BASE_URL = "http://douhao1p4.gamepku.com/";
     // 正式版
-    public static final String BASE_URL = "http://douhao1p4.gamepku.com/";
+    public static final String BASE_URL = "http://douhaolaoshi.gamepku.com/";
     public static final String BASE_RESOURCE_URL = "http://douhao.gamepku.com/files/";
     public static final String BASE_FILES_UPLOAD_URL = "http://douhao.gamepku.com/";
 
@@ -168,7 +170,8 @@ public class HttpUtilService {
     }
 
     public static String postPictureByUrl(String parseUrl, String filePath, String teacherphone) throws Exception {
-        String url = BASE_FILES_UPLOAD_URL + "js/timg";
+        // String url = BASE_FILES_UPLOAD_URL + "js/timg";
+        String url = BASE_API_URL + "js/imgteacher";
         String uploadFilePath = BitmapUtils.compressImageUpload(filePath);
         File file = new File(uploadFilePath);
         String fileName = filePath.substring(filePath.lastIndexOf("/") + 1, filePath.length());
@@ -176,7 +179,7 @@ public class HttpUtilService {
         Response response = OkHttpUtils.post()
                 .addFile("userfile", fileName, file)
                 .url(url)
-                .addParams("appkey", "123456")
+                .addParams("appkey", MLConfig.HTTP_APP_KEY)
                 .addParams("teacherphone", teacherphone)
                 .build()
                 .execute();

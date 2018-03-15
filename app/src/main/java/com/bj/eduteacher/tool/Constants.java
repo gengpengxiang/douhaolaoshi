@@ -34,9 +34,12 @@ public class Constants {
 //    public static final int SDK_APPID = 1400042640;
 //    public static final int ACCOUNT_TYPE = 17723;
     // 正式版
+//    public static final int SDK_APPID = 1400043188;
+//    public static final int ACCOUNT_TYPE = 15370;
+    // 正式版2
     public static final int SDK_APPID = 1400043188;
     public static final int ACCOUNT_TYPE = 15370;
-
+    
     public static final int HOST = 1;
 
     public static final int MEMBER = 0;
