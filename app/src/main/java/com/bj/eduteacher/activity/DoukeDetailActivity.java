@@ -14,6 +14,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.http.SslError;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcel;
@@ -205,16 +206,19 @@ public class DoukeDetailActivity extends BaseActivity {
             public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
                 super.onReceivedHttpError(view, request, errorResponse);
                 LL.i("webView ---->>>> onReceivedHttpError");
-                llErrorContent.setVisibility(View.VISIBLE);
-                web_content.setVisibility(View.GONE);
+                // llErrorContent.setVisibility(View.VISIBLE);
+                // web_content.setVisibility(View.GONE);
             }
 
             @Override
             public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-                super.onReceivedSslError(view, handler, error);
-                LL.i("webView ---->>>> onReceivedSslError");
-                llErrorContent.setVisibility(View.VISIBLE);
-                web_content.setVisibility(View.GONE);
+//                super.onReceivedSslError(view, handler, error);
+//                LL.i("webView ---->>>> onReceivedSslError");
+//                llErrorContent.setVisibility(View.VISIBLE);
+//                web_content.setVisibility(View.GONE);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    view.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+                }
             }
 
             @Override
@@ -263,9 +267,9 @@ public class DoukeDetailActivity extends BaseActivity {
 
 //        setting.setDomStorageEnabled(true);
 //        setting.setPluginState(WebSettings.PluginState.ON);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//           吗 setting.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
-//        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setting.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
 
         setting.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
 
@@ -284,7 +288,7 @@ public class DoukeDetailActivity extends BaseActivity {
     /**
      * 实现Parcelable接口，主要是避免因为混淆而导致方法名变更
      */
-    @SuppressLint("JavascriptInterface")
+    @SuppressLint({"JavascriptInterface", "ParcelCreator"})
     public class CodeBoyJsInterface implements Parcelable {
 
         public CodeBoyJsInterface() {
