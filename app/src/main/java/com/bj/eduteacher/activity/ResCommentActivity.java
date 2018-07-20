@@ -19,13 +19,21 @@ import com.bj.eduteacher.api.LmsDataService;
 import com.bj.eduteacher.api.MLConfig;
 import com.bj.eduteacher.api.MLProperties;
 import com.bj.eduteacher.entity.CommentInfo;
+import com.bj.eduteacher.entity.MsgEvent;
+import com.bj.eduteacher.integral.model.Doubi;
+import com.bj.eduteacher.integral.presenter.IntegralPresenter;
+import com.bj.eduteacher.integral.view.IViewintegral;
+import com.bj.eduteacher.manager.IntentManager;
 import com.bj.eduteacher.utils.KeyBoardUtils;
 import com.bj.eduteacher.utils.LL;
+import com.bj.eduteacher.utils.LoginStatusUtil;
 import com.bj.eduteacher.utils.PreferencesUtils;
 import com.bj.eduteacher.utils.StringUtils;
 import com.bj.eduteacher.utils.T;
 import com.bj.eduteacher.widget.DecorationForDouke;
 import com.umeng.analytics.MobclickAgent;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +55,7 @@ import io.reactivex.schedulers.Schedulers;
  * 资源评论页面
  */
 
-public class ResCommentActivity extends BaseActivity {
+public class ResCommentActivity extends BaseActivity implements IViewintegral{
 
     @BindView(R.id.mXRefreshView)
     XRefreshView mXRefreshView;
@@ -66,12 +74,16 @@ public class ResCommentActivity extends BaseActivity {
     private String newsID;
     private String userPhoneNumber;
     private LinearLayoutManager layoutManager;
+    private String unionid;
+    private IntegralPresenter presenter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_douke_comment);
         ButterKnife.bind(this);
+        unionid = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_WECHAT_UNIONID,"");
+        presenter = new IntegralPresenter(this,this);
         // 初始化页面
         initToolBar();
         initView();
@@ -135,6 +147,7 @@ public class ResCommentActivity extends BaseActivity {
 
     @Override
     protected void initData() {
+        unionid = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_WECHAT_UNIONID,"");
         userPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
         newsID = getIntent().getStringExtra(MLProperties.BUNDLE_KEY_DOUKE_ID);
 
@@ -168,16 +181,30 @@ public class ResCommentActivity extends BaseActivity {
 
     @OnClick(R.id.tv_send)
     void actionSendClick() {
-        String content = edtContent.getText().toString().trim();
-        if (StringUtils.isEmpty(content)) {
-            T.showShort(this, "评论内容不能为空！");
-            return;
-        }
+        if(LoginStatusUtil.noLogin(this)){
+            IntentManager.toLoginSelectActivity(this, IntentManager.LOGIN_SUCC_ACTION_MAINACTIVITY);
+        }else {
+            String content = edtContent.getText().toString().trim();
+            if (StringUtils.isEmpty(content)) {
+                T.showShort(this, "评论内容不能为空！");
+                return;
+            }
 
-        edtContent.setText("");
-        KeyBoardUtils.closeKeybord(this.getCurrentFocus().getWindowToken(), this);
-        tvSend.setEnabled(false);
-        sendCommentContent(content);
+            edtContent.setText("");
+            KeyBoardUtils.closeKeybord(this.getCurrentFocus().getWindowToken(), this);
+            tvSend.setEnabled(false);
+            sendCommentContent(content);
+        }
+//        String content = edtContent.getText().toString().trim();
+//        if (StringUtils.isEmpty(content)) {
+//            T.showShort(this, "评论内容不能为空！");
+//            return;
+//        }
+//
+//        edtContent.setText("");
+//        KeyBoardUtils.closeKeybord(this.getCurrentFocus().getWindowToken(), this);
+//        tvSend.setEnabled(false);
+//        sendCommentContent(content);
     }
 
     private void getDoukeCommentFromAPI(final int currentPage) {
@@ -215,12 +242,14 @@ public class ResCommentActivity extends BaseActivity {
     }
 
     private void sendCommentContent(final String content) {
+        unionid = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_WECHAT_UNIONID,"");
+        userPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
         Observable.create(new ObservableOnSubscribe<String[]>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<String[]> e) throws Exception {
                 LmsDataService mService = new LmsDataService();
                 String[] result = mService.postResourceCommentFromAPI(newsID, userPhoneNumber,
-                        MLConfig.KEY_DOUKE_COMMENT_JIAOSHI, content);
+                        MLConfig.KEY_DOUKE_COMMENT_JIAOSHI, content,unionid);
                 e.onNext(result);
             }
         }).subscribeOn(Schedulers.io())
@@ -237,6 +266,10 @@ public class ResCommentActivity extends BaseActivity {
                         if (!StringUtils.isEmpty(result[0]) && "1".equals(result[0])) {
                             // 发布成功
                             mXRefreshView.startRefresh();
+                            setResult(300);
+                            //EventBus.getDefault().post(new MsgEvent("pinglunsuccess",type));
+                            String unionid = PreferencesUtils.getString(ResCommentActivity.this, MLProperties.PREFER_KEY_WECHAT_UNIONID,"");
+                            presenter.getDouBi("pinglun",userPhoneNumber,"getdoubi",unionid);
                         } else {
                             // 发布失败
                             T.showShort(ResCommentActivity.this, "发布评论失败");
@@ -268,5 +301,10 @@ public class ResCommentActivity extends BaseActivity {
         super.onPause();
         MobclickAgent.onPageEnd("comment");
         MobclickAgent.onPause(this);
+    }
+
+    @Override
+    public void getDouBi(Doubi doubi) {
+
     }
 }

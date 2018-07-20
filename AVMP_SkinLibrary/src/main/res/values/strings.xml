@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="alivc_error_msg">Error message</string>
+    <string name="alivc_error_code">Error code:</string>
+    <string name="alivc_retry">Retry</string>
+
+
+    <string name="alivc_net_disable">The network is unreachable, please check network and replay latter</string>
+    <string name="alivc_net_state_mobile">The current network is cell-network, whether to continue?</string>
+    <string name="alivc_net_state_mobile_yes">Resume</string>
+    <string name="alivc_net_state_mobile_no">Exit</string>
+    <string name="alivc_alivc_replay_msg">Video ended</string>
+    <string name="alivc_replay">Replay</string>
+    <string name="alivc_loading">Loading...</string>
+    <string name="alivc_loading_tips">Video is loading...</string>
+
+
+
+    <string name="alivc_speed_one_times">Normal</string>
+    <string name="alivc_speed_optf_times">1.25X</string>
+    <string name="alivc_speed_opt_times">1.5X</string>
+    <string name="alivc_speed_twice_times">2.0X</string>
+    <string name="alivc_speed_mode">Fast Speed Play</string>
+    <string name="alivc_speed_tips">the current video has switched to %1$s speed rate</string>
+    <string name="alivc_left_side">left side</string>
+    <string name="alivc_brightness">brightness</string>
+    <string name="alivc_control">&#160;control</string>
+    <string name="alivc_center">center</string>
+    <string name="alivc_progress">progress</string>
+    <string name="alivc_right_side">right side</string>
+    <string name="alivc_volume">volume</string>
+
+</resources>

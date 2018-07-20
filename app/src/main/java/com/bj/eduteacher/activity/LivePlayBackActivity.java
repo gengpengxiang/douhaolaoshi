@@ -1,3 +1,4 @@
+/*
 package com.bj.eduteacher.activity;
 
 import android.content.Context;
@@ -32,10 +33,12 @@ import cn.jzvd.JZVideoPlayer;
 import cn.jzvd.JZVideoPlayerManager;
 import cn.jzvd.JZVideoPlayerStandard;
 
+*/
 /**
  * Created by zz379 on 2017/8/30.
  * 直播回放功能页面
- */
+ *//*
+
 
 public class LivePlayBackActivity extends BaseActivity {
 
@@ -151,7 +154,7 @@ public class LivePlayBackActivity extends BaseActivity {
     void clickComment() {
         // 点赞评论需要登录
 //        if (StringUtils.isEmpty(teacherPhoneNumber)) {
-//            IntentManager.toLoginActivity(this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
+//            IntentManager.toLoginSelectActivity(this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
 //            return;
 //        }
 
@@ -187,7 +190,7 @@ public class LivePlayBackActivity extends BaseActivity {
 //        MobclickAgent.onEvent(this, "article_like");
 //        // 点赞评论需要登录
 //        if (StringUtils.isEmpty(teacherPhoneNumber)) {
-//            IntentManager.toLoginActivity(this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
+//            IntentManager.toLoginSelectActivity(this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
 //            return;
 //        }
 //
@@ -245,9 +248,11 @@ public class LivePlayBackActivity extends BaseActivity {
                 }
             }
 
-            /**
+            */
+/**
              * 根据手机屏幕的朝向角度，来设置内容的横竖屏，并且记录状态
-             */
+             *//*
+
             if (orientation > 45 && orientation < 135) {
                 LL.i("··········反向横屏··········");
                 return;
@@ -274,3 +279,4 @@ public class LivePlayBackActivity extends BaseActivity {
         }
     }
 }
+*/

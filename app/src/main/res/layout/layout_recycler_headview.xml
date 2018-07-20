@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.bj.eduteacher.zzautolayout.AutoLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingBottom="12dp">
+
+    <TextView
+        android:textColor="#000000"
+        android:id="@+id/tv_head"
+        android:textSize="55px"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <TextView
+            android:textColor="@color/colorTextGray"
+            android:id="@+id/tv_head_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:textColor="@color/colorTextGray"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/tv_head_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+</com.bj.eduteacher.zzautolayout.AutoLinearLayout>

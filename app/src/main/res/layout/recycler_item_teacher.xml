@@ -51,22 +51,20 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/rl_photo"
         android:layout_alignTop="@+id/rl_photo"
         android:layout_toLeftOf="@+id/rl_photo"
         android:layout_toStartOf="@+id/rl_photo"
         android:orientation="vertical"
-        android:paddingBottom="12dp"
         android:paddingLeft="13dp"
-        android:paddingTop="12dp">
+        android:gravity="center_vertical"
+        >
 
         <TextView
             android:id="@+id/tv_authorName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:layout_weight="1"
             android:ellipsize="end"
             android:gravity="center_vertical"
             android:singleLine="true"
@@ -78,8 +76,6 @@
             android:id="@+id/tv_authorDesc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:layout_weight="1"
             android:ellipsize="end"
             android:gravity="center_vertical"
             android:singleLine="true"

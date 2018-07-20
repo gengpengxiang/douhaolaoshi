@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:background="@color/white"
+        android:paddingTop="20dp"
+        android:paddingBottom="30dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:textSize="16sp"
+            android:id="@+id/tv_examtitle"
+            android:textColor="@color/colorTextBlack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_marginTop="10dp"
+            android:id="@+id/tv_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <LinearLayout
+            android:layout_marginLeft="80dp"
+            android:layout_marginTop="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:textSize="16sp"
+                android:text="题目数量"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:textSize="16sp"
+                android:layout_marginLeft="15dp"
+                android:id="@+id/tv_num"
+                android:textColor="@color/colorTextBlack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginLeft="80dp"
+            android:layout_marginTop="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:textSize="16sp"
+                android:text="截止时间"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:textSize="16sp"
+                android:layout_marginLeft="15dp"
+                android:id="@+id/tv_time"
+                android:textColor="@color/colorTextBlack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <Button
+            android:textSize="16sp"
+            android:text="开始答题"
+            android:layout_marginTop="20dp"
+            android:textColor="@color/colorTextWhite"
+            android:id="@+id/bt_start"
+            android:background="@drawable/btn_shape_corner_orange"
+            android:layout_marginLeft="80dp"
+            android:layout_marginRight="80dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <View
+        android:background="#f1f1f1"
+        android:layout_width="match_parent"
+        android:layout_height="15dp"/>
+
+    <TextView
+        android:background="@color/white"
+        android:padding="10dp"
+        android:id="@+id/tv_youxiao"
+        android:text="答题记录"
+        android:textColor="@color/colorTextBlack"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <View
+        android:visibility="gone"
+        android:background="#f1f1f1"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"/>
+
+
+</LinearLayout>

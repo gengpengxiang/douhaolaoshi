@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="alivc_white">#e7e7e7</color>
+    <color name="alivc_blue">#379DF2</color>
+    <color name="alivc_green">#57AB44</color>
+    <color name="alivc_orange">#EE7C33</color>
+    <color name="alivc_red">#E94033</color>
+
+    <color name="alivc_info_text_duration">#9f9e9e</color>
+    <color name="alivc_dialog_error_bg">#b2000000</color>
+    <color name="alivc_dialog_gesture_bg">#66ffffff</color>
+    <color name="alivc_gesture_text_color">#333333</color>
+
+    <color name="alivc_color_rate_item">#4c000000</color>
+</resources>

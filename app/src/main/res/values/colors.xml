@@ -18,6 +18,7 @@
     <color name="transparent">#00000000</color>
     <color name="colorTextBlack">#000000</color>
     <color name="colorGray1">#F0F0F0</color>
+    <color name="colorTextGray">#959595</color>
 
     <color name="colorSendName">#9966cc</color>
     <color name="colorSendName1">#FF3163</color>
@@ -32,7 +33,7 @@
 
     <color name="white_fff">#FFF</color>
 
-    <color name="navigationBarColor">#f46444</color>
+    <color name="navigationBarColor">#FF000000</color>
     <color name="colorPrimaryDarkTrans">#CCf57257</color>
 
     <color name="line_gray">#CBCCCD</color>
@@ -62,6 +63,7 @@
     <color name="image_overlay">#20000000</color>
     <color name="image_overlay2">#80000000</color>
 
+    <color name="transparent2">#80000000</color>
     <!--special color-->
 
 </resources>

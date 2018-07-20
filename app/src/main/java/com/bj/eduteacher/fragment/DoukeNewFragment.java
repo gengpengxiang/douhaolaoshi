@@ -48,7 +48,6 @@ import io.reactivex.schedulers.Schedulers;
  * Created by zz379 on 2017/8/16.
  * 新逗课页面
  */
-
 public class DoukeNewFragment extends BaseFragment {
 
     @BindView(R.id.header_tv_title)
@@ -108,7 +107,7 @@ public class DoukeNewFragment extends BaseFragment {
 
     private void initToolbar() {
         tvTitle.setVisibility(View.VISIBLE);
-        tvTitle.setText(getString(R.string.bottom_tab_1));
+        tvTitle.setText("优课");
         ivSearch.setVisibility(View.VISIBLE);
     }
 

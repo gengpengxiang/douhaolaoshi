@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -31,14 +32,20 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.bj.eduteacher.BaseActivity;
 import com.bj.eduteacher.R;
 import com.bj.eduteacher.api.LmsDataService;
+import com.bj.eduteacher.api.MLConfig;
 import com.bj.eduteacher.api.MLProperties;
 import com.bj.eduteacher.entity.ArticleInfo;
 import com.bj.eduteacher.entity.BaseDataInfo;
+import com.bj.eduteacher.entity.MsgEvent;
+import com.bj.eduteacher.entity.ZiyuanInfo;
 import com.bj.eduteacher.manager.IntentManager;
 import com.bj.eduteacher.utils.LL;
+import com.bj.eduteacher.utils.LoginStatusUtil;
 import com.bj.eduteacher.utils.NetUtils;
 import com.bj.eduteacher.utils.PreferencesUtils;
 import com.bj.eduteacher.utils.ScreenUtils;
@@ -48,7 +55,12 @@ import com.bj.eduteacher.view.ResPreWebView;
 import com.bj.eduteacher.zzokhttp.OkHttpUtils;
 import com.bj.eduteacher.zzokhttp.callback.FileCallBack;
 import com.jaeger.library.StatusBarUtil;
+import com.lzy.okgo.OkGo;
+import com.lzy.okgo.callback.StringCallback;
+import com.lzy.okgo.model.Response;
 import com.umeng.analytics.MobclickAgent;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 
@@ -58,14 +70,18 @@ import butterknife.OnClick;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.Call;
 
+import static com.bj.eduteacher.api.HttpUtilService.BASE_URL;
 import static com.bj.eduteacher.api.HttpUtilService.DOWNLOAD_PATH;
+import static com.bj.eduteacher.api.Urls.ZIYUANINFO;
 
 /**
  * Created by zz379 on 20/07/2017.
@@ -119,6 +135,7 @@ public class ResReviewActivity extends BaseActivity {
 
     // 2.创建一个检测器
     GestureDetector detector;
+    private String unionid;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -131,6 +148,67 @@ public class ResReviewActivity extends BaseActivity {
         initToolBar();
         initView();
         initData();
+        unionid = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_WECHAT_UNIONID, "");
+        teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
+        checkDianzanStatus();
+    }
+
+    private void checkDianzanStatus() {
+        Observable.create(new ObservableOnSubscribe<BaseDataInfo>() {
+            @Override
+            public void subscribe(final ObservableEmitter<BaseDataInfo> e) throws Exception {
+
+                OkGo.<String>post(BASE_URL+"index.php/ziyuan/dianzan")
+                        .params("appkey", MLConfig.HTTP_APP_KEY)
+                        .params("ziyuanid", resID)
+                        .params("unionid", unionid)
+                        .params("userphone", teacherPhoneNumber)
+                        .params("caozuo", "3")
+
+                        .execute(new StringCallback() {
+                            @Override
+                            public void onSuccess(Response<String> response) {
+                                String str = response.body().toString();
+                                Log.e("检查点赞状态", str);
+                                BaseDataInfo info = JSON.parseObject(str, new TypeReference<BaseDataInfo>() {
+                                });
+
+                                e.onNext(info);
+                                e.onComplete();
+                            }
+                        });
+            }
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<BaseDataInfo>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(BaseDataInfo dataInfo) {
+
+                        if (dataInfo.getRet().equals("3")) {
+                            if (dataInfo.getData().equals("1")) {//已点赞
+                                ivAgree.setImageResource(R.mipmap.ic_liked);
+                            }if (dataInfo.getData().equals("0")){
+                                ivAgree.setImageResource(R.mipmap.ic_like);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     @Override
@@ -150,6 +228,10 @@ public class ResReviewActivity extends BaseActivity {
         tvShare.setVisibility(View.VISIBLE);
         tvShare.setText("发送");
         initPopViewShare();
+
+        if(getIntent().getStringExtra("type")!=null){
+            shanghcuanjindu();
+        }
     }
 
     @Override
@@ -225,14 +307,25 @@ public class ResReviewActivity extends BaseActivity {
     @OnClick(R.id.ll_commentNumber)
     void clickComment() {
         // 点赞评论需要登录
-        if (StringUtils.isEmpty(teacherPhoneNumber)) {
-            IntentManager.toLoginActivity(this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
-            return;
-        }
+//        if (LoginStatusUtil.noLogin(this)) {
+//            IntentManager.toLoginSelectActivity(this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
+//            return;
+//        }
 
         Intent intent = new Intent(this, ResCommentActivity.class);
         intent.putExtra(MLProperties.BUNDLE_KEY_DOUKE_ID, resID);
-        startActivity(intent);
+        startActivityForResult(intent, 1);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == 300) {
+            if (requestCode == 1) {
+                Log.e("评论返回", "true");
+                getResNumbers();
+            }
+        }
     }
 
     @Override
@@ -241,12 +334,9 @@ public class ResReviewActivity extends BaseActivity {
         webView.onResume();
         MobclickAgent.onPageStart("resource_preview");
         MobclickAgent.onResume(this);
-
+        unionid = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_WECHAT_UNIONID, "");
         teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
-        if (!StringUtils.isEmpty(teacherPhoneNumber)) {
-            // 查询是否点赞
-            getArticleAgreeNumber(ARTICLE_AGREE_TYPE_SEARCH);
-        }
+
     }
 
     @Override
@@ -314,6 +404,7 @@ public class ResReviewActivity extends BaseActivity {
             public void onClick(View v) {
                 hidePopViewShare();
                 // 开始下载，然后发送到邮箱
+                Log.e("aa","aaa");
                 startSendOffice();
             }
         });
@@ -368,21 +459,26 @@ public class ResReviewActivity extends BaseActivity {
 
         File oldFile = new File(DOWNLOAD_PATH, fileName);
         if (oldFile.exists()) {
-            LL.i("way", "文件已存在，不需要重新下载");
+            Log.e("way", "文件已存在，不需要重新下载");
             sendFileToEmail(oldFile);
             // sendEmail();
+            Log.e("aa","aaa11");
         } else {
+            Log.e("aa",downloadUrl);
             showLoadingDialog();
             OkHttpUtils.get().url(downloadUrl).tag(fileName).build()
                     .execute(new FileCallBack(DOWNLOAD_PATH, fileName) {
 
                         @Override
                         public void onError(Call call, Exception e) {
+
                             hideLoadingDialog();
+                            Log.e("aa","fail");
                         }
 
                         @Override
                         public void onResponse(File response) {
+                            Log.e("aa","aaa33");
                             hideLoadingDialog();
                             LL.i("下载完成：" + response.length() / 1024 + "kb");
                             sendFileToEmail(response);
@@ -425,7 +521,7 @@ public class ResReviewActivity extends BaseActivity {
         startActivity(Intent.createChooser(intent, "请选择邮件类应用"));
     }
 
-
+    //获得阅读量
     private void getResPreviewNumber() {
         Observable.create(new ObservableOnSubscribe<String[]>() {
             @Override
@@ -446,9 +542,6 @@ public class ResReviewActivity extends BaseActivity {
                     public void onNext(@NonNull String[] result) {
                         // 获取点赞数量和评论数量
                         getResNumbers();
-                        if ("1".equals(result[0])) {
-
-                        }
                     }
 
                     @Override
@@ -462,6 +555,7 @@ public class ResReviewActivity extends BaseActivity {
                 });
     }
 
+    //获取点赞数量和评论数量
     private void getResNumbers() {
         Observable.create(new ObservableOnSubscribe<ArticleInfo>() {
             @Override
@@ -484,6 +578,8 @@ public class ResReviewActivity extends BaseActivity {
                         tvAgreeNumber.setText(articleInfo.getAgreeNumber());
                         tvCommentNumber.setText(articleInfo.getCommentNumber());
                         tvReadNumber.setText(articleInfo.getReadNumber() + "次阅读");
+
+                        tvTitle.setText(articleInfo.getTitle());
                     }
 
                     @Override
@@ -499,32 +595,43 @@ public class ResReviewActivity extends BaseActivity {
                 });
     }
 
-    boolean isAgree = false;
 
     @OnClick(R.id.ll_agreeNumber)
     void clickAgree() {
         MobclickAgent.onEvent(this, "article_like");
         // 点赞评论需要登录
-        if (StringUtils.isEmpty(teacherPhoneNumber)) {
-            IntentManager.toLoginActivity(this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
+        if (LoginStatusUtil.noLogin(this)) {
+            IntentManager.toLoginSelectActivity(this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
             return;
+        } else {
+            dianzanchaxun();
         }
 
-        if (isAgree) {
-            getArticleAgreeNumber(ARTICLE_AGREE_TYPE_NO);
-        } else {
-            getArticleAgreeNumber(ARTICLE_AGREE_TYPE_YES);
-        }
     }
 
-    private void getArticleAgreeNumber(final String type) {
+    private void dianzanchaxun() {
         Observable.create(new ObservableOnSubscribe<BaseDataInfo>() {
             @Override
-            public void subscribe(@NonNull ObservableEmitter<BaseDataInfo> e) throws Exception {
-                LmsDataService mService = new LmsDataService();
-                BaseDataInfo dataInfo = mService.getResourceAgreeStatus(resID, teacherPhoneNumber, type);
-                e.onNext(dataInfo);
-                e.onComplete();
+            public void subscribe(final ObservableEmitter<BaseDataInfo> e) throws Exception {
+                OkGo.<String>post(BASE_URL+"index.php/ziyuan/dianzan")
+                        .params("appkey", MLConfig.HTTP_APP_KEY)
+                        .params("ziyuanid", resID)
+                        .params("unionid", unionid)
+                        .params("userphone", teacherPhoneNumber)
+                        .params("caozuo", "3")
+
+                        .execute(new StringCallback() {
+                            @Override
+                            public void onSuccess(Response<String> response) {
+                                String str = response.body().toString();
+                                Log.e("检查点赞状态", str);
+                                BaseDataInfo info = JSON.parseObject(str, new TypeReference<BaseDataInfo>() {
+                                });
+
+                                e.onNext(info);
+                                e.onComplete();
+                            }
+                        });
             }
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -535,30 +642,21 @@ public class ResReviewActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onNext(BaseDataInfo info) {
-                        if (info == null || StringUtils.isEmpty(info.getRet())) {
-                            return;
-                        }
+                    public void onNext(BaseDataInfo dataInfo) {
 
-                        if (info.getRet().equals("3")) {
-                            if (info.getData().equals("1")) {
-                                ivAgree.setImageResource(R.mipmap.ic_liked);
-                                isAgree = true;
-                            } else {
-                                ivAgree.setImageResource(R.mipmap.ic_like);
-                                isAgree = false;
+                        if (dataInfo.getRet().equals("3")) {
+                            if (dataInfo.getData().equals("1")) {//已点赞
+                                dianzan("del");
+                            }if (dataInfo.getData().equals("0")){
+                                dianzan("add");
                             }
-                        } else if (info.getRet().equals("2")) {
-                            ivAgree.setImageResource(R.mipmap.ic_like);
-                            isAgree = false;
-                        } else if (info.getRet().equals("1")) {
-                            ivAgree.setImageResource(R.mipmap.ic_liked);
-                            isAgree = true;
-                        } else {
-
                         }
-                        // 获取res 各种数据
-                        getResNumbers();
+
+//                        if(dataInfo.getRet().equals("4")){//已点赞
+//                            dianzan("2");
+//                        }if(dataInfo.getRet().equals("5")){
+//                            dianzan("1");
+//                        }
                     }
 
                     @Override
@@ -571,8 +669,60 @@ public class ResReviewActivity extends BaseActivity {
 
                     }
                 });
-
     }
+
+    private void dianzan(final String s) {
+        Observable.create(new ObservableOnSubscribe<BaseDataInfo>() {
+            @Override
+            public void subscribe(final ObservableEmitter<BaseDataInfo> e) throws Exception {
+                OkGo.<String>post(BASE_URL+"index.php/ziyuan/dianzan")
+                        .params("appkey", MLConfig.HTTP_APP_KEY)
+                        .params("ziyuanid", resID)
+                        .params("unionid", unionid)
+                        .params("userphone", teacherPhoneNumber)
+                        .params("caozuo", s)
+
+                        .execute(new StringCallback() {
+                            @Override
+                            public void onSuccess(Response<String> response) {
+                                String str = response.body().toString();
+                                Log.e("点赞结果", str);
+                                BaseDataInfo info = JSON.parseObject(str, new TypeReference<BaseDataInfo>() {
+                                });
+
+                                e.onNext(info);
+                                e.onComplete();
+                            }
+                        });
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<BaseDataInfo>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(BaseDataInfo dataInfo) {
+                       checkDianzanStatus();
+
+                       getResNumbers();
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
 
     private boolean isLandscape = false;    // 是否横屏
 
@@ -678,4 +828,57 @@ public class ResReviewActivity extends BaseActivity {
             return super.onSingleTapConfirmed(e);
         }
     };
+
+
+    private void shanghcuanjindu() {
+        unionid = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_WECHAT_UNIONID, "");
+        teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
+        Observable.create(new ObservableOnSubscribe<BaseDataInfo>() {
+            @Override
+            public void subscribe(final ObservableEmitter<BaseDataInfo> e) throws Exception {
+                OkGo.<String>post(BASE_URL + "index.php/kecheng/setkcresjindu")
+                        .params("appkey", MLConfig.HTTP_APP_KEY)
+                        .params("resid", resID)
+                        .params("kechengid", "")
+                        .params("restype", "1")
+                        .params("endtime", "0")
+                        .params("unionid", unionid)
+                        .params("phone", teacherPhoneNumber)
+                        .execute(new StringCallback() {
+                            @Override
+                            public void onSuccess(Response<String> response) {
+                                String str = response.body().toString();
+                                BaseDataInfo baseDataInfo = JSON.parseObject(str, new TypeReference<BaseDataInfo>() {
+                                });
+                                Log.e("上传进度结果", str);
+
+                                e.onNext(baseDataInfo);
+                                e.onComplete();
+                            }
+                        });
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<BaseDataInfo>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(BaseDataInfo dataInfo) {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
 }

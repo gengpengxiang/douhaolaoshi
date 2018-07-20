@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.scwang.smartrefresh.layout.SmartRefreshLayout
+    android:id="@+id/mSmartRefreshLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <com.scwang.smartrefresh.layout.header.ClassicsHeader
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:fresco="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/coordinatorlayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/appbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+            <android.support.design.widget.CollapsingToolbarLayout
+                android:id="@+id/collapsing_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:contentScrim="#01000000"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed">
+                <!-- 设置图片-->
+                <!--添加一个定义了app:layout_collapseMode="parallax" 属性的ImageView，出现和消失会有过度-->
+                <ImageView
+                    android:visibility="gone"
+                    android:id="@+id/header_bg"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:fitsSystemWindows="true"
+                    android:scaleType="centerCrop"
+                     />
+
+                <com.facebook.drawee.view.SimpleDraweeView
+                    android:id="@+id/header_bg0"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    fresco:actualImageScaleType="fitXY"
+                    fresco:placeholderImage="@color/colorPrimary"
+                    fresco:placeholderImageScaleType="fitXY"
+                    fresco:viewAspectRatio="2.68"
+                    />
+
+                <ImageView
+                    android:id="@+id/header_bg2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:fitsSystemWindows="true"
+                    android:scaleType="centerCrop"
+                    android:background="#40000000"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center">
+                    <RelativeLayout
+                        android:paddingTop="20dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center">
+
+                        <com.facebook.drawee.view.SimpleDraweeView
+                            android:visibility="gone"
+                            android:id="@+id/header_logo"
+                            android:layout_width="144px"
+                            android:layout_height="144px"
+                            android:layout_centerHorizontal="true"
+                            fresco:placeholderImage="@mipmap/icon_default_photo_teacher"
+                            fresco:roundAsCircle="false"
+                            fresco:roundedCornerRadius="5dp"
+                            fresco:roundingBorderColor="#ffffff" />
+
+                        <TextView
+                            android:id="@+id/header_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/header_logo"
+                            android:layout_centerHorizontal="true"
+                            android:text=""
+                            android:textColor="@color/colorTextWhite"
+                            android:textSize="51px" />
+
+                        <TextView
+                            android:id="@+id/header_tongji"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/header_name"
+                            android:layout_centerHorizontal="true"
+                            android:layout_marginTop="31px"
+                            android:text=""
+                            android:textColor="@color/colorTextWhite"
+                            android:textSize="42px" />
+                        <TextView
+                            android:id="@+id/toolbar_signin"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/header_tongji"
+                            android:layout_centerHorizontal="true"
+                            android:layout_marginTop="40px"
+                            android:background="@null"
+                            android:paddingTop="2dp"
+                            android:paddingLeft="15dp"
+                            android:paddingRight="15dp"
+                            android:paddingBottom="2dp"
+                            android:textColor="@color/colorTextBlack"
+                            android:textSize="14sp" />
+
+
+                    </RelativeLayout>
+                </LinearLayout>
+
+                <!-- 设置标题-->
+                <android.support.v7.widget.Toolbar
+                    app:contentInsetStart="0dp"
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    app:layout_collapseMode="pin">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+                        <View
+                            android:id="@+id/spaceView"
+                            android:background="#01000000"
+                            android:layout_width="match_parent"
+                            android:layout_height="20dp"/>
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="10dp">
+
+                            <ImageView
+                                android:layout_marginLeft="10dp"
+                                android:id="@+id/toolbar_back"
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:layout_centerVertical="true"
+                                android:scaleType="fitXY"
+                                android:src="@mipmap/icon_header_back" />
+
+                            <TextView
+                                android:id="@+id/toolbar_title"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:maxEms="15"
+                                android:layout_centerInParent="true"
+
+                                android:singleLine="true"
+                                android:visibility="gone"
+                                android:textColor="@color/colorTextWhite"
+                                android:textSize="18sp" />
+
+                           <!-- <TextView
+                                android:id="@+id/toolbar_signin"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:layout_centerVertical="true"
+                                android:background="@null"
+                                android:paddingTop="2dp"
+                                android:paddingLeft="15dp"
+                                android:paddingRight="15dp"
+                                android:paddingBottom="2dp"
+                                android:layout_marginRight="10dp"
+                                android:textColor="@color/colorTextBlack"
+                                android:textSize="14sp" />-->
+                        </RelativeLayout>
+                    </LinearLayout>
+
+
+                </android.support.v7.widget.Toolbar>
+
+            </android.support.design.widget.CollapsingToolbarLayout>
+        </android.support.design.widget.AppBarLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            <!-- 自定义tab-->
+            <!-- 设置可滑动-->
+            <android.support.design.widget.TabLayout
+                android:id="@+id/tabs"
+                android:layout_width="match_parent"
+                android:layout_height="120px"
+                app:tabIndicatorColor="@color/btn_red"
+                app:tabSelectedTextColor="@color/btn_red" />
+
+            <View
+                android:visibility="gone"
+                android:id="@+id/lineView"
+                android:layout_width="match_parent"
+                android:layout_height="30px"
+                android:background="#f1f1f1" />
+            <android.support.v4.widget.NestedScrollView
+                android:fillViewport="true"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <android.support.v4.view.ViewPager
+                    android:id="@+id/viewpager"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </android.support.v4.widget.NestedScrollView>
+
+
+        </LinearLayout>
+
+        <Button
+            android:visibility="gone"
+            android:id="@+id/bt_group_edit"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_gravity="right|bottom"
+            android:layout_marginBottom="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/ic_edit" />
+
+    </android.support.design.widget.CoordinatorLayout>
+</com.scwang.smartrefresh.layout.SmartRefreshLayout>

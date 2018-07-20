@@ -7,6 +7,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
+import android.util.Log;
 
 import java.io.File;
 import java.io.IOException;
@@ -137,6 +138,8 @@ public class AppUtils {
             e.printStackTrace();
             result = "";
         }
+        Log.e("渠道信息",result);
         return result;
+
     }
 }

@@ -3,6 +3,7 @@ package com.bj.eduteacher.widget.dialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Rect;
+import android.support.annotation.NonNull;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -14,15 +15,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bj.eduteacher.R;
-import com.bj.eduteacher.activity.LiveActivity;
+//import com.bj.eduteacher.activity.LiveActivity;
 import com.bj.eduteacher.model.MySelfInfo;
 import com.bj.eduteacher.tool.SxbLog;
-import com.tencent.TIMElem;
-import com.tencent.TIMMessage;
-import com.tencent.TIMTextElem;
-import com.tencent.TIMUserProfile;
-import com.tencent.ilivesdk.ILiveCallBack;
-import com.tencent.ilivesdk.core.ILiveRoomManager;
+//import com.tencent.TIMElem;
+//import com.tencent.TIMMessage;
+//import com.tencent.TIMTextElem;
+//import com.tencent.TIMUserProfile;
+//import com.tencent.ilivesdk.ILiveCallBack;
+//import com.tencent.ilivesdk.core.ILiveRoomManager;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Timer;
@@ -37,86 +38,90 @@ public class InputTextMsgDialog extends Dialog {
     private EditText messageTextView;
     private static final String TAG = InputTextMsgDialog.class.getSimpleName();
     private Context mContext;
-    private LiveActivity mVideoPlayActivity;
+    //private LiveActivity mVideoPlayActivity;
     private InputMethodManager imm;
     private RelativeLayout rlDlg;
     private int mLastDiff = 0;
     private final String reg = "[`~@#$%^&*()-_+=|{}':;,/.<>￥…（）—【】‘；：”“’。，、]";
     private Pattern pattern = Pattern.compile(reg);
 
-    public InputTextMsgDialog(Context context, int theme, LiveActivity activity) {
-        super(context, theme);
-        mContext = context.getApplicationContext();
-        mVideoPlayActivity = activity;
-        setContentView(R.layout.input_text_dialog);
-        messageTextView = (EditText) findViewById(R.id.input_message);
-        confirmBtn = (TextView) findViewById(R.id.confrim_btn);
-//        rlDlg = (RelativeLayout) findViewById(R.id.rl_dlg);
-        imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-        confirmBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (messageTextView.getText().length() > 0) {
-                    sendText("" + messageTextView.getText());
-                    imm.showSoftInput(messageTextView, InputMethodManager.SHOW_FORCED);
-                    imm.hideSoftInputFromWindow(messageTextView.getWindowToken(), 0);
-                    dismiss();
-                } else {
-                    Toast.makeText(mContext, "输入内容不能为空！", Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-        messageTextView.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (event.getAction() != KeyEvent.ACTION_UP) {   // 忽略其它事件
-                    return false;
-                }
-
-                switch (keyCode) {
-                    case KeyEvent.KEYCODE_ENTER:
-                        if (messageTextView.getText().length() > 0) {
-                            sendText("" + messageTextView.getText());
-                            imm.showSoftInput(messageTextView, InputMethodManager.SHOW_FORCED);
-                            imm.hideSoftInputFromWindow(messageTextView.getWindowToken(), 0);
-                            dismiss();
-                        } else {
-                            Toast.makeText(mContext, "输入内容不能为空！", Toast.LENGTH_LONG).show();
-                        }
-                        return true;
-                    default:
-                        return false;
-                }
-            }
-        });
-
-        final LinearLayout rldlgview = (LinearLayout) findViewById(R.id.rl_inputdlg_view);
-        rldlgview.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                Rect r = new Rect();
-                //获取当前界面可视部分
-                getWindow().getDecorView().getWindowVisibleDisplayFrame(r);
-                //获取屏幕的高度
-                int screenHeight = getWindow().getDecorView().getRootView().getHeight();
-                //此处就是用来获取键盘的高度的， 在键盘没有弹出的时候 此高度为0 键盘弹出的时候为一个正数
-                int heightDifference = screenHeight - r.bottom;
-
-                if (heightDifference <= 0 && mLastDiff > 0) {
-                    imm.hideSoftInputFromWindow(messageTextView.getWindowToken(), 0);
-                    dismiss();
-                }
-                mLastDiff = heightDifference;
-            }
-        });
-        rldlgview.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                imm.hideSoftInputFromWindow(messageTextView.getWindowToken(), 0);
-                dismiss();
-            }
-        });
+    public InputTextMsgDialog(@NonNull Context context, int themeResId) {
+        super(context, themeResId);
     }
+
+//    public InputTextMsgDialog(Context context, int theme, LiveActivity activity) {
+//        super(context, theme);
+//        mContext = context.getApplicationContext();
+//        mVideoPlayActivity = activity;
+//        setContentView(R.layout.input_text_dialog);
+//        messageTextView = (EditText) findViewById(R.id.input_message);
+//        confirmBtn = (TextView) findViewById(R.id.confrim_btn);
+////        rlDlg = (RelativeLayout) findViewById(R.id.rl_dlg);
+//        imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+//        confirmBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (messageTextView.getText().length() > 0) {
+//                    sendText("" + messageTextView.getText());
+//                    imm.showSoftInput(messageTextView, InputMethodManager.SHOW_FORCED);
+//                    imm.hideSoftInputFromWindow(messageTextView.getWindowToken(), 0);
+//                    dismiss();
+//                } else {
+//                    Toast.makeText(mContext, "输入内容不能为空！", Toast.LENGTH_LONG).show();
+//                }
+//            }
+//        });
+//        messageTextView.setOnKeyListener(new View.OnKeyListener() {
+//            @Override
+//            public boolean onKey(View v, int keyCode, KeyEvent event) {
+//                if (event.getAction() != KeyEvent.ACTION_UP) {   // 忽略其它事件
+//                    return false;
+//                }
+//
+//                switch (keyCode) {
+//                    case KeyEvent.KEYCODE_ENTER:
+//                        if (messageTextView.getText().length() > 0) {
+//                            sendText("" + messageTextView.getText());
+//                            imm.showSoftInput(messageTextView, InputMethodManager.SHOW_FORCED);
+//                            imm.hideSoftInputFromWindow(messageTextView.getWindowToken(), 0);
+//                            dismiss();
+//                        } else {
+//                            Toast.makeText(mContext, "输入内容不能为空！", Toast.LENGTH_LONG).show();
+//                        }
+//                        return true;
+//                    default:
+//                        return false;
+//                }
+//            }
+//        });
+//
+//        final LinearLayout rldlgview = (LinearLayout) findViewById(R.id.rl_inputdlg_view);
+//        rldlgview.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//            @Override
+//            public void onGlobalLayout() {
+//                Rect r = new Rect();
+//                //获取当前界面可视部分
+//                getWindow().getDecorView().getWindowVisibleDisplayFrame(r);
+//                //获取屏幕的高度
+//                int screenHeight = getWindow().getDecorView().getRootView().getHeight();
+//                //此处就是用来获取键盘的高度的， 在键盘没有弹出的时候 此高度为0 键盘弹出的时候为一个正数
+//                int heightDifference = screenHeight - r.bottom;
+//
+//                if (heightDifference <= 0 && mLastDiff > 0) {
+//                    imm.hideSoftInputFromWindow(messageTextView.getWindowToken(), 0);
+//                    dismiss();
+//                }
+//                mLastDiff = heightDifference;
+//            }
+//        });
+//        rldlgview.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                imm.hideSoftInputFromWindow(messageTextView.getWindowToken(), 0);
+//                dismiss();
+//            }
+//        });
+//    }
 
     /**
      * add message text
@@ -151,43 +156,43 @@ public class InputTextMsgDialog extends Dialog {
             e.printStackTrace();
             return;
         }
-        TIMMessage Nmsg = new TIMMessage();
-        TIMTextElem elem = new TIMTextElem();
-        elem.setText(msg);
-        if (Nmsg.addElement(elem) != 0) {
-            return;
-        }
-        ILiveRoomManager.getInstance().sendGroupMessage(Nmsg, new ILiveCallBack<TIMMessage>() {
-            @Override
-            public void onSuccess(TIMMessage data) {
-                //发送成回显示消息内容
-                for (int j = 0; j < data.getElementCount(); j++) {
-                    TIMElem elem = (TIMElem) data.getElement(0);
-                    TIMTextElem textElem = (TIMTextElem) elem;
-                    if (data.isSelf()) {
-                        if (mVideoPlayActivity != null)
-                            mVideoPlayActivity.refreshText(textElem.getText(), MySelfInfo.getInstance().getNickName());
-//                        handleTextMessage(elem, MySelfInfo.getInstance().getNickName());
-                    } else {
-                        TIMUserProfile sendUser = data.getSenderProfile();
-                        String name;
-                        if (sendUser != null) {
-                            name = sendUser.getNickName();
-                        } else {
-                            name = data.getSender();
-                        }
-                        if (mVideoPlayActivity != null)
-                            mVideoPlayActivity.refreshText(textElem.getText(), name);
-                    }
-                }
-                SxbLog.d(TAG, "sendGroupMessage->success");
-            }
-
-            @Override
-            public void onError(String module, int errCode, String errMsg) {
-                Toast.makeText(mContext, "发送失败！", Toast.LENGTH_SHORT).show();
-            }
-        });
+//        TIMMessage Nmsg = new TIMMessage();
+//        TIMTextElem elem = new TIMTextElem();
+//        elem.setText(msg);
+//        if (Nmsg.addElement(elem) != 0) {
+//            return;
+//        }
+//        ILiveRoomManager.getInstance().sendGroupMessage(Nmsg, new ILiveCallBack<TIMMessage>() {
+//            @Override
+//            public void onSuccess(TIMMessage data) {
+//                //发送成回显示消息内容
+//                for (int j = 0; j < data.getElementCount(); j++) {
+//                    TIMElem elem = (TIMElem) data.getElement(0);
+//                    TIMTextElem textElem = (TIMTextElem) elem;
+//                    if (data.isSelf()) {
+//                        if (mVideoPlayActivity != null)
+//                            mVideoPlayActivity.refreshText(textElem.getText(), MySelfInfo.getInstance().getNickName());
+////                        handleTextMessage(elem, MySelfInfo.getInstance().getNickName());
+//                    } else {
+//                        TIMUserProfile sendUser = data.getSenderProfile();
+//                        String name;
+//                        if (sendUser != null) {
+//                            name = sendUser.getNickName();
+//                        } else {
+//                            name = data.getSender();
+//                        }
+//                        if (mVideoPlayActivity != null)
+//                            mVideoPlayActivity.refreshText(textElem.getText(), name);
+//                    }
+//                }
+//                SxbLog.d(TAG, "sendGroupMessage->success");
+//            }
+//
+//            @Override
+//            public void onError(String module, int errCode, String errMsg) {
+//                Toast.makeText(mContext, "发送失败！", Toast.LENGTH_SHORT).show();
+//            }
+//        });
     }
 
     @Override

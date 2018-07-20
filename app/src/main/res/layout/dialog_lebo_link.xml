@@ -11,7 +11,7 @@
         android:layout_height="match_parent"
         android:background="@android:color/transparent" />
 
-    <RelativeLayout
+   <!-- <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/layout_title_height_400dp"
         android:layout_alignParentBottom="true"
@@ -187,6 +187,6 @@
 
             </RelativeLayout>
         </LinearLayout>
-    </RelativeLayout>
+    </RelativeLayout>-->
 
 </RelativeLayout>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <RelativeLayout
+        android:id="@+id/layout1"
+        android:paddingTop="40dp"
+        android:paddingBottom="40dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#fe5433">
+        <TextView
+            android:id="@+id/tv_success"
+            android:textSize="20sp"
+            android:textColor="#ffffff"
+            android:text="登录后即可获得积分"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_below="@id/tv_success"
+            android:layout_marginTop="10dp"
+            android:textSize="20sp"
+            android:textColor="#ffffff"
+            android:text="积分可以兑换抽奖机会哦"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/layout_choujiang"
+        android:layout_below="@+id/layout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:background="#ffffff">
+        <Button
+            android:id="@+id/bt_choujiang"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
+            android:textColor="#ffffff"
+            android:layout_centerInParent="true"
+            android:background="@drawable/btn_shape_corner_orange"
+            android:text="快去登录哦"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+
+
+    <ImageView
+        android:layout_below="@id/layout_choujiang"
+        android:id="@+id/bt_close"
+        android:layout_marginTop="30dp"
+        android:layout_centerHorizontal="true"
+        android:src="@mipmap/ic_closepopup"
+        android:layout_width="38dp"
+        android:layout_height="38dp" />
+
+
+
+</RelativeLayout>

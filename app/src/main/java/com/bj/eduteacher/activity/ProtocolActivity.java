@@ -1,6 +1,7 @@
 package com.bj.eduteacher.activity;
 
 import android.net.http.SslError;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -50,13 +51,15 @@ public class ProtocolActivity extends BaseActivity {
     private String contentUrl;
     private long clickMillis = 0;
 
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_protocol);
         ButterKnife.bind(this);
 
-        contentUrl = "http://mp.weixin.qq.com/s/h7fgLrC2209BWolPUcgObw";
+        //contentUrl = "http://mp.weixin.qq.com/s/h7fgLrC2209BWolPUcgObw";
+        contentUrl = "http://douhaolaoshi.gamepku.com/index.php/wenzhang/index/1148";
         LL.i("协议地址：" + contentUrl);
 
         initToolBar();
@@ -84,43 +87,18 @@ public class ProtocolActivity extends BaseActivity {
     protected void initView() {
         // 覆盖WebView默认使用第三方或系统默认浏览器打开网页的行为，使网页用WebView打开
         // 主要处理解析，渲染网页等浏览器做的事情 WebViewClient就是帮助WebView处理各种通知、请求事件的。
+        web_content.getSettings().setJavaScriptEnabled(true);//启用js
+        web_content.getSettings().setBlockNetworkImage(false);//解决图片不显示
         web_content.setWebViewClient(new WebViewClient() {
-
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            public boolean shouldOverrideUrlLoading(WebView view, String url)
+            { //  重写此方法表明点击网页里面的链接还是在当前的webview里跳转，不跳到浏览器那边
+                view.loadUrl(url);
                 return true;
             }
-
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-                LL.i("webView ---->>>> onPageFinished ---->>>> title:" + view.getTitle());
-                // tvTitle.setText(String.valueOf(view.getTitle()));
-            }
-
-            @Override
-            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-                LL.i("webView ---->>>> onReceivedError");
-                llErrorContent.setVisibility(View.VISIBLE);
-                web_content.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
-                super.onReceivedHttpError(view, request, errorResponse);
-                LL.i("webView ---->>>> onReceivedHttpError");
-                // llErrorContent.setVisibility(View.VISIBLE);
-                // web_content.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-                super.onReceivedSslError(view, handler, error);
-                LL.i("webView ---->>>> onReceivedSslError");
-                // llErrorContent.setVisibility(View.VISIBLE);
-                // web_content.setVisibility(View.GONE);
-            }
         });
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+            web_content.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
         // setWebChromeClient：辅助WebView处理Javascript的对话框，网站图标，网站title，加载进度等
         web_content.setWebChromeClient(new WebChromeClient() {
             // 网页加载进度条

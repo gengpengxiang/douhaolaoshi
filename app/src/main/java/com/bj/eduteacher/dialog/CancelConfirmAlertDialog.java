@@ -97,6 +97,14 @@ public class CancelConfirmAlertDialog extends Dialog implements View.OnClickList
         mCancelButton.setVisibility(View.VISIBLE);
     }
 
+    public CancelConfirmAlertDialog hideContentText() {
+        if(mContentTextView!=null){
+            mContentTextView.setVisibility(View.GONE);
+        }
+
+        return this;
+    }
+
     public String getTitleText() {
         return mTitleText;
     }

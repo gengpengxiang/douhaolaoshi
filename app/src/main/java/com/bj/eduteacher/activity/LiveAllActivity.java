@@ -1,3 +1,4 @@
+/*
 package com.bj.eduteacher.activity;
 
 import android.app.Activity;
@@ -68,10 +69,12 @@ import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
+*/
 /**
  * Created by zz379 on 2017/3/8.
  * 全部直播列表
- */
+ *//*
+
 
 public class LiveAllActivity extends BaseActivity {
 
@@ -143,7 +146,7 @@ public class LiveAllActivity extends BaseActivity {
                 ArticleInfo item = mDataList.get(position);
                 if (item.getShowType() != ArticleInfo.SHOW_TYPE_DECORATION) {
                     if (StringUtils.isEmpty(teacherPhoneNumber)) {
-                        IntentManager.toLoginActivity(LiveAllActivity.this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
+                        IntentManager.toLoginSelectActivity(LiveAllActivity.this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
                         return;
                     }
                     joinLive(item);
@@ -161,7 +164,7 @@ public class LiveAllActivity extends BaseActivity {
         mXRefreshView.setPullLoadEnable(true);
         mXRefreshView.restoreLastRefreshTime(lastRefreshTime);
         mXRefreshView.setAutoRefresh(false);
-        mXRefreshView.setAutoLoadMore(true);
+        mXRefreshView.setAutoLoadMore(false);
 
         mXRefreshView.setXRefreshViewListener(new XRefreshView.SimpleXRefreshListener() {
             @Override
@@ -222,10 +225,10 @@ public class LiveAllActivity extends BaseActivity {
                 dialog.show();
             } else {
                 // 进入直播回放页面，观看直播页面
-                Intent intent = new Intent(this, LivePlayBackActivity.class);
-                intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_NAME, item.getTitle());
-                intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_PREVIEW_URL, item.getPlayUrl());
-                startActivity(intent);
+//                Intent intent = new Intent(this, LivePlayBackActivity.class);
+//                intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_NAME, item.getTitle());
+//                intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_PREVIEW_URL, item.getPlayUrl());
+//                startActivity(intent);
             }
         }
     }
@@ -443,7 +446,9 @@ public class LiveAllActivity extends BaseActivity {
         MobclickAgent.onPause(this);
     }
 
-    /****************************** 支付 ***********************************/
+    */
+/****************************** 支付 ***********************************//*
+
     private void initPopViewPayDetailForLive(final String masterid, final String sxbroomuser, final String realPrice) {
         View popView = LayoutInflater.from(this).inflate(R.layout.pop_pay_masterres_detail, null);
         popPayDetail = new PopupWindow(popView, ViewGroup.LayoutParams.MATCH_PARENT,
@@ -496,12 +501,14 @@ public class LiveAllActivity extends BaseActivity {
         }
     }
 
-    /**
+    */
+/**
      * 设置背景透明度
      *
      * @param activity
      * @param bgAlpha
-     */
+     *//*
+
     public void setBackgroundAlpha(Activity activity, float bgAlpha) {
         WindowManager.LayoutParams lp = activity.getWindow().getAttributes();
         lp.alpha = bgAlpha;
@@ -555,11 +562,13 @@ public class LiveAllActivity extends BaseActivity {
                 });
     }
 
-    /**
+    */
+/**
      * 开始支付
      *
      * @param orderInfo
-     */
+     *//*
+
     private void startPay(OrderInfo orderInfo) {
         if (api.getWXAppSupportAPI() >= com.tencent.mm.opensdk.constants.Build.PAY_SUPPORTED_SDK_INT) {
             currTradeID = orderInfo.getOut_trade_no();  // 获取当前商户订单号
@@ -578,11 +587,13 @@ public class LiveAllActivity extends BaseActivity {
         }
     }
 
-    /**
+    */
+/**
      * 查询订单支付状态
      *
      * @param tradeID
-     */
+     *//*
+
     private void queryTheTradeStateFromAPI(final String tradeID) {
         Observable.create(new ObservableOnSubscribe<TradeInfo>() {
             @Override
@@ -720,3 +731,4 @@ public class LiveAllActivity extends BaseActivity {
         }).start();
     }
 }
+*/

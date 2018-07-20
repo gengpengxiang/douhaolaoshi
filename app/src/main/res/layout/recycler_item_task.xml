@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="216px"
+    android:background="#ffffff">
+
+
+    <ImageView
+        android:layout_marginLeft="20dp"
+        android:layout_centerVertical="true"
+        android:id="@+id/iv_icon"
+        android:layout_width="20dp"
+        android:layout_height="20dp" />
+
+    <LinearLayout
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="20dp"
+        android:layout_toRightOf="@+id/iv_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:singleLine="true"
+            android:maxEms="16"
+            android:ellipsize="end"
+            android:text="任务名称"
+            android:textSize="16sp"
+            android:gravity="center_vertical"
+            android:textColor="#4A4A4A"
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:textSize="14sp"
+                android:text="截止日期"
+                android:layout_marginTop="13px"
+                android:gravity="center_vertical"
+                android:id="@+id/tv_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:layout_marginLeft="15dp"
+                android:textSize="14sp"
+                android:text="已完成"
+                android:layout_marginTop="13px"
+                android:gravity="center_vertical"
+                android:id="@+id/tv_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <!--<TextView-->
+            <!--android:textSize="45px"-->
+            <!--android:text="截止日期"-->
+            <!--android:layout_marginTop="13px"-->
+            <!--android:gravity="center_vertical"-->
+            <!--android:id="@+id/tv_time"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="63px" />-->
+    </LinearLayout>
+
+
+</RelativeLayout>

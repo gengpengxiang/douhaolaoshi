@@ -106,4 +106,21 @@ public class OrderInfo {
     public void setTrade_type(String trade_type) {
         this.trade_type = trade_type;
     }
+
+    @Override
+    public String toString() {
+        return "OrderInfo{" +
+                "appid='" + appid + '\'' +
+                ", mch_id='" + mch_id + '\'' +
+                ", nonce_str='" + nonce_str + '\'' +
+                ", prepay_id='" + prepay_id + '\'' +
+                ", result_code='" + result_code + '\'' +
+                ", return_code='" + return_code + '\'' +
+                ", return_msg='" + return_msg + '\'' +
+                ", sign='" + sign + '\'' +
+                ", trade_type='" + trade_type + '\'' +
+                ", timeStamp='" + timeStamp + '\'' +
+                ", out_trade_no='" + out_trade_no + '\'' +
+                '}';
+    }
 }

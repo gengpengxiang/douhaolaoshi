@@ -166,19 +166,19 @@ public class PublishLiveActivity extends BaseActivity implements View.OnClickLis
         }
 
         // 跳转到直播的页面
-        Intent intent = new Intent(this, LiveActivity.class);
-        MySelfInfo.getInstance().setIdStatus(Constants.HOST);
-        MySelfInfo.getInstance().setJoinRoomWay(true);
-        CurLiveInfo.setTitle(title);
-        CurLiveInfo.setHostID(MySelfInfo.getInstance().getId());
-        CurLiveInfo.setRoomNum(MySelfInfo.getInstance().getMyRoomNum());
-        if (StringUtils.isEmpty(selectPicPath)) {
-            CurLiveInfo.setCoverurl(sxbPicture.substring(sxbPicture.lastIndexOf("/") + 1));
-        }
-        startActivity(intent);
-        SxbLog.i(TAG, "PerformanceTest  publish Live " + SxbLog.getTime());
-        Log.i("way", MySelfInfo.getInstance().toString());
-        this.finish();
+//        Intent intent = new Intent(this, LiveActivity.class);
+//        MySelfInfo.getInstance().setIdStatus(Constants.HOST);
+//        MySelfInfo.getInstance().setJoinRoomWay(true);
+//        CurLiveInfo.setTitle(title);
+//        CurLiveInfo.setHostID(MySelfInfo.getInstance().getId());
+//        CurLiveInfo.setRoomNum(MySelfInfo.getInstance().getMyRoomNum());
+//        if (StringUtils.isEmpty(selectPicPath)) {
+//            CurLiveInfo.setCoverurl(sxbPicture.substring(sxbPicture.lastIndexOf("/") + 1));
+//        }
+//        startActivity(intent);
+//        SxbLog.i(TAG, "PerformanceTest  publish Live " + SxbLog.getTime());
+//        Log.i("way", MySelfInfo.getInstance().toString());
+//        this.finish();
     }
 
     /**

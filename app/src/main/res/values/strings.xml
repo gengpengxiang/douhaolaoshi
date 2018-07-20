@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">逗号老师</string>
-    <string name="bottom_tab_1">逗课</string>
+    <string name="bottom_tab_1">优课</string>
     <string name="bottom_tab_2">我的</string>
+    <string name="bottom_tab_4">社区</string>
 
     <string name="dialog_waiting">加载中</string>
 
@@ -17,6 +18,7 @@
 
     <string name="errcode_success">发送成功</string>
     <string name="errcode_cancel">发送取消</string>
+    <string name="errcode_login_success">微信验证成功</string>
     <string name="errcode_deny">发送被拒绝</string>
     <string name="errcode_unsupported">不支持错误</string>
     <string name="errcode_unknown">发送返回</string>
@@ -144,4 +146,7 @@
     <string name="str_room_discuss">主播已离开房间，是否退出?</string>
 
     <string name="str_tips_force_exit">管理员已将房间解散或将您踢出房间!</string>
+
+    <string name="str_space">\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n</string>
+
 </resources>

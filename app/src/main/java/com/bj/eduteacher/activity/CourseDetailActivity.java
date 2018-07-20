@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,11 +35,13 @@ import com.bj.eduteacher.entity.TradeInfo;
 import com.bj.eduteacher.manager.IntentManager;
 import com.bj.eduteacher.manager.ShareHelp;
 import com.bj.eduteacher.utils.LL;
+import com.bj.eduteacher.utils.LoginStatusUtil;
 import com.bj.eduteacher.utils.NetUtils;
 import com.bj.eduteacher.utils.PreferencesUtils;
 import com.bj.eduteacher.utils.ScreenUtils;
 import com.bj.eduteacher.utils.StringUtils;
 import com.bj.eduteacher.utils.T;
+import com.bj.eduteacher.videoplayer.view.PlayerActivity;
 import com.bj.eduteacher.view.FullyLinearLayoutManager;
 import com.bj.eduteacher.view.OnRecyclerItemClickListener;
 import com.bj.eduteacher.widget.PullZoomView;
@@ -115,6 +118,7 @@ public class CourseDetailActivity extends BaseActivity {
     private View headerView;
     private int headerHeight = 0;
     LmsDataService mService = new LmsDataService();
+    private String unionid;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -314,10 +318,11 @@ public class CourseDetailActivity extends BaseActivity {
                 String downloadUrl = item.getArticlePicture();
                 String resType = item.getPreviewType();  // 目前先根据这个类型来判断是否是视频
                 if ("2".equals(resType)) {
-                    Intent intent = new Intent(this, ResPlayActivity.class);
+                    Intent intent = new Intent(this, PlayerActivity.class);
                     intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_ID, resID);
                     intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_NAME, resName);
                     intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_PREVIEW_URL, previewUrl);
+                    intent.putExtra("type","free");
                     startActivity(intent);
                 } else {
                     Intent intent = new Intent(this, ResReviewActivity.class);
@@ -498,13 +503,15 @@ public class CourseDetailActivity extends BaseActivity {
     /********************************* 分享功能 ***********************************************/
     @OnClick(R.id.tv_share)
     void showShareDialog() {
-        MobclickAgent.onEvent(CourseDetailActivity.this, "elect_expert");
-        View popViewShare = LayoutInflater.from(this).inflate(R.layout.alert_share_course, null);
-        SimpleDraweeView ivPicture = (SimpleDraweeView) popViewShare.findViewById(R.id.iv_coursePicture);
-        TextView tvTitle = (TextView) popViewShare.findViewById(R.id.tv_courseTitle);
-        ivPicture.setImageURI(coursePicture);
-        tvTitle.setText(courseTitle);
-        ShareHelp.getInstance().showShareDialog(this, popViewShare);
+        if (!LoginStatusUtil.noLogin(this)) {
+            MobclickAgent.onEvent(CourseDetailActivity.this, "elect_expert");
+            View popViewShare = LayoutInflater.from(this).inflate(R.layout.alert_share_course, null);
+            SimpleDraweeView ivPicture = (SimpleDraweeView) popViewShare.findViewById(R.id.iv_coursePicture);
+            TextView tvTitle = (TextView) popViewShare.findViewById(R.id.tv_courseTitle);
+            ivPicture.setImageURI(coursePicture);
+            tvTitle.setText(courseTitle);
+            ShareHelp.getInstance().showShareDialog(this, popViewShare);
+        }
     }
 
     @OnClick(R.id.uc_setting_iv)
@@ -515,8 +522,8 @@ public class CourseDetailActivity extends BaseActivity {
     @OnClick(R.id.tv_pay)
     void clickPayCourse() {
         if (StringUtils.isEmpty(courseJiaru) || courseJiaru.equals("0")) {
-            if (StringUtils.isEmpty(teacherPhoneNumber)) {
-                IntentManager.toLoginActivity(this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
+            if (LoginStatusUtil.noLogin(this)) {
+                IntentManager.toLoginSelectActivity(this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
                 return;
             }
 
@@ -615,11 +622,12 @@ public class CourseDetailActivity extends BaseActivity {
      * 生成订单
      */
     private void getTheOrderFromAPI(final String masterresid, final String price, final String payType) {
+        unionid = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_WECHAT_UNIONID, "");
         Observable.create(new ObservableOnSubscribe<OrderInfo>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<OrderInfo> e) throws Exception {
                 LmsDataService mService = new LmsDataService();
-                OrderInfo info = mService.getTheOrderInfoFromAPIForCourse(masterresid, price, teacherPhoneNumber, payType);
+                OrderInfo info = mService.getTheOrderInfoFromAPIForCourse(masterresid, price, teacherPhoneNumber,unionid, payType);
                 e.onNext(info);
             }
         }).subscribeOn(Schedulers.io())
@@ -632,6 +640,8 @@ public class CourseDetailActivity extends BaseActivity {
 
                     @Override
                     public void onNext(OrderInfo orderInfo) {
+
+                        Log.e("订单信息",orderInfo.toString());
                         // 获取订单成功后 发起微信支付
                         if ("SUCCESS".equals(orderInfo.getResult_code())
                                 && "SUCCESS".equals(orderInfo.getReturn_code())
@@ -774,7 +784,7 @@ public class CourseDetailActivity extends BaseActivity {
         Observable.create(new ObservableOnSubscribe<String[]>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<String[]> e) throws Exception {
-                String[] result = mService.joinCourseFromAPI(courseID, phoneNumber, payStatus);
+                String[] result = mService.joinCourseFromAPI(courseID, phoneNumber,unionid, payStatus);
                 e.onNext(result);
                 e.onComplete();
             }

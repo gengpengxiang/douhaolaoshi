@@ -91,6 +91,7 @@ public class FamousTeacherAllActivity extends BaseActivity {
             public void onZhuanjiaClick(View view, int position) {
                 ArticleInfo item = mDataList.get(position);
                 Intent intent = new Intent(FamousTeacherAllActivity.this, FamousTeacherDetailActivity.class);
+                intent.putExtra("type","mingshi");
                 intent.putExtra(MLProperties.BUNDLE_KEY_ZHUANJIA_ID, item.getArticleID());
                 intent.putExtra(MLProperties.BUNDLE_KEY_ZHUANJIA_NAME, item.getAuthor());
                 intent.putExtra(MLProperties.BUNDLE_KEY_ZHUANJIA_TITLE, item.getTitle());
@@ -142,7 +143,7 @@ public class FamousTeacherAllActivity extends BaseActivity {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<ArticleInfo>> e) throws Exception {
                 LmsDataService mService = new LmsDataService();
-                List<ArticleInfo> dataList = mService.getFamousTeacherCardsFromAPI(currentPage, 30);
+                List<ArticleInfo> dataList = mService.getFamousTeacherCardsFromAPI2(currentPage, 30);
                 e.onNext(dataList);
                 e.onComplete();
             }

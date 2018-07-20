@@ -94,13 +94,19 @@ public class ShareHelp {
             WXMediaMessage msg = new WXMediaMessage();
             msg.mediaObject = imgObject;
             // 设置缩略图
-            if (shareBmp != null && !shareBmp.isRecycled()) {
-                Bitmap thumbBmp = Bitmap.createScaledBitmap(shareBmp, shareBmp.getWidth() / 10,
-                        shareBmp.getHeight() / 10, true);
-                // msg.thumbData = Util.bmpToByteArray(thumbBmp, true);
-                msg.thumbData = Util.bmpToByteArray(thumbBmp, true);
-                shareBmp.recycle();
-            }
+//            if (shareBmp != null && !shareBmp.isRecycled()) {
+//                Bitmap thumbBmp = Bitmap.createScaledBitmap(shareBmp, shareBmp.getWidth() / 10,
+//                        shareBmp.getHeight() / 10, true);
+//                // msg.thumbData = WXUtil.bmpToByteArray(thumbBmp, true);
+//                msg.thumbData = Util.bmpToByteArray(thumbBmp, true);
+//                shareBmp.recycle();
+//            }
+            Bitmap thumbBmp = Bitmap.createScaledBitmap(shareBmp, shareBmp.getWidth() / 10,
+                    shareBmp.getHeight() / 10, true);
+            // msg.thumbData = WXUtil.bmpToByteArray(thumbBmp, true);
+            shareBmp.recycle();
+            msg.thumbData = Util.bmpToByteArray(thumbBmp, true);
+
             // 构造一个Req
             SendMessageToWX.Req req = new SendMessageToWX.Req();
             // transaction 字段用于唯一标示一个请求
@@ -156,17 +162,26 @@ public class ShareHelp {
      * @param context
      * @return
      */
+//    private boolean isWeixinAvilible(Context context) {
+//        final PackageManager packageManager = context.getPackageManager();// 获取packagemanager
+//        List<PackageInfo> pinfo = packageManager.getInstalledPackages(0);// 获取所有已安装程序的包信息
+//        if (pinfo != null) {
+//            for (int i = 0; i < pinfo.size(); i++) {
+//                String pn = pinfo.get(i).packageName;
+//                if (pn.equals("com.tencent.mm")) {
+//                    return true;
+//                }
+//            }
+//        }
+//        return false;
+//    }
     private boolean isWeixinAvilible(Context context) {
-        final PackageManager packageManager = context.getPackageManager();// 获取packagemanager
-        List<PackageInfo> pinfo = packageManager.getInstalledPackages(0);// 获取所有已安装程序的包信息
-        if (pinfo != null) {
-            for (int i = 0; i < pinfo.size(); i++) {
-                String pn = pinfo.get(i).packageName;
-                if (pn.equals("com.tencent.mm")) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        IWXAPI msgApi = WXAPIFactory.createWXAPI(context, null);
+        msgApi.registerApp(MLProperties.APP_DOUHAO_TEACHER_ID);
+
+        boolean sIsWXAppInstalledAndSupported = msgApi.isWXAppInstalled()
+                && msgApi.isWXAppSupportAPI();
+
+        return sIsWXAppInstalledAndSupported;
     }
 }

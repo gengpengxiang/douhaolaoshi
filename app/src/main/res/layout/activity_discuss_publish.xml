@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.bj.eduteacher.course.fragment.discuss.publish.DiscussPublishActivity">
+
+    <include
+        android:id="@+id/layout_bar"
+        layout="@layout/layout_header_toolbar" />
+
+    <EditText
+        android:singleLine="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@null"
+        android:layout_below="@+id/layout_bar"
+        android:id="@+id/et_title"
+        android:hint="输入标题"
+        android:textSize="14sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <View
+        android:id="@+id/view"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/et_title"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#f1f1f1"/>
+
+    <EditText
+        android:inputType="textMultiLine"
+        android:singleLine="true"
+        android:textSize="14sp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@null"
+        android:gravity="top"
+        android:layout_below="@+id/view"
+        android:id="@+id/et_content"
+        android:hint="分享你的观点"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/layout_bt"/>
+
+    <LinearLayout
+        android:id="@+id/layout_bt"
+        android:background="#f1f1f1"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="90dp">
+        <TextView
+            android:id="@+id/bt_fabu"
+            android:layout_marginRight="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_gravity="center"
+            android:text="确认发布"
+            android:gravity="center"
+            android:textColor="@color/colorTextWhite"
+            android:background="@drawable/btn_shape_corner_orange"
+            android:layout_width="match_parent"
+            android:layout_height="50dp" />
+    </LinearLayout>
+
+</RelativeLayout>

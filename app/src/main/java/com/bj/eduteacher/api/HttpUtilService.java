@@ -2,51 +2,42 @@ package com.bj.eduteacher.api;
 
 import android.content.Context;
 import android.os.Environment;
+import android.util.Log;
 import android.widget.Toast;
-
 import com.bj.eduteacher.utils.AppUtils;
 import com.bj.eduteacher.utils.BitmapUtils;
 import com.bj.eduteacher.utils.LL;
 import com.bj.eduteacher.zzokhttp.OkHttpUtils;
 import com.bj.eduteacher.zzokhttp.builder.PostFormBuilder;
 import com.bj.eduteacher.zzokhttp.callback.FileCallBack;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
 import okhttp3.Call;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-
 /**
  * Created by Administrator on 2016/8/2.
  */
 public class HttpUtilService {
-
     private static final String TAG = "HTTP";
-
-    // 测试版
+    //测试版
 //    public static final String BASE_RESOURCE_URL = "http://testdouhao.gamepku.com/files/";
 //    public static final String BASE_FILES_UPLOAD_URL = "http://testdouhao.gamepku.com/";
-//    public static final String BASE_URL = "http://testdouhao1p4.gamepku.com/";
-
-    // public static final String BASE_URL = "http://douhao1p4.gamepku.com/";
+//    public static final String BASE_URL = "http://testdouhaolaoshi.gamepku.com/";
     // 正式版
     public static final String BASE_URL = "http://douhaolaoshi.gamepku.com/";
     public static final String BASE_RESOURCE_URL = "http://douhao.gamepku.com/files/";
     public static final String BASE_FILES_UPLOAD_URL = "http://douhao.gamepku.com/";
 
     public static final String BASE_API_URL = BASE_URL + "index.php/";
-    public static final String DOWNLOAD_PATH = Environment.getExternalStorageDirectory().getAbsolutePath()
-            + "/EduTeacher/";
-
+    public static final String DOWNLOAD_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/EduTeacher/";
     public static String getBaseURL() {
         return BASE_API_URL + "MobileSpecialRelateAppList.aspx";
     }
@@ -72,6 +63,8 @@ public class HttpUtilService {
     public static String getJsonByPostCompleteUrl(String parseUrl, HashMap<String, String> params) throws Exception {
         String url = parseUrl;
         String result = postParamsByUrl(url, params);
+
+        Log.e("获取",result);
         return result;
     }
 
@@ -113,10 +106,13 @@ public class HttpUtilService {
                 .execute();
 
         if (!response.isSuccessful()) {
+            Log.e("结果",response.body().string());
             throw new IOException("Unexpected code" + response);
+
         }
         String result = response.body().string();
         LL.i(TAG, "API返回结果: " + result);
+
         return result;
     }
 
@@ -136,6 +132,29 @@ public class HttpUtilService {
         } else {
             return "0";
         }
+    }
+
+    public static String postPictureByUrl2( String filePath) throws Exception {
+        String url = BASE_URL + "js/timg";
+        String uploadFilePath = BitmapUtils.compressImageUpload(filePath);
+        File file = new File(uploadFilePath);
+        String fileName = filePath.substring(filePath.lastIndexOf("/") + 1, filePath.length());
+        LL.i(TAG, "API接口地址: " + url);
+        Response response = OkHttpUtils.post()
+                .addFile("userfile", fileName, file)
+                .url(url)
+                .addParams("appkey", MLConfig.HTTP_APP_KEY)
+                .build()
+                .execute();
+        if (!response.isSuccessful()) {
+            throw new IOException("Unexpected code" + response);
+        }
+        // 上传成功后删除缓存文件
+        BitmapUtils.deleteCacheFile();
+        (new File(filePath)).deleteOnExit();
+        String result = response.body().string();
+        Log.e("结果===",result);
+        return result;
     }
 
     /**
@@ -169,7 +188,7 @@ public class HttpUtilService {
         return result;
     }
 
-    public static String postPictureByUrl(String parseUrl, String filePath, String teacherphone) throws Exception {
+    public static String postPictureByUrl(String parseUrl, String filePath, String teacherphone,String unionid) throws Exception {
         // String url = BASE_FILES_UPLOAD_URL + "js/timg";
         String url = BASE_API_URL + "js/imgteacher";
         String uploadFilePath = BitmapUtils.compressImageUpload(filePath);
@@ -181,6 +200,7 @@ public class HttpUtilService {
                 .url(url)
                 .addParams("appkey", MLConfig.HTTP_APP_KEY)
                 .addParams("teacherphone", teacherphone)
+                .addParams("unionid", unionid)
                 .build()
                 .execute();
         if (!response.isSuccessful()) {

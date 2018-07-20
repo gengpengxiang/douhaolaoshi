@@ -1,5 +1,6 @@
 package com.bj.eduteacher.zzimgselector.view;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -16,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bj.eduteacher.R;
+import com.bj.eduteacher.utils.T;
 import com.bj.eduteacher.zzimgselector.adapter.ImageFolderAdapter;
 import com.bj.eduteacher.zzimgselector.adapter.ImageListAdapter;
 import com.bj.eduteacher.zzimgselector.model.LocalMedia;
@@ -24,10 +26,13 @@ import com.bj.eduteacher.zzimgselector.utils.FileUtils;
 import com.bj.eduteacher.zzimgselector.utils.GridSpacingItemDecoration;
 import com.bj.eduteacher.zzimgselector.utils.LocalMediaLoader;
 import com.bj.eduteacher.zzimgselector.utils.ScreenUtils;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import io.reactivex.functions.Consumer;
 
 /**
  * Created by dee on 15/11/19.
@@ -184,7 +189,22 @@ public class ImageSelectorActivity extends AppCompatActivity {
 
             @Override
             public void onTakePhoto() {
-                startCamera();
+
+                RxPermissions rxPermissions = new RxPermissions(ImageSelectorActivity.this);
+                rxPermissions.request(Manifest.permission.CAMERA)
+                        .subscribe(new Consumer<Boolean>() {
+                            @Override
+                            public void accept(Boolean aBoolean) throws Exception {
+                                if(aBoolean){
+                                    //T.showShort(ImageSelectorActivity.this,"同意");
+                                    startCamera();
+                                }else {
+                                    //T.showShort(ImageSelectorActivity.this,"拒绝");
+                                }
+                            }
+                        });
+
+//                startCamera();
             }
 
             @Override

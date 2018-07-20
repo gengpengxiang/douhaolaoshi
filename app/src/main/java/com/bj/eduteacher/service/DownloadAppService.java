@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.content.FileProvider;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.bj.eduteacher.BuildConfig;
@@ -71,6 +72,7 @@ public class DownloadAppService extends IntentService {
     public int onStartCommand(Intent intent, int flags, int startId) {
         LL.i("Service onStartCommand......");
         downloadURL = intent.getExtras().getString(MLConfig.KEY_BUNDLE_DOWNLOAD_URL);
+        //downloadURL = "http://imtt.dd.qq.com/16891/0AFC43222FF6097159140895F6B934AA.apk?fsname=com.bj.eduteacher_3.9.1_31.apk&csr=1bbd";
         LL.i("DownloadURL: " + downloadURL);
 
         return super.onStartCommand(intent, flags, startId);
@@ -87,7 +89,7 @@ public class DownloadAppService extends IntentService {
     private void downloadAPP() {
         File oldFile = new File(DOWNLOAD_PATH, FILENAME);
         if (oldFile.exists()) {
-            LL.i("DownloadFile", "存在旧的安装包，已经删除");
+            Log.e("DownloadFile", "存在旧的安装包，已经删除");
             oldFile.delete();
         }
         OkHttpUtils.get().url(downloadURL).tag(FILENAME).build()
@@ -102,7 +104,7 @@ public class DownloadAppService extends IntentService {
                             sendMyBroadCast("downloading", currProgress);
                             if (downloadIndex >= 5) {
                                 downloadIndex = 0;
-                                LL.i("DownloadFile", "HttpUtilService -- DownloadFile() -- 下载中：" +
+                                Log.e("DownloadFile", "HttpUtilService -- DownloadFile() -- 下载中：" +
                                         downloadProgress + "%");
                                 builder.setTicker("开始下载...")
                                         .setContentTitle("逗号老师")
@@ -132,7 +134,7 @@ public class DownloadAppService extends IntentService {
 
                     @Override
                     public void onError(Call call, Exception e) {
-                        LL.i("Download", "HttpUtilService -- DownloadFile() -- 下载失败");
+                        Log.e("Download", "HttpUtilService -- DownloadFile() -- 下载失败");
                         File file = new File(DOWNLOAD_PATH, FILENAME);
                         file.delete();
                         sendMyBroadCast("error", 0);
@@ -168,7 +170,7 @@ public class DownloadAppService extends IntentService {
                                 .setProgress(0, 0, false);
                         send(builder.build());
                         sendMyBroadCast("finish", 100);
-                        LL.i("Download", "HttpUtilService -- DownloadFile() -- 下载完成：" + response.getPath());
+                        Log.e("Download", "HttpUtilService -- DownloadFile() -- 下载完成：" + response.getPath());
                         Toast.makeText(DownloadAppService.this, "安装包下载完成", Toast.LENGTH_SHORT).show();
                         // 开始安装
                         DownloadAppService.this.startActivity(intent);

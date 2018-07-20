@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="alivc_info_seekbar" parent="@android:style/Widget.SeekBar">
+        <item name="android:indeterminateOnly">false</item>
+        <item name="android:maxHeight">@dimen/alivc_info_seekbar_height</item>
+        <item name="android:minHeight">@dimen/alivc_info_seekbar_height</item>
+        <item name="android:paddingLeft">@dimen/alivc_info_seekbar_offset</item>
+        <item name="android:paddingRight">@dimen/alivc_info_seekbar_offset</item>
+        <item name="android:thumbOffset">@dimen/alivc_info_seekbar_offset</item>
+    </style>
+
+    <style name="alivc_info_seekbar_blue" parent="alivc_info_seekbar">
+        <item name="android:progressDrawable">@drawable/alivc_info_seekbar_bg_blue</item>
+        <item name="android:indeterminateDrawable">@drawable/alivc_info_seekbar_bg_blue</item>
+        <item name="android:thumb">@drawable/alivc_info_seekbar_thumb_blue</item>
+    </style>
+
+    <style name="alivc_info_seekbar_green" parent="alivc_info_seekbar">
+        <item name="android:progressDrawable">@drawable/alivc_info_seekbar_bg_green</item>
+        <item name="android:indeterminateDrawable">@drawable/alivc_info_seekbar_bg_green</item>
+        <item name="android:thumb">@drawable/alivc_info_seekbar_thumb_green</item>
+    </style>
+
+    <style name="alivc_info_seekbar_orange" parent="alivc_info_seekbar">
+        <item name="android:progressDrawable">@drawable/alivc_info_seekbar_bg_orange</item>
+        <item name="android:indeterminateDrawable">@drawable/alivc_info_seekbar_bg_orange</item>
+        <item name="android:thumb">@drawable/alivc_info_seekbar_thumb_orange</item>
+    </style>
+
+    <style name="alivc_info_seekbar_red" parent="alivc_info_seekbar">
+        <item name="android:progressDrawable">@drawable/alivc_info_seekbar_bg_red</item>
+        <item name="android:indeterminateDrawable">@drawable/alivc_info_seekbar_bg_red</item>
+        <item name="android:thumb">@drawable/alivc_info_seekbar_thumb_red</item>
+    </style>
+
+</resources>

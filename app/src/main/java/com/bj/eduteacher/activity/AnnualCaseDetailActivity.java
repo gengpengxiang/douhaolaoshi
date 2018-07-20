@@ -22,10 +22,12 @@ import com.bj.eduteacher.entity.BaseDataInfo;
 import com.bj.eduteacher.manager.IntentManager;
 import com.bj.eduteacher.manager.ShareHelp;
 import com.bj.eduteacher.utils.LL;
+import com.bj.eduteacher.utils.LoginStatusUtil;
 import com.bj.eduteacher.utils.NetUtils;
 import com.bj.eduteacher.utils.PreferencesUtils;
 import com.bj.eduteacher.utils.StringUtils;
 import com.bj.eduteacher.utils.T;
+import com.bj.eduteacher.videoplayer.view.PlayerActivity;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.umeng.analytics.MobclickAgent;
 
@@ -136,10 +138,11 @@ public class AnnualCaseDetailActivity extends BaseActivity {
                 String downloadUrl = mDataList.get(position).getArticlePicture();
                 String resType = item.getPreviewType();  // 目前先根据这个类型来判断是否是视频
                 if ("2".equals(resType)) {
-                    Intent intent = new Intent(AnnualCaseDetailActivity.this, ResPlayActivity.class);
+                    Intent intent = new Intent(AnnualCaseDetailActivity.this, PlayerActivity.class);
                     intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_ID, resID);
                     intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_NAME, resName);
                     intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_PREVIEW_URL, previewUrl);
+                    intent.putExtra("type","AnnualCaseDetailActivity");
                     startActivity(intent);
                 } else {
                     Intent intent = new Intent(AnnualCaseDetailActivity.this, ResReviewActivity.class);
@@ -259,8 +262,8 @@ public class AnnualCaseDetailActivity extends BaseActivity {
 
     @OnClick(R.id.tv_pay)
     void clickPayCourse() {
-        if (StringUtils.isEmpty(teacherPhoneNumber)) {
-            IntentManager.toLoginActivity(this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
+        if (LoginStatusUtil.noLogin(this)) {
+            IntentManager.toLoginSelectActivity(this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
             return;
         }
         if (System.currentTimeMillis() - currMillis > 1000) {

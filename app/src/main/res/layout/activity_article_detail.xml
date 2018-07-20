@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.bj.eduteacher.zzautolayout.AutoLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.bj.eduteacher.community.details.view.ArticleDetailActivity">
+
+    <include layout="@layout/layout_header_toolbar" />
+
+    <android.support.v7.widget.RecyclerView
+        android:overScrollMode="never"
+        android:layout_marginTop="12dp"
+        android:id="@+id/mRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="#ffffff" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#D8D8D8" />
+
+    <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/layout_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:layout_below="@id/tv_articleContent"
+        >
+        <LinearLayout
+            android:id="@+id/layout_like"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center">
+            <ImageView
+                android:id="@+id/iv_like"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@mipmap/ic_like"/>
+            <TextView
+                android:layout_marginLeft="4dp"
+                android:id="@+id/tv_like"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"/>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/layout_comment"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+                <ImageView
+                    android:layout_centerVertical="true"
+                    android:id="@+id/iv_comment"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@mipmap/ic_comment1"/>
+                <TextView
+                    android:layout_marginTop="10dp"
+                    android:singleLine="true"
+                    android:gravity="center"
+                    android:layout_marginLeft="15dp"
+                    android:textSize="9sp"
+                    android:id="@+id/tv_comment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/btn_shape_comment_orange"
+                    android:textColor="@android:color/white"
+                    android:text="0"/>
+            </RelativeLayout>
+           <!-- <ImageView
+                android:id="@+id/iv_comment"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@mipmap/ic_comment1"/>
+            <TextView
+                android:layout_marginLeft="4dp"
+                android:id="@+id/tv_comment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"/>-->
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/layout_money"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center">
+            <ImageView
+                android:id="@+id/iv_money"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@mipmap/ic_money1"/>
+            <TextView
+                android:layout_marginLeft="4dp"
+                android:id="@+id/tv_money"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="打赏"/>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/layout_share"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center">
+            <ImageView
+                android:id="@+id/iv_share"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@mipmap/ic_share1"/>
+            <TextView
+                android:layout_marginLeft="4dp"
+                android:id="@+id/tv_share"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="分享"/>
+        </LinearLayout>
+    </LinearLayout>
+
+</com.bj.eduteacher.zzautolayout.AutoLinearLayout>

@@ -152,7 +152,7 @@ public class MySelfInfo {
             editor.putString(Constants.USER_SIGN, sign);
             editor.putInt(Constants.USER_ROOM_NUM, myRoomNum);
             editor.putBoolean(Constants.LIVE_ANIMATOR, bLiveAnimator);
-            editor.putInt(Constants.LOG_LEVEL, logLevel.ordinal());
+        //    editor.putInt(Constants.LOG_LEVEL, logLevel.ordinal());
             editor.putInt(Constants.BEAUTY_TYPE, beautyType);
             editor.putString(Constants.VIDEO_QULITY, guestRole);
             editor.commit();

@@ -254,7 +254,7 @@ public class DonationActivity extends BaseActivity {
             if (shareBmp != null && !shareBmp.isRecycled()) {
                 Bitmap thumbBmp = Bitmap.createScaledBitmap(shareBmp, shareBmp.getWidth() / 10,
                         shareBmp.getHeight() / 10, true);
-                // msg.thumbData = Util.bmpToByteArray(thumbBmp, true);
+                // msg.thumbData = WXUtil.bmpToByteArray(thumbBmp, true);
                 msg.thumbData = Util.bmpToByteArray(thumbBmp, true);
                 shareBmp.recycle();
             }

@@ -1,9 +1,11 @@
 package com.bj.eduteacher.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -19,13 +21,20 @@ import com.bj.eduteacher.api.LmsDataService;
 import com.bj.eduteacher.api.MLConfig;
 import com.bj.eduteacher.api.MLProperties;
 import com.bj.eduteacher.entity.CommentInfo;
+import com.bj.eduteacher.entity.MsgEvent;
+import com.bj.eduteacher.integral.presenter.IntegralPresenter;
+import com.bj.eduteacher.integral.view.IViewintegral;
+import com.bj.eduteacher.manager.IntentManager;
 import com.bj.eduteacher.utils.KeyBoardUtils;
 import com.bj.eduteacher.utils.LL;
+import com.bj.eduteacher.utils.LoginStatusUtil;
 import com.bj.eduteacher.utils.PreferencesUtils;
 import com.bj.eduteacher.utils.StringUtils;
 import com.bj.eduteacher.utils.T;
 import com.bj.eduteacher.widget.DecorationForDouke;
 import com.umeng.analytics.MobclickAgent;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +56,7 @@ import io.reactivex.schedulers.Schedulers;
  * 逗课文章评论页面
  */
 
-public class DoukeCommentActivity extends BaseActivity {
+public class DoukeCommentActivity extends BaseActivity implements IViewintegral{
 
     @BindView(R.id.mXRefreshView)
     XRefreshView mXRefreshView;
@@ -57,14 +66,15 @@ public class DoukeCommentActivity extends BaseActivity {
     EditText edtContent;
     @BindView(R.id.tv_send)
     TextView tvSend;
+    private IntegralPresenter presenter;
 
     private DoukeCommentAdapter mAdapter;
     private int currentPage = 1;
     public static long lastRefreshTime;
 
     private List<CommentInfo> mDataList = new ArrayList<>();
-    private String newsID;
-    private String userPhoneNumber;
+    private String newsID,type;
+    private String userPhoneNumber,unionid;
     private LinearLayoutManager layoutManager;
 
     @Override
@@ -76,6 +86,11 @@ public class DoukeCommentActivity extends BaseActivity {
         initToolBar();
         initView();
         initData();
+        Intent intent = getIntent();
+        type = intent.getStringExtra("type");
+        unionid = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_WECHAT_UNIONID,"");
+
+        presenter = new IntegralPresenter(this,this);
     }
 
     @Override
@@ -106,6 +121,7 @@ public class DoukeCommentActivity extends BaseActivity {
         // set Adatper
         mAdapter = new DoukeCommentAdapter(mDataList);
         mRecyclerView.setAdapter(mAdapter);
+//        mRecyclerView.setAdapter(mAdapter2);
         mRecyclerView.addItemDecoration(new DecorationForDouke(this, LinearLayoutManager.VERTICAL, 3));
 
         // set xRefreshView
@@ -136,8 +152,9 @@ public class DoukeCommentActivity extends BaseActivity {
     @Override
     protected void initData() {
         userPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
+        Log.e("手机号",userPhoneNumber+"xxx");
         newsID = getIntent().getStringExtra(MLProperties.BUNDLE_KEY_DOUKE_ID);
-
+        Log.e("文章id",newsID+"yyy");
         currentPage = 1;
         mXRefreshView.setPullLoadEnable(true);
         getDoukeCommentFromAPI(currentPage);
@@ -168,11 +185,22 @@ public class DoukeCommentActivity extends BaseActivity {
 
     @OnClick(R.id.tv_send)
     void actionSendClick() {
-        tvSend.setEnabled(false);
+        //tvSend.setEnabled(false);
         String content = edtContent.getText().toString().trim();
-        edtContent.setText("");
+
         KeyBoardUtils.closeKeybord(this.getCurrentFocus().getWindowToken(), this);
-        sendCommentContent(content);
+
+        if(LoginStatusUtil.noLogin(this)){
+            IntentManager.toLoginSelectActivity(this, IntentManager.LOGIN_SUCC_ACTION_MAINACTIVITY);
+        }else {
+            if(!StringUtils.isEmpty(edtContent.getText().toString().trim())){
+                sendCommentContent(content);
+            }else {
+                T.showShort(this,"评论内容不能为空");
+            }
+
+        }
+        edtContent.setText("");
     }
 
     private void getDoukeCommentFromAPI(final int currentPage) {
@@ -213,9 +241,12 @@ public class DoukeCommentActivity extends BaseActivity {
         Observable.create(new ObservableOnSubscribe<String[]>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<String[]> e) throws Exception {
+                userPhoneNumber = PreferencesUtils.getString(DoukeCommentActivity.this, MLProperties.PREFER_KEY_USER_ID, "");
+                String unionid = PreferencesUtils.getString(DoukeCommentActivity.this, MLProperties.PREFER_KEY_WECHAT_UNIONID,"");
+
                 LmsDataService mService = new LmsDataService();
                 String[] result = mService.postDoukeCommentFromAPI(newsID, userPhoneNumber,
-                        MLConfig.KEY_DOUKE_COMMENT_JIAOSHI, content);
+                        MLConfig.KEY_DOUKE_COMMENT_JIAOSHI, content,unionid);
                 e.onNext(result);
             }
         }).subscribeOn(Schedulers.io())
@@ -232,6 +263,13 @@ public class DoukeCommentActivity extends BaseActivity {
                         if (!StringUtils.isEmpty(result[0]) && "1".equals(result[0])) {
                             // 发布成功
                             mXRefreshView.startRefresh();
+
+                            //add by gpx
+                            setResult(100);
+
+                            EventBus.getDefault().post(new MsgEvent("pinglunsuccess",type));
+                            String unionid = PreferencesUtils.getString(DoukeCommentActivity.this, MLProperties.PREFER_KEY_WECHAT_UNIONID,"");
+                            presenter.getDouBi("pinglun",userPhoneNumber,"getdoubi",unionid);
                         } else {
                             // 发布失败
                             T.showShort(DoukeCommentActivity.this, "发布评论失败");
@@ -251,6 +289,7 @@ public class DoukeCommentActivity extends BaseActivity {
                 });
     }
 
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -263,5 +302,17 @@ public class DoukeCommentActivity extends BaseActivity {
         super.onPause();
         MobclickAgent.onPageEnd("comment");
         MobclickAgent.onPause(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        presenter.onDestory();
+    }
+
+    @Override
+    public void getDouBi(com.bj.eduteacher.integral.model.Doubi doubi) {
+        //T.showShort(this,"获取成功");
+        EventBus.getDefault().post(new MsgEvent("getdoubisuccess",doubi.getData().getUser_doubinum_sum()));
     }
 }

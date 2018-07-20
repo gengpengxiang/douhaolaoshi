@@ -38,14 +38,17 @@ import com.bj.eduteacher.dialog.TipsAlertDialog3;
 import com.bj.eduteacher.entity.ArticleInfo;
 import com.bj.eduteacher.entity.OrderInfo;
 import com.bj.eduteacher.entity.TradeInfo;
+import com.bj.eduteacher.login.view.LoginActivity;
 import com.bj.eduteacher.manager.IntentManager;
 import com.bj.eduteacher.utils.LL;
+import com.bj.eduteacher.utils.LoginStatusUtil;
 import com.bj.eduteacher.utils.NetUtils;
 import com.bj.eduteacher.utils.PreferencesUtils;
 import com.bj.eduteacher.utils.ScreenUtils;
 import com.bj.eduteacher.utils.StringUtils;
 import com.bj.eduteacher.utils.T;
 import com.bj.eduteacher.utils.Util;
+import com.bj.eduteacher.videoplayer.view.PlayerActivity;
 import com.bj.eduteacher.view.FullyLinearLayoutManager;
 import com.bj.eduteacher.widget.PullZoomView;
 import com.bj.eduteacher.widget.RoundProgressBar;
@@ -123,6 +126,8 @@ public class FamousTeacherDetailActivity extends BaseActivity {
     private View headerView;
     private int headerHeight = 0;
     private Disposable shareDisposable;
+    private String unionid;
+    private String type;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -150,6 +155,8 @@ public class FamousTeacherDetailActivity extends BaseActivity {
         zhuanjiaName = getIntent().getStringExtra(MLProperties.BUNDLE_KEY_ZHUANJIA_NAME);
         zhuanjiaTitle = getIntent().getStringExtra(MLProperties.BUNDLE_KEY_ZHUANJIA_TITLE);
         zhuanjiaImg = getIntent().getStringExtra(MLProperties.BUNDLE_KEY_ZHUANJIA_IMG);
+
+        type = getIntent().getStringExtra("type");
     }
 
     @Override
@@ -159,7 +166,7 @@ public class FamousTeacherDetailActivity extends BaseActivity {
         FullyLinearLayoutManager layoutManager = new FullyLinearLayoutManager(FamousTeacherDetailActivity.this);
         mRecyclerView.setLayoutManager(layoutManager);
         // set Adatper
-        mAdapter = new FamousTeacherDetailAdapter(mDataList);
+        mAdapter = new FamousTeacherDetailAdapter(mDataList,this);
         mAdapter.setOnMyItemClickListener(new FamousTeacherDetailAdapter.OnMyItemClickListener() {
             @Override
             public void onClick(View view, int position) {
@@ -182,12 +189,21 @@ public class FamousTeacherDetailActivity extends BaseActivity {
                 String buyType = item.getCommentNumber();
                 if (!"0".equals(price) && "0".equals(buyType)) {
                     // 购买资源前需要登录
-                    if (StringUtils.isEmpty(teacherPhoneNumber)) {
-                        IntentManager.toLoginActivity(FamousTeacherDetailActivity.this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
+                    if (LoginStatusUtil.noLogin(FamousTeacherDetailActivity.this)) {
+                        IntentManager.toLoginSelectActivity(FamousTeacherDetailActivity.this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
                         return;
                     }
 
                     MobclickAgent.onEvent(FamousTeacherDetailActivity.this, "doc_buy");
+
+                    //add
+                    if(PreferencesUtils.getString(getApplicationContext(), MLProperties.PREFER_KEY_USER_ID) == null){
+                        Intent intent = new Intent(FamousTeacherDetailActivity.this, LoginActivity.class);
+                        intent.putExtra("laiyuan","bind");
+                        startActivity(intent);
+                        return;
+                    }
+
                     initPopViewPayDetail(item.getArticleID(), item.getAgreeNumber());
                 } else {
                     MobclickAgent.onEvent(FamousTeacherDetailActivity.this, "doc_look");
@@ -197,10 +213,11 @@ public class FamousTeacherDetailActivity extends BaseActivity {
                     String downloadUrl = mDataList.get(position).getArticlePicture();
                     String resType = item.getPreviewType();  // 目前先根据这个类型来判断是否是视频
                     if ("2".equals(resType)) {
-                        Intent intent = new Intent(FamousTeacherDetailActivity.this, ResPlayActivity.class);
+                        Intent intent = new Intent(FamousTeacherDetailActivity.this, PlayerActivity.class);
                         intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_ID, resID);
                         intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_NAME, resName);
                         intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_PREVIEW_URL, previewUrl);
+                        intent.putExtra("type","FamousTeacherDetailActivity");
                         startActivity(intent);
                     } else {
                         Intent intent = new Intent(FamousTeacherDetailActivity.this, ResReviewActivity.class);
@@ -226,8 +243,8 @@ public class FamousTeacherDetailActivity extends BaseActivity {
                     startActivity(intent);
                 } else if ("Invite".equals(tag)) {
                     // 购买资源前需要登录
-                    if (StringUtils.isEmpty(teacherPhoneNumber)) {
-                        IntentManager.toLoginActivity(FamousTeacherDetailActivity.this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
+                    if (LoginStatusUtil.noLogin(FamousTeacherDetailActivity.this)) {
+                        IntentManager.toLoginSelectActivity(FamousTeacherDetailActivity.this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
                         return;
                     }
 
@@ -421,6 +438,7 @@ public class FamousTeacherDetailActivity extends BaseActivity {
     protected void initData() {
         teacherPhoneNumber = PreferencesUtils.getString(FamousTeacherDetailActivity.this, MLProperties.PREFER_KEY_USER_ID, "");
         userPhotoPath = PreferencesUtils.getString(FamousTeacherDetailActivity.this, MLProperties.BUNDLE_KEY_TEACHER_IMG);
+        unionid = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_WECHAT_UNIONID, "");
 
         currentPage = 1;
         mDataList.clear();
@@ -451,13 +469,11 @@ public class FamousTeacherDetailActivity extends BaseActivity {
                         zhuanjiaName = articleInfo.getAuthor();
                         zhuanjiaTitle = articleInfo.getTitle();
                         zhuanjiaImg = articleInfo.getAuthImg();
-
                         tvZhuanjiaName.setText(articleInfo.getAuthor());
                         tvZhuanjiaTitle.setText(articleInfo.getTitle());
                         tvZhuanjiaDesc.setText(articleInfo.getAuthDesc());
                         ivZhuanjiaPhoto.setImageURI(articleInfo.getAuthImg());
                         tvTitle.setText(zhuanjiaName);
-
                         final ViewTreeObserver viewTreeObserver = tvZhuanjiaDesc.getViewTreeObserver();
                         viewTreeObserver.addOnDrawListener(new ViewTreeObserver.OnDrawListener() {
                             @Override
@@ -492,7 +508,7 @@ public class FamousTeacherDetailActivity extends BaseActivity {
             public void subscribe(@NonNull ObservableEmitter<List<ArticleInfo>> e) throws Exception {
                 LmsDataService mService = new LmsDataService();
                 // SystemClock.sleep(1000);
-                List<ArticleInfo> dataList = mService.getMasterResFromAPI(masterID, teacherPhoneNumber, currentPage);
+                List<ArticleInfo> dataList = mService.getMasterResFromAPI(masterID, teacherPhoneNumber,unionid, currentPage);
                 e.onNext(dataList);
                 e.onComplete();
             }
@@ -531,7 +547,13 @@ public class FamousTeacherDetailActivity extends BaseActivity {
                 }
                 if (data3 != null && data3.size() > 0) {
                     // 置顶话题
-                    dataList.add(new ArticleInfo("名师黑板报", ArticleInfo.SHOW_TYPE_DECORATION));
+                    if(type!=null&&type.equals("zhuanjia")){
+                        dataList.add(new ArticleInfo("专家黑板报", ArticleInfo.SHOW_TYPE_DECORATION));
+                    }
+                    if(type!=null&&type.equals("mingshi")){
+                        dataList.add(new ArticleInfo("名师黑板报", ArticleInfo.SHOW_TYPE_DECORATION));
+                    }
+//                    dataList.add(new ArticleInfo("名师黑板报", ArticleInfo.SHOW_TYPE_DECORATION));
                     ArticleInfo subjectTop = data3.get(0);
                     subjectTop.setShowType(ArticleInfo.SHOW_TYPE_ZHUANJIA_BLACKBOARD_TOP);
                     dataList.add(subjectTop);
@@ -568,7 +590,7 @@ public class FamousTeacherDetailActivity extends BaseActivity {
                         LL.e(e);
                         hideLoadingDialog();
                         stopRefreshChildView();
-                        T.showShort(FamousTeacherDetailActivity.this, "服务器开小差了，请重试");
+                        //T.showShort(FamousTeacherDetailActivity.this, "服务器开小差了，请重试");
                     }
 
                     @Override
@@ -641,7 +663,7 @@ public class FamousTeacherDetailActivity extends BaseActivity {
             if (shareBmp != null && !shareBmp.isRecycled()) {
                 Bitmap thumbBmp = Bitmap.createScaledBitmap(shareBmp, shareBmp.getWidth() / 10,
                         shareBmp.getHeight() / 10, true);
-                // msg.thumbData = Util.bmpToByteArray(thumbBmp, true);
+                // msg.thumbData = WXUtil.bmpToByteArray(thumbBmp, true);
                 msg.thumbData = Util.bmpToByteArray(thumbBmp, true);
                 shareBmp.recycle();
             }
@@ -793,7 +815,8 @@ public class FamousTeacherDetailActivity extends BaseActivity {
             @Override
             public void subscribe(@NonNull ObservableEmitter<OrderInfo> e) throws Exception {
                 LmsDataService mService = new LmsDataService();
-                OrderInfo info = mService.getTheOrderInfoFromAPI(masterresid, price, teacherPhoneNumber, payType);
+                String unionid = PreferencesUtils.getString(getApplicationContext(), MLProperties.PREFER_KEY_WECHAT_UNIONID, "");
+                OrderInfo info = mService.getTheOrderInfoFromAPI(masterresid, price, teacherPhoneNumber,unionid, payType);
                 e.onNext(info);
             }
         }).subscribeOn(Schedulers.io())
@@ -860,6 +883,7 @@ public class FamousTeacherDetailActivity extends BaseActivity {
         MobclickAgent.onResume(this);
         teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
         userPhotoPath = PreferencesUtils.getString(this, MLProperties.BUNDLE_KEY_TEACHER_IMG);
+        unionid = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_WECHAT_UNIONID, "");
 
         if (!StringUtils.isEmpty(currTradeID)) {
             queryTheTradeStateFromAPI(currTradeID);

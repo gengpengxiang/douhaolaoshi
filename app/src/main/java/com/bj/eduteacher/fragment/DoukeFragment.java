@@ -10,14 +10,14 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.andview.refreshview.XRefreshView;
@@ -25,17 +25,20 @@ import com.andview.refreshview.XRefreshViewFooter;
 import com.bj.eduteacher.BaseFragment;
 import com.bj.eduteacher.R;
 import com.bj.eduteacher.activity.AnnualCaseAllActivity;
-import com.bj.eduteacher.activity.CourseDetailActivity;
+import com.bj.eduteacher.activity.CourseAllActivity;
 import com.bj.eduteacher.activity.DoukeDetailActivity;
 import com.bj.eduteacher.activity.FamousTeacherAllActivity;
 import com.bj.eduteacher.activity.FamousTeacherDetailActivity;
-import com.bj.eduteacher.activity.LiveActivity;
-import com.bj.eduteacher.activity.LiveAllActivity;
+import com.bj.eduteacher.master.view.MasterAllActivity;
+import com.bj.eduteacher.activity.ZhuantiActivity;
+import com.bj.eduteacher.course.view.CourseDetailActivity2;
+import com.bj.eduteacher.entity.MsgEvent;
+import com.bj.eduteacher.group.list.view.GroupAllActivity;
+//import com.bj.eduteacher.activity.LiveActivity;
+//import com.bj.eduteacher.activity.LiveAllActivity;
 import com.bj.eduteacher.activity.PayProtocolActivity;
-import com.bj.eduteacher.activity.ResPlayActivity;
 import com.bj.eduteacher.activity.ResReviewActivity;
 import com.bj.eduteacher.activity.WebviewActivity;
-import com.bj.eduteacher.activity.ZhuanjiaAllActivity;
 import com.bj.eduteacher.activity.ZhuanjiaDetailActivity;
 import com.bj.eduteacher.adapter.DoukeListAdapter;
 import com.bj.eduteacher.api.LmsDataService;
@@ -47,25 +50,30 @@ import com.bj.eduteacher.entity.AppVersionInfo;
 import com.bj.eduteacher.entity.ArticleInfo;
 import com.bj.eduteacher.entity.OrderInfo;
 import com.bj.eduteacher.entity.TradeInfo;
+import com.bj.eduteacher.login.view.LoginActivity;
 import com.bj.eduteacher.manager.IntentManager;
 import com.bj.eduteacher.model.CurLiveInfo;
 import com.bj.eduteacher.model.MySelfInfo;
+import com.bj.eduteacher.prize.view.PrizeActivity;
+import com.bj.eduteacher.school.list.view.SchoolAllActivity;
 import com.bj.eduteacher.service.DownloadAppService;
 import com.bj.eduteacher.tool.Constants;
 import com.bj.eduteacher.tool.ShowNameUtil;
 import com.bj.eduteacher.utils.AppUtils;
 import com.bj.eduteacher.utils.FrescoImageLoader;
 import com.bj.eduteacher.utils.LL;
+import com.bj.eduteacher.utils.LoginStatusUtil;
 import com.bj.eduteacher.utils.NetUtils;
 import com.bj.eduteacher.utils.PreferencesUtils;
 import com.bj.eduteacher.utils.ScreenUtils;
 import com.bj.eduteacher.utils.StringUtils;
 import com.bj.eduteacher.utils.T;
+import com.bj.eduteacher.videoplayer.view.PlayerActivity;
 import com.bj.eduteacher.view.OnRecyclerItemClickListener;
-import com.bj.eduteacher.widget.dialog.RadioGroupDialog;
 import com.bj.eduteacher.widget.manager.SaveGridLayoutManager;
 import com.bj.eduteacher.zzokhttp.OkHttpUtils;
 import com.tbruyelle.rxpermissions2.RxPermissions;
+import com.tencent.mm.opensdk.constants.Build;
 import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
@@ -74,6 +82,10 @@ import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
 import com.youth.banner.Transformer;
 import com.youth.banner.listener.OnBannerListener;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.InterruptedIOException;
 import java.util.ArrayList;
@@ -99,7 +111,7 @@ import io.reactivex.schedulers.Schedulers;
  * 首页
  */
 
-public class DoukeFragment extends BaseFragment {
+public class DoukeFragment extends BaseFragment implements View.OnClickListener {
 
     @BindView(R.id.mXRefreshView)
     XRefreshView mXRefreshView;
@@ -128,6 +140,8 @@ public class DoukeFragment extends BaseFragment {
 
     private int columnResNum, columnTeaNum;
     private int resPageSize, teaPageSize;
+    private TextView tab1, tab2, tab3, tab4,tab5;
+    private String unionid;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -139,6 +153,7 @@ public class DoukeFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_douke, container, false);
         ButterKnife.bind(this, view);
+        EventBus.getDefault().register(this);
         init();
 
         initToolbar();
@@ -194,6 +209,7 @@ public class DoukeFragment extends BaseFragment {
         // testRxJavaError();
     }
 
+
     private void initView() {
         teacherPhoneNumber = PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_USER_ID, "");
         // 下拉刷新控件
@@ -201,10 +217,7 @@ public class DoukeFragment extends BaseFragment {
         layoutManager = new SaveGridLayoutManager(getActivity(), 30);
         mAdapter = new DoukeListAdapter(getActivity(), mDataList);
         // 添加header
-        RelativeLayout headerView = (RelativeLayout) mAdapter.setHeaderView(R.layout.recycler_header_banner, mRecyclerView);
-        ViewGroup.LayoutParams lp = headerView.getLayoutParams();
-        lp.height = (int) (ScreenUtils.getScreenWidth(getActivity()) / 2.67f);
-        headerView.setLayoutParams(lp);
+        LinearLayout headerView = (LinearLayout) mAdapter.setHeaderView(R.layout.recycler_header_banner, mRecyclerView);
 
         initHeaderView(headerView);
 
@@ -236,7 +249,7 @@ public class DoukeFragment extends BaseFragment {
         mXRefreshView.setXRefreshViewListener(new XRefreshView.SimpleXRefreshListener() {
             @Override
             public void onRefresh(boolean isPullDown) {
-                LL.i("刷新数据");
+
                 currentPage = 1;
 
                 getBannerInfoFromAPI();
@@ -274,17 +287,19 @@ public class DoukeFragment extends BaseFragment {
         } else if (item.getShowType() == ArticleInfo.SHOW_TYPE_ZHUANJIA_ALL) {
             String text = item.getTitle();
             if (text.endsWith("专家")) {
-                Intent intent = new Intent(getActivity(), ZhuanjiaAllActivity.class);
+                Intent intent = new Intent(getActivity(), MasterAllActivity.class);
                 startActivity(intent);
             } else if (text.endsWith("名师")) {
                 Intent intent = new Intent(getActivity(), FamousTeacherAllActivity.class);
                 startActivity(intent);
-            } else if (text.endsWith("直播")) {
-                Intent intent = new Intent(getActivity(), LiveAllActivity.class);
+            } else if (text.endsWith("课程")) {
+                Intent intent = new Intent(getActivity(), CourseAllActivity.class);
                 startActivity(intent);
             } else {
                 if (bottomTabListener != null) {
-                    bottomTabListener.onTabChange(1);
+                    //add by gpx
+                    bottomTabListener.onTabChange(2);
+                    //bottomTabListener.onTabChange(1);
                 }
             }
         } else if (item.getShowType() == ArticleInfo.SHOW_TYPE_ZHUANJIA_RES) {
@@ -293,8 +308,14 @@ public class DoukeFragment extends BaseFragment {
 
             if (!StringUtils.isEmpty(price) && !"0".equals(price) && "0".equals(buyType)) {
                 // 如果资源不是免费，需要先登录
-                if (StringUtils.isEmpty(teacherPhoneNumber)) {
-                    IntentManager.toLoginActivity(getActivity(), IntentManager.LOGIN_SUCC_ACTION_MAINACTIVITY);
+                if (LoginStatusUtil.noLogin(getActivity())) {
+                    IntentManager.toLoginSelectActivity(getActivity(), IntentManager.LOGIN_SUCC_ACTION_MAINACTIVITY);
+                    return;
+                }
+                if (PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_USER_ID) == null) {
+                    Intent intent = new Intent(getActivity(), LoginActivity.class);
+                    intent.putExtra("laiyuan", "bind");
+                    startActivity(intent);
                     return;
                 }
 
@@ -308,7 +329,9 @@ public class DoukeFragment extends BaseFragment {
                 String downloadUrl = item.getArticlePicture();
                 String resType = item.getPreviewType();  // 目前先根据这个类型来判断是否是视频
                 if ("2".equals(resType)) {
-                    Intent intent = new Intent(getActivity(), ResPlayActivity.class);
+
+                    Intent intent = new Intent(getActivity(), PlayerActivity.class);
+                    intent.putExtra("type", "DoukeFragment");
                     intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_ID, resID);
                     intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_NAME, resName);
                     intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_PREVIEW_URL, previewUrl);
@@ -324,6 +347,7 @@ public class DoukeFragment extends BaseFragment {
             }
         } else if (item.getShowType() == ArticleInfo.SHOW_TYPE_TEACHER) {
             Intent intent = new Intent(getActivity(), FamousTeacherDetailActivity.class);
+            intent.putExtra("type","mingshi");
             intent.putExtra(MLProperties.BUNDLE_KEY_ZHUANJIA_ID, item.getArticleID());
             intent.putExtra(MLProperties.BUNDLE_KEY_ZHUANJIA_NAME, item.getAuthor());
             intent.putExtra(MLProperties.BUNDLE_KEY_ZHUANJIA_TITLE, item.getTitle());
@@ -336,19 +360,24 @@ public class DoukeFragment extends BaseFragment {
                 Intent intent = new Intent(getActivity(), DoukeDetailActivity.class);
                 intent.putExtra(MLProperties.BUNDLE_KEY_DOUKE_ID, id);
                 intent.putExtra(MLProperties.BUNDLE_KEY_DOUKE_URL, path);
+                //add
+                intent.putExtra("title", item.getTitle());
+                intent.putExtra("content", item.getContent());
+                intent.putExtra("imgurl", item.getArticlePicture());
+                intent.putExtra("commentnum", item.getCommentNumber());
                 startActivity(intent);
             } else {
                 T.showShort(getActivity(), "页面不存在");
             }
         } else if (item.getShowType() == ArticleInfo.SHOW_TYPE_LIVE) {
             // 观看直播需要先进行登录
-            if (StringUtils.isEmpty(teacherPhoneNumber)) {
-                IntentManager.toLoginActivity(getActivity(), IntentManager.LOGIN_SUCC_ACTION_MAINACTIVITY);
+            if (LoginStatusUtil.noLogin(getActivity())) {
+                IntentManager.toLoginSelectActivity(getActivity(), IntentManager.LOGIN_SUCC_ACTION_MAINACTIVITY);
                 return;
             }
 
             if (item.getAuthDesc().equals(MySelfInfo.getInstance().getId())) {
-                returnBackRoom();
+
             } else {
                 String price = item.getAgreeNumber();
                 String buyType = item.getCommentNumber();
@@ -373,7 +402,7 @@ public class DoukeFragment extends BaseFragment {
                     CurLiveInfo.setRoomNum(Integer.valueOf(item.getArticleID()));
                     CurLiveInfo.setTitle(item.getTitle());
                     CurLiveInfo.setCoverurl(item.getArticlePicture());
-                    checkJoinLive();
+
                 }
             }
         } else if (item.getShowType() == ArticleInfo.SHOW_TYPE_LATEST_RES) {
@@ -384,6 +413,12 @@ public class DoukeFragment extends BaseFragment {
                 Intent intent = new Intent(getActivity(), DoukeDetailActivity.class);
                 intent.putExtra(MLProperties.BUNDLE_KEY_DOUKE_ID, item.getArticleID());
                 intent.putExtra(MLProperties.BUNDLE_KEY_DOUKE_URL, item.getArticlePath());
+                //add
+                //add
+                intent.putExtra("title", item.getTitle());
+                intent.putExtra("content", item.getContent());
+                intent.putExtra("imgurl", item.getArticlePicture());
+                intent.putExtra("commentnum", item.getCommentNumber());
                 startActivity(intent);
                 return;
             }
@@ -393,8 +428,14 @@ public class DoukeFragment extends BaseFragment {
 
             if (!StringUtils.isEmpty(price) && !"0".equals(price) && "0".equals(buyType)) {
                 // 如果资源不是免费，需要先登录
-                if (StringUtils.isEmpty(teacherPhoneNumber)) {
-                    IntentManager.toLoginActivity(getActivity(), IntentManager.LOGIN_SUCC_ACTION_MAINACTIVITY);
+                if (LoginStatusUtil.noLogin(getActivity())) {
+                    IntentManager.toLoginSelectActivity(getActivity(), IntentManager.LOGIN_SUCC_ACTION_MAINACTIVITY);
+                    return;
+                }
+                if (PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_USER_ID) == null) {
+                    Intent intent = new Intent(getActivity(), LoginActivity.class);
+                    intent.putExtra("laiyuan", "bind");
+                    startActivity(intent);
                     return;
                 }
 
@@ -407,7 +448,8 @@ public class DoukeFragment extends BaseFragment {
                     String resName = item.getTitle();
                     String previewUrl = item.getArticlePath();
 
-                    Intent intent = new Intent(getActivity(), ResPlayActivity.class);
+                    Intent intent = new Intent(getActivity(), PlayerActivity.class);
+                    intent.putExtra("type", "DoukeFragment");
                     intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_ID, resID);
                     intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_NAME, resName);
                     intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_PREVIEW_URL, previewUrl);
@@ -418,17 +460,17 @@ public class DoukeFragment extends BaseFragment {
                     String resName = item.getTitle();
                     String previewUrl = item.getArticlePath();
                     String downloadUrl = item.getAuthor();
-
                     Intent intent = new Intent(getActivity(), ResReviewActivity.class);
                     intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_ID, resID);
                     intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_NAME, resName);
                     intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_PREVIEW_URL, previewUrl);
                     intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_DOWNLOAD_URL, downloadUrl);
+
                     startActivity(intent);
                 }
             }
         } else if (item.getShowType() == ArticleInfo.SHOW_TYPE_COURSE) {
-            Intent intent = new Intent(getActivity(), CourseDetailActivity.class);
+            Intent intent = new Intent(getActivity(), CourseDetailActivity2.class);
             Bundle args = new Bundle();
             args.putString("CourseID", item.getArticleID());
             args.putString("CourseTitle", item.getTitle());
@@ -438,6 +480,10 @@ public class DoukeFragment extends BaseFragment {
 
             args.putString("CoursePrice", item.getAgreeNumber());
             args.putString("CourseBuyStatus", item.getCommentNumber());
+
+            //add
+            args.putString("CourseJiakeStatus", item.getJiakeStatus());
+
             args.putString("CourseDesc", item.getAuthDesc());
             args.putString("CourseZhengshu", item.getAuthImg());
             args.putString("CourseShuoming", item.getContent());
@@ -447,51 +493,6 @@ public class DoukeFragment extends BaseFragment {
         }
     }
 
-    /**
-     * 直接回到直播房间
-     */
-    private void returnBackRoom() {
-        Intent intent = new Intent(getActivity(), LiveActivity.class);
-        MySelfInfo.getInstance().setIdStatus(Constants.HOST);
-        MySelfInfo.getInstance().setJoinRoomWay(true);
-        CurLiveInfo.setHostID(MySelfInfo.getInstance().getId());
-        CurLiveInfo.setRoomNum(MySelfInfo.getInstance().getMyRoomNum());
-        String sxbTitle = PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_USER_SXB_Title, "");
-        String sxbPic = PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_USER_SXB_Picture, "");
-        CurLiveInfo.setTitle(sxbTitle);
-        if (!StringUtils.isEmpty(sxbPic)) {
-            CurLiveInfo.setCoverurl(sxbPic.substring(sxbPic.lastIndexOf("/") + 1));
-        }
-        intent.putExtra("HostComeBack", true);
-        startActivity(intent);
-    }
-
-    /**
-     * 选择观看直播的模式：清晰 or 流畅
-     */
-    private void checkJoinLive() {
-        if (TextUtils.isEmpty(MySelfInfo.getInstance().getGuestRole())) {
-            final String[] roles = new String[]{getString(R.string.str_video_sd), getString(R.string.str_video_ld)};
-            final String[] values = new String[]{Constants.SD_GUEST, Constants.LD_GUEST};
-
-            RadioGroupDialog roleDialog = new RadioGroupDialog(getActivity(), roles);
-
-            roleDialog.setTitle(R.string.str_video_qulity);
-            roleDialog.setOnItemClickListener(new RadioGroupDialog.onItemClickListener() {
-                @Override
-                public void onItemClick(int position) {
-                    MySelfInfo.getInstance().setGuestRole(values[position]);
-                    MySelfInfo.getInstance().writeToCache(getActivity());
-                    Intent intent = new Intent(getActivity(), LiveActivity.class);
-                    startActivity(intent);
-                }
-            });
-            roleDialog.show();
-        } else {
-            Intent intent = new Intent(getActivity(), LiveActivity.class);
-            startActivity(intent);
-        }
-    }
 
     private void initHeaderView(View headerView) {
         banner = (Banner) headerView.findViewById(R.id.banner);
@@ -525,6 +526,12 @@ public class DoukeFragment extends BaseFragment {
                     Intent intent = new Intent(getActivity(), DoukeDetailActivity.class);
                     intent.putExtra(MLProperties.BUNDLE_KEY_DOUKE_ID, mBannerList.get(position).getArticleID());
                     intent.putExtra(MLProperties.BUNDLE_KEY_DOUKE_URL, mBannerList.get(position).getArticlePath());
+                    //add
+                    //add
+                    intent.putExtra("title", mBannerList.get(position).getTitle());
+                    intent.putExtra("content", mBannerList.get(position).getContent());
+                    intent.putExtra("imgurl", mBannerList.get(position).getArticlePicture());
+                    intent.putExtra("commentnum", mBannerList.get(position).getCommentNumber());
                     startActivity(intent);
                 } else if ("sp".equals(mBannerList.get(position).getTitle())) {
                     // 跳转动视频播放页面
@@ -532,7 +539,8 @@ public class DoukeFragment extends BaseFragment {
                     String resName = mBannerList.get(position).getContent();
                     String previewUrl = mBannerList.get(position).getArticlePath();
 
-                    Intent intent = new Intent(getActivity(), ResPlayActivity.class);
+                    Intent intent = new Intent(getActivity(), PlayerActivity.class);
+                    intent.putExtra("type", "DoukeFragment");
                     intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_ID, resID);
                     intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_NAME, resName);
                     intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_PREVIEW_URL, previewUrl);
@@ -555,6 +563,16 @@ public class DoukeFragment extends BaseFragment {
                     intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_PREVIEW_URL, previewUrl);
                     intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_DOWNLOAD_URL, downloadUrl);
                     startActivity(intent);
+                } else if ("choujiang".equals(mBannerList.get(position).getTitle())) {
+                    Intent intent = new Intent(getActivity(), PrizeActivity.class);
+                    startActivity(intent);
+
+                } else if ("zhuanti".equals(mBannerList.get(position).getTitle())) {
+                    Intent intent = new Intent(getActivity(), ZhuantiActivity.class);
+                    intent.putExtra("id", mBannerList.get(position).getZhuanti());
+                    intent.putExtra("title", mBannerList.get(position).getZhuanti_name());
+                    startActivity(intent);
+                    Log.e("专题名字",mBannerList.get(position).getZhuanti_name());
                 } else {
                     // 其余的情况跳转到一个单纯的webView页面
                     String resName = mBannerList.get(position).getContent();
@@ -567,6 +585,18 @@ public class DoukeFragment extends BaseFragment {
                 }
             }
         });
+        //add by gpx
+        tab1 = (TextView) headerView.findViewById(R.id.bt_course);
+        tab2 = (TextView) headerView.findViewById(R.id.bt_expert);
+        tab3 = (TextView) headerView.findViewById(R.id.bt_famous_teacher);
+        tab4 = (TextView) headerView.findViewById(R.id.bt_school);
+        tab5 = (TextView) headerView.findViewById(R.id.bt_group);
+        tab1.setOnClickListener(this);
+        tab2.setOnClickListener(this);
+        tab3.setOnClickListener(this);
+        tab4.setOnClickListener(this);
+        tab5.setOnClickListener(this);
+
     }
 
     private void initData() {
@@ -590,13 +620,14 @@ public class DoukeFragment extends BaseFragment {
             public void subscribe(@NonNull ObservableEmitter<List<ArticleInfo>> e) throws Exception {
                 try {
                     List<ArticleInfo> dataList = mService.getMasterCardsFromAPI(currentPage, 5);
-                    if (dataList.size() >= 5) {
-                        ArticleInfo articleInfo = mService.getMasterCountFromAPI();
-                        int count = Integer.parseInt(articleInfo.getReplyCount());
-                        if (count > 5) {    // 超过5位专家，显示查看全部
+
+                    if(dataList.size()>0){
+                        if(!dataList.get(0).getGetmore().equals("0")){
+                            int count = dataList.get(0).getCardnum();
                             dataList.add(new ArticleInfo("查看全部" + count + "位专家", ArticleInfo.SHOW_TYPE_ZHUANJIA_ALL));
                         }
                     }
+
                     if (!e.isDisposed()) {
                         e.onNext(dataList);
                         e.onComplete();
@@ -615,7 +646,7 @@ public class DoukeFragment extends BaseFragment {
             }
         }).subscribeOn(Schedulers.io());
 
-        // 获取逗课列表
+        // 获取干货精选列表
         Observable<List<ArticleInfo>> observable2 = Observable.create(new ObservableOnSubscribe<List<ArticleInfo>>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<ArticleInfo>> e) throws Exception {
@@ -639,7 +670,7 @@ public class DoukeFragment extends BaseFragment {
             }
         }).subscribeOn(Schedulers.io());
 
-        // 获取专家日课
+        // 获取优课精选列表
         Observable<List<ArticleInfo>> observable3 = Observable.create(new ObservableOnSubscribe<List<ArticleInfo>>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<ArticleInfo>> e) throws Exception {
@@ -693,12 +724,13 @@ public class DoukeFragment extends BaseFragment {
             public void subscribe(@NonNull ObservableEmitter<List<ArticleInfo>> e) throws Exception {
                 try {
                     List<ArticleInfo> dataList = mService.getFamousTeacherCardsFromAPI(currentPage, teaPageSize);
-                    if (dataList.size() >= teaPageSize) {
-                        ArticleInfo articleInfo = mService.getFamousTeacherCountFromAPI();
-                        int count = Integer.parseInt(articleInfo.getReplyCount());
-                        if (count > teaPageSize) {    // 超过8位名师，显示查看全部
+
+                    if(dataList.size()>0){
+                        if(!dataList.get(0).getGetmore().equals("0")){
+                            int count = dataList.get(0).getCardnum();
                             dataList.add(new ArticleInfo("查看全部" + count + "位名师", ArticleInfo.SHOW_TYPE_ZHUANJIA_ALL));
                         }
+
                     }
                     if (!e.isDisposed()) {
                         e.onNext(dataList);
@@ -723,7 +755,17 @@ public class DoukeFragment extends BaseFragment {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<ArticleInfo>> e) throws Exception {
                 try {
-                    List<ArticleInfo> dataList = mService.getHomePageCourseList(teacherPhoneNumber);
+                    unionid = PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_WECHAT_UNIONID, "");
+                    List<ArticleInfo> dataList = mService.getHomePageCourseList(teacherPhoneNumber, unionid, "1");
+
+                    if(dataList.size()>0){
+                        if(!dataList.get(0).getGetmore().equals("0")){
+                            int count = dataList.get(0).getCardnum();
+                            dataList.add(new ArticleInfo("查看全部" + count + "门课程", ArticleInfo.SHOW_TYPE_ZHUANJIA_ALL));
+                        }
+
+                    }
+
                     if (!e.isDisposed()) {
                         e.onNext(dataList);
                         e.onComplete();
@@ -785,7 +827,7 @@ public class DoukeFragment extends BaseFragment {
                             dataList.addAll(data6);
                         }
                         if (data3.size() > 0) {
-                            dataList.add(new ArticleInfo("逗课精选", ArticleInfo.SHOW_TYPE_DECORATION));
+                            dataList.add(new ArticleInfo("优课精选", ArticleInfo.SHOW_TYPE_DECORATION));
                             dataList.addAll(data3);
                             dataList.add(new ArticleInfo("查看全部", ArticleInfo.SHOW_TYPE_ZHUANJIA_ALL));
                         }
@@ -877,6 +919,8 @@ public class DoukeFragment extends BaseFragment {
                 try {
                     LmsDataService mService = new LmsDataService();
                     List<ArticleInfo> dataList = mService.getDouKeListFromAPI(currentPage, teacherPhoneNumber);
+
+
                     e.onNext(dataList);
                     e.onComplete();
                 } catch (InterruptedIOException ex) {
@@ -896,12 +940,18 @@ public class DoukeFragment extends BaseFragment {
                 .subscribe(new Observer<List<ArticleInfo>>() {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {
+
                         disposables.add(d);
+
                     }
 
                     @Override
                     public void onNext(@NonNull List<ArticleInfo> result) {
+                        //T.showShort(getActivity(), "有新数据");
+
+                        cleanXRefreshView();
                         loadData(result);
+
                     }
 
                     @Override
@@ -923,7 +973,7 @@ public class DoukeFragment extends BaseFragment {
         if (list == null || list.size() < 10) {
             mXRefreshView.setPullLoadEnable(false);
         }
-        mXRefreshView.stopLoadMore();
+        // mXRefreshView.stopLoadMore();
         // 更新数据
         mDataList.addAll(list);
         mAdapter.notifyDataSetChanged();
@@ -1002,6 +1052,7 @@ public class DoukeFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        Log.e("主页数据", "手机号==" + PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_USER_ID, ""));
         phoneNumberBack = PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_USER_ID, "");
         if (!phoneNumberBack.equals(teacherPhoneNumber)) {
             // 前后两次手机号不同的时候刷新数据
@@ -1159,7 +1210,7 @@ public class DoukeFragment extends BaseFragment {
             public void subscribe(@NonNull ObservableEmitter<OrderInfo> e) throws Exception {
                 try {
                     LmsDataService mService = new LmsDataService();
-                    OrderInfo info = mService.getTheOrderInfoFromAPI(masterresid, price, teacherPhoneNumber, payType);
+                    OrderInfo info = mService.getTheOrderInfoFromAPI(masterresid, price, teacherPhoneNumber, unionid, payType);
                     if (!e.isDisposed()) {
                         e.onNext(info);
                     }
@@ -1271,7 +1322,7 @@ public class DoukeFragment extends BaseFragment {
      * @param orderInfo
      */
     private void startPay(OrderInfo orderInfo) {
-        if (api.getWXAppSupportAPI() >= com.tencent.mm.opensdk.constants.Build.PAY_SUPPORTED_SDK_INT) {
+        if (api.getWXAppSupportAPI() >= Build.PAY_SUPPORTED_SDK_INT) {
             currTradeID = orderInfo.getOut_trade_no();  // 获取当前商户订单号
             PayReq request = new PayReq();
             request.appId = orderInfo.getAppid();
@@ -1404,6 +1455,9 @@ public class DoukeFragment extends BaseFragment {
 
                     @Override
                     public void onNext(AppVersionInfo info) {
+//                        Log.e("版本apk信息",info.getTitle());
+//                        Log.e("版本apk信息",info.getContent());
+//                        Log.e("版本apk下载地址",info.getDownloadUrl());
                         if (StringUtils.isEmpty(info.getErrorCode()) || info.getErrorCode().equals("0")) {
                             return;
                         }
@@ -1525,4 +1579,56 @@ public class DoukeFragment extends BaseFragment {
             }
         }, 8000);
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void udateUI(MsgEvent event) {
+        if (event.getAction().equals("courseStudyBuySuccess")) {
+            currentPage = 1;
+            mDataList.clear();
+
+            getBannerInfoFromAPI();
+            getRefreshDataList();
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.bt_course:
+                Intent intent1 = new Intent(getActivity(), CourseAllActivity.class);
+                startActivity(intent1);
+                break;
+            case R.id.bt_expert:
+                Intent intent2 = new Intent(getActivity(), MasterAllActivity.class);
+                startActivity(intent2);
+
+                break;
+            case R.id.bt_famous_teacher:
+                Intent intent3 = new Intent(getActivity(), FamousTeacherAllActivity.class);
+                startActivity(intent3);
+                break;
+            case R.id.bt_school:
+                Intent intent4 = new Intent(getActivity(), SchoolAllActivity.class);
+                startActivity(intent4);
+                break;
+            case R.id.bt_group:
+                Intent intent5 = new Intent(getActivity(), GroupAllActivity.class);
+                intent5.putExtra("type","DoukeFragment");
+                startActivity(intent5);
+                break;
+        }
+    }
+
 }

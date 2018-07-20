@@ -14,8 +14,8 @@ import com.bj.eduteacher.tool.SxbLog;
 import com.bj.eduteacher.utils.LL;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.tencent.ilivesdk.core.ILiveLog;
-import com.tencent.ilivesdk.core.ILiveRoomManager;
+//import com.tencent.ilivesdk.core.ILiveLog;
+//import com.tencent.ilivesdk.core.ILiveRoomManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -397,7 +397,7 @@ public class UserServerHelper {
 
             String json = jasonPacket.toString();
             String res = post(REPORT_ME, json);
-            ILiveLog.i(TAG, "reportMe " + role + " action " + action);
+            //ILiveLog.i(TAG, "reportMe " + role + " action " + action);
             JSONTokener jsonParser = new JSONTokener(res);
             JSONObject response = (JSONObject) jsonParser.nextValue();
             int code = response.getInt("errorCode");
@@ -435,7 +435,7 @@ public class UserServerHelper {
                 Type listType = new TypeToken<ArrayList<MemberID>>() {
                 }.getType();
                 ArrayList<MemberID> result = new Gson().fromJson(record.toString(), listType);
-                ILiveLog.i(TAG, "size" + result.size());
+                //ILiveLog.i(TAG, "size" + result.size());
                 return result;
             }
             return null;
@@ -532,7 +532,7 @@ public class UserServerHelper {
                 for (int i = 0; i < record.length(); i++) {
                     recList.add(new RecordInfo(record.getJSONObject(i)));
                 }
-                ILiveLog.i(TAG, "size" + recList.size());
+                //ILiveLog.i(TAG, "size" + recList.size());
                 return recList;
             }
         } catch (JSONException e) {
@@ -618,7 +618,7 @@ public class UserServerHelper {
             JSONObject jasonPacket = new JSONObject();
             jasonPacket.put("token", MySelfInfo.getInstance().getToken());
             jasonPacket.put("id", id);
-            jasonPacket.put("current_roomnum", ILiveRoomManager.getInstance().getRoomId());
+            //jasonPacket.put("current_roomnum", ILiveRoomManager.getInstance().getRoomId());
             jasonPacket.put("roomnum", Integer.valueOf(roomid));
             String json = jasonPacket.toString();
             SxbLog.d(TAG, "getGetLinkSig->req:" + json);

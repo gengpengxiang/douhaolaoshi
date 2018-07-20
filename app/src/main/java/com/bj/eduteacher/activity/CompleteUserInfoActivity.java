@@ -18,14 +18,13 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.bj.eduteacher.BaseActivity;
 import com.bj.eduteacher.R;
 import com.bj.eduteacher.api.LmsDataService;
 import com.bj.eduteacher.api.MLProperties;
-import com.bj.eduteacher.manager.IntentManager;
-import com.bj.eduteacher.model.MySelfInfo;
-import com.bj.eduteacher.presenter.LoginHelper;
-import com.bj.eduteacher.presenter.viewinface.LoginView;
+import com.bj.eduteacher.entity.MsgEvent;
 import com.bj.eduteacher.tool.Constants;
 import com.bj.eduteacher.utils.KeyBoardUtils;
 import com.bj.eduteacher.utils.PreferencesUtils;
@@ -33,7 +32,12 @@ import com.bj.eduteacher.utils.StringUtils;
 import com.bj.eduteacher.utils.T;
 import com.bj.eduteacher.zzimgselector.view.ImageSelectorActivity;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.lzy.okgo.OkGo;
+import com.lzy.okgo.callback.StringCallback;
+import com.lzy.okgo.model.Response;
 import com.tbruyelle.rxpermissions2.RxPermissions;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -52,6 +56,7 @@ import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.bj.eduteacher.api.HttpUtilService.BASE_URL;
 import static com.bj.eduteacher.utils.BitmapUtils.changeFileSize;
 import static com.taobao.accs.ACCSManager.mContext;
 
@@ -60,7 +65,7 @@ import static com.taobao.accs.ACCSManager.mContext;
  * 用户信息完善页面，昵称，头像设置
  */
 
-public class CompleteUserInfoActivity extends BaseActivity implements LoginView {
+public class CompleteUserInfoActivity extends BaseActivity {
 
     @BindView(R.id.header_tv_title)
     TextView tvTitle;
@@ -80,24 +85,16 @@ public class CompleteUserInfoActivity extends BaseActivity implements LoginView 
     private Handler mHandler = new Handler();
 
     private String teacherPhoneNumber;
-    private String userPhotoPath;
-    private String userNickName;
-    private String currPhotoPath;
-    private String currNickName;
-
-    private String sxbStatus;
-
+    private String currPhotoPath,userPhotoPath;
+    private String currNickName,userNickName;
     private LmsDataService mService;
-    private LoginHelper sxbLoginHelper;
-
-    private String loginSuccAction;
+    private String unionid;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_complete_user_info);
         ButterKnife.bind(this);
-        sxbLoginHelper = new LoginHelper(this, this);
 
         initToolBar();
         initView();
@@ -107,7 +104,6 @@ public class CompleteUserInfoActivity extends BaseActivity implements LoginView 
     @Override
     protected void initToolBar() {
         super.initToolBar();
-        loginSuccAction = getIntent().getExtras().getString("LoginSuccAction", "0");
         ivBack.setVisibility(View.VISIBLE);
         tvTitle.setVisibility(View.VISIBLE);
         tvTitle.setText("完善个人资料");
@@ -128,19 +124,8 @@ public class CompleteUserInfoActivity extends BaseActivity implements LoginView 
     @Override
     protected void initData() {
         mService = new LmsDataService();
-        sxbStatus = getIntent().getStringExtra("SxbStatus");
-        userPhotoPath = PreferencesUtils.getString(this, MLProperties.BUNDLE_KEY_TEACHER_IMG, "");
         teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
-        userNickName = PreferencesUtils.getString(this, MLProperties.BUNDLE_KEY_TEACHER_NICK, "");
-
-        // 用户头像
-        if (!StringUtils.isEmpty(userPhotoPath)) {
-            imgUserPhoto.setImageURI(Uri.parse(userPhotoPath));
-        }
-        // 用户昵称
-        if (!StringUtils.isEmpty(userNickName)) {
-            edtNickname.setText(userNickName);
-        }
+        unionid = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_WECHAT_UNIONID,"");
     }
 
     /**
@@ -187,26 +172,109 @@ public class CompleteUserInfoActivity extends BaseActivity implements LoginView 
     void clickComplete() {
         currNickName = edtNickname.getText().toString().trim();
         KeyBoardUtils.closeKeybord(edtNickname, this);
-        if (StringUtils.isEmpty(userPhotoPath) && StringUtils.isEmpty(currPhotoPath)) {
+        if (StringUtils.isEmpty(currPhotoPath)) {
             T.showShort(this, "请选择一张图片作为您的头像！");
             return;
         }
-        if (StringUtils.isEmpty(userNickName) && StringUtils.isEmpty(currNickName)) {
+        if (StringUtils.isEmpty(currNickName)) {
             T.showShort(this, "昵称不能为空！");
             return;
         }
 
-        // 开始晚上用户的头像和昵称信息
+        // 开始完善用户的头像和昵称信息
         showLoadingDialog();
-        if (!StringUtils.isEmpty(currPhotoPath)) {
-            updateUserPhoto(currPhotoPath);
-        } else {
-            if (!StringUtils.isEmpty(currNickName) && !currNickName.equals(userNickName)) {
-                updateUserNickname(currNickName);
-            } else {
-                loginLiveAndEase();
+        updateUserPhoto();
+    }
+
+    private void updateUserPhoto() {
+        final String phoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
+        final String unionid = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_WECHAT_UNIONID, "");
+        Observable.create(new ObservableOnSubscribe<String[]>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<String[]> e) throws Exception {
+                String[] result = mService.uploadKidPhoto(phoneNumber,unionid, currPhotoPath);
+                e.onNext(result);
+                e.onComplete();
             }
-        }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<String[]>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                    }
+
+                    @Override
+                    public void onNext(@NonNull String[] result) {
+                        if (StringUtils.isEmpty(result[0]) || result[0].equals("0")) {
+                            T.showShort(CompleteUserInfoActivity.this, StringUtils.isEmpty(result[1]) ? "服务器开小差了，请待会重试" : result[1]);
+                        } else {
+                            userPhotoPath = result[1];
+                            PreferencesUtils.putString(CompleteUserInfoActivity.this, MLProperties.BUNDLE_KEY_TEACHER_IMG, userPhotoPath);
+                           updateUserNickName();
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        hideLoadingDialog();
+                        T.showShort(CompleteUserInfoActivity.this, "服务器开小差了，请稍后重试！");
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    private void updateUserNickName() {
+        Observable.create(new ObservableOnSubscribe<String[]>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<String[]> e) throws Exception {
+                String[] result = mService.updateUserNickName(teacherPhoneNumber,unionid, currNickName);
+                e.onNext(result);
+                e.onComplete();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<String[]>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull String[] result) {
+                        if (StringUtils.isEmpty(result[0]) || result[0].equals("0")) {
+                            T.showShort(CompleteUserInfoActivity.this, StringUtils.isEmpty(result[1]) ? "服务器开小差了，请待会重试" : result[1]);
+                        } else {
+                            userNickName = currNickName;
+                            Log.e("昵称设置成功",userNickName);
+                            PreferencesUtils.putString(CompleteUserInfoActivity.this, MLProperties.BUNDLE_KEY_TEACHER_NICK, userNickName);
+                            // 上传昵称成功后登录
+                            login();
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        hideLoadingDialog();
+                        T.showShort(CompleteUserInfoActivity.this, "服务器开小差了，请稍后重试！");
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    private void login() {
+        EventBus.getDefault().post(new MsgEvent("phoneloginsuccess"));
+        hideLoadingDialog();
+        Intent intent = new Intent(CompleteUserInfoActivity.this, MainActivity.class);
+        startActivity(intent);
+        CompleteUserInfoActivity.this.finish();
     }
 
     @OnClick(R.id.iv_userPhoto)
@@ -263,144 +331,6 @@ public class CompleteUserInfoActivity extends BaseActivity implements LoginView 
         }
     }
 
-    /**
-     * 上传用户头像
-     *
-     * @param filePath
-     */
-    private void updateUserPhoto(final String filePath) {
-        Observable.create(new ObservableOnSubscribe<String[]>() {
-            @Override
-            public void subscribe(@NonNull ObservableEmitter<String[]> e) throws Exception {
-                String[] result = mService.uploadKidPhoto(teacherPhoneNumber, filePath);
-                e.onNext(result);
-                e.onComplete();
-            }
-        }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<String[]>() {
-                    @Override
-                    public void onSubscribe(@NonNull Disposable d) {
-                    }
-
-                    @Override
-                    public void onNext(@NonNull String[] result) {
-                        if (StringUtils.isEmpty(result[0]) || result[0].equals("0")) {
-                            T.showShort(CompleteUserInfoActivity.this, StringUtils.isEmpty(result[1]) ? "服务器开小差了，请待会重试" : result[1]);
-                        } else {
-                            userPhotoPath = result[1];
-                            PreferencesUtils.putString(CompleteUserInfoActivity.this, MLProperties.BUNDLE_KEY_TEACHER_IMG, userPhotoPath);
-                            // 上传头像成功后，如果需要就上传昵称，否则结束页面
-                            if (StringUtils.isEmpty(userNickName)) {
-                                updateUserNickname(currNickName);
-                            } else {
-                                loginLiveAndEase();
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onError(@NonNull Throwable e) {
-                        hideLoadingDialog();
-                        T.showShort(CompleteUserInfoActivity.this, "服务器开小差了，请稍后重试！");
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
-    /**
-     * 登录直播和环信功能
-     */
-    private void loginLiveAndEase() {
-        MySelfInfo.getInstance().setAvatar(userPhotoPath);
-        MySelfInfo.getInstance().setNickName(userNickName);
-        MySelfInfo.getInstance().writeToCache(mContext);
-        // 判断后续相关初始化操作,根据直播状态判断下一步的动作
-        sxbLoginHelper.checkSxbLiveStatus(sxbStatus, teacherPhoneNumber);
-    }
-
-    /**
-     * 上传用户昵称
-     *
-     * @param nickname
-     */
-    private void updateUserNickname(final String nickname) {
-        Observable.create(new ObservableOnSubscribe<String[]>() {
-            @Override
-            public void subscribe(@NonNull ObservableEmitter<String[]> e) throws Exception {
-                String[] result = mService.updateUserNickName(teacherPhoneNumber, nickname);
-                e.onNext(result);
-                e.onComplete();
-            }
-        }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<String[]>() {
-                    @Override
-                    public void onSubscribe(@NonNull Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(@NonNull String[] result) {
-                        if (StringUtils.isEmpty(result[0]) || result[0].equals("0")) {
-                            T.showShort(CompleteUserInfoActivity.this, StringUtils.isEmpty(result[1]) ? "服务器开小差了，请待会重试" : result[1]);
-                        } else {
-                            userNickName = nickname;
-                            PreferencesUtils.putString(CompleteUserInfoActivity.this, MLProperties.BUNDLE_KEY_TEACHER_NICK, userNickName);
-                            // 上传昵称成功后登录直播和环信
-                            loginLiveAndEase();
-                        }
-                    }
-
-                    @Override
-                    public void onError(@NonNull Throwable e) {
-                        hideLoadingDialog();
-                        T.showShort(CompleteUserInfoActivity.this, "服务器开小差了，请稍后重试！");
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
-    @Override
-    public void loginSucc() {
-        // 检查环信是否登录
-        // checkIsLoginEase();
-        // 去掉环信功能，所以需要跳过环信的登录检测
-        loginSuccess();
-    }
-
-    @Override
-    public void completeInfo(String sxbStatus) {
-
-    }
-
-    @Override
-    public void loginFail(String module, int errCode, String errMsg) {
-        T.showShort(this, "网络连接异常，请稍后重试！");
-        Log.i("way", "modole: " + module + "-- errCode: " + errCode + " -- errMsg: " + errMsg);
-    }
-
-    /**
-     * 登录成功后跳转到首页
-     */
-    private void loginSuccess() {
-        hideLoadingDialog();
-        PreferencesUtils.putLong(this, MLProperties.PREFER_KEY_LOGIN_Time, System.currentTimeMillis());
-        PreferencesUtils.putInt(this, MLProperties.PREFER_KEY_LOGIN_STATUS, 1);
-        if (loginSuccAction.equals(IntentManager.LOGIN_SUCC_ACTION_MAINACTIVITY)) {
-            Intent intent = new Intent(CompleteUserInfoActivity.this, MainActivity.class);
-            startActivity(intent);
-        }
-        CompleteUserInfoActivity.this.finish();
-    }
 
     InputFilter emojiFilter = new InputFilter() {
         Pattern emoji = Pattern.compile("[\ud83c\udc00-\ud83c\udfff]|[\ud83d\udc00-\ud83d\udfff]|[\u2600-\u27ff]",

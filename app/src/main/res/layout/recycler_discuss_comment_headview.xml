@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout_info"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:id="@+id/layout_nouse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30px">
+
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/iv_authorPhoto"
+            fresco:actualImageScaleType="focusCrop"
+            fresco:placeholderImage="@mipmap/icon_default_photo_teacher"
+            fresco:placeholderImageScaleType="focusCrop"
+            fresco:roundAsCircle="true"
+            android:layout_width="108px"
+            android:layout_height="108px"
+            android:layout_centerVertical="true" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="108px"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@id/iv_authorPhoto"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_authorName"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginTop="10px"
+                android:layout_weight="63"
+                android:text="名字"
+                android:textColor="@color/colorTextBlack"
+                android:textSize="45px" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="50"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_createTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="时间"
+                    android:textSize="36px" />
+
+                <TextView
+                    android:id="@+id/tv_dianzan"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:text="点赞"
+                    android:textSize="36px" />
+
+                <TextView
+                    android:id="@+id/tv_huifu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:text="回复"
+                    android:textSize="36px" />
+            </LinearLayout>
+        </LinearLayout>
+    </RelativeLayout>
+
+    <TextView
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:textColor="@color/colorTextBlack"
+        android:textSize="52px" />
+
+    <TextView
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:id="@+id/tv_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="20dp"
+        android:paddingBottom="10dp"
+        android:background="#EFEFEF"
+        android:layout_below="@+id/layout_info"
+        android:layout_marginTop="10dp">
+        <RelativeLayout
+            android:id="@+id/layout_huifu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal">
+
+            <View
+                android:layout_width="90px"
+                android:layout_height="3px"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/tv1"
+                android:background="@color/line_gray_3" />
+
+            <TextView
+                android:textColor="@color/colorTextGray"
+                android:id="@+id/tv1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="最新回复" />
+
+            <View
+                android:layout_width="90px"
+                android:layout_height="3px"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/tv1"
+                android:background="@color/line_gray_3" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <!--<RelativeLayout
+        android:id="@+id/layout_huifu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/layout_info"
+        android:layout_marginTop="10dp"
+        android:background="#EFEFEF">
+
+        <View
+            android:layout_width="90px"
+            android:layout_height="3px"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/tv1"
+            android:background="@color/line_gray_3" />
+
+        <TextView
+            android:id="@+id/tv1"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="最新回复" />
+
+        <View
+            android:layout_width="90px"
+            android:layout_height="3px"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/tv1"
+            android:background="@color/line_gray_3" />
+    </RelativeLayout>-->
+</LinearLayout>
+

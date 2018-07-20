@@ -32,12 +32,14 @@
             android:visibility="gone" />
 
         <TextView
+            android:id="@+id/tv_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:textColor="#FFF"
-            android:textSize="@dimen/text_size_title_sub"
-            android:visibility="gone" />
+            android:textSize="15sp"
+            android:text="取消"
+            android:visibility="gone"/>
     </LinearLayout>
 
     <LinearLayout
@@ -59,6 +61,7 @@
             android:visibility="gone" />
 
         <TextView
+            android:paddingRight="16dp"
             android:id="@+id/tv_share"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -133,6 +136,7 @@
         android:layout_toRightOf="@+id/header_ll_left">
 
         <TextView
+            android:layout_marginRight="10dp"
             android:id="@+id/header_tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -142,10 +146,35 @@
             android:textSize="17sp"
             android:visibility="visible" />
 
+
         <android.support.v7.widget.AppCompatSpinner
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:scrollbars="none"
             android:visibility="gone" />
     </LinearLayout>
+
+    <TextView
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:lines="1"
+        android:textColor="#FFF"
+        android:textSize="17sp"
+        android:visibility="gone" />
+
+    <TextView
+        android:layout_toRightOf="@+id/header_ll_left"
+        android:layout_centerVertical="true"
+        android:id="@+id/tv_title_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:lines="1"
+        android:textColor="#FFF"
+        android:textSize="17sp"
+        android:visibility="gone" />
 </RelativeLayout>

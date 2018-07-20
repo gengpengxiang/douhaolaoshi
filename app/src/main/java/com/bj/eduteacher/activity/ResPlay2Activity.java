@@ -30,7 +30,7 @@ import com.bj.eduteacher.utils.PreferencesUtils;
 import com.bj.eduteacher.utils.ScreenUtils;
 import com.bj.eduteacher.utils.StringUtils;
 import com.bj.eduteacher.utils.T;
-import com.bj.eduteacher.view.MyJZView;
+
 import com.umeng.analytics.MobclickAgent;
 
 import butterknife.BindView;
@@ -55,7 +55,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public class ResPlay2Activity extends BaseActivity {
 
-    private static final String ARTICLE_AGREE_TYPE_YES = "add";
+   /* private static final String ARTICLE_AGREE_TYPE_YES = "add";
     private static final String ARTICLE_AGREE_TYPE_NO = "del";
     private static final String ARTICLE_AGREE_TYPE_SEARCH = "status";
 
@@ -70,7 +70,7 @@ public class ResPlay2Activity extends BaseActivity {
     @BindView(R.id.ll_bottomBar)
     LinearLayout llBottomBar;
 
-    private MyJZView mPlayer;
+//    private MyJZView mPlayer;
 
     private String resID;
     private String resUrl;
@@ -169,7 +169,7 @@ public class ResPlay2Activity extends BaseActivity {
     void clickComment() {
         // 点赞评论需要登录
         if (StringUtils.isEmpty(teacherPhoneNumber)) {
-            IntentManager.toLoginActivity(this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
+            IntentManager.toLoginSelectActivity(this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
             return;
         }
 
@@ -279,7 +279,7 @@ public class ResPlay2Activity extends BaseActivity {
         MobclickAgent.onEvent(this, "article_like");
         // 点赞评论需要登录
         if (StringUtils.isEmpty(teacherPhoneNumber)) {
-            IntentManager.toLoginActivity(this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
+            IntentManager.toLoginSelectActivity(this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
             return;
         }
 
@@ -394,9 +394,9 @@ public class ResPlay2Activity extends BaseActivity {
                 }
             }
 
-            /**
+            *//**
              * 根据手机屏幕的朝向角度，来设置内容的横竖屏，并且记录状态
-             */
+             *//*
             if (orientation > 45 && orientation < 135) {
                 LL.i("··········反向横屏··········");
                 return;
@@ -421,5 +421,5 @@ public class ResPlay2Activity extends BaseActivity {
         public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
         }
-    }
+    }*/
 }

@@ -35,13 +35,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:icon,android:allowBackup">
-
         <activity
             android:name=".activity.MainActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
-
         <activity
             android:name=".activity.SplashActivity"
             android:screenOrientation="portrait"
@@ -52,12 +50,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".activity.GuideActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".activity.DoukeDetailActivity"
             android:hardwareAccelerated="true"
@@ -68,29 +64,24 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
-
         <activity
-            android:name=".activity.LoginActivity"
+            android:name=".login.view.LoginActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateHidden" />
-
         <activity
             android:name=".activity.CompleteUserInfoActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateHidden" />
-
         <activity
             android:name=".activity.LoginHelpActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".activity.SettingActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".activity.ProtocolActivity"
             android:launchMode="singleTop"
@@ -171,6 +162,7 @@
             android:name=".activity.ResPlayActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:screenOrientation="sensor" />
+        <!--
         <activity
             android:name=".activity.LivePlayBackActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -180,17 +172,16 @@
             android:name=".activity.LiveAllActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
+        -->
         <activity
             android:name=".activity.ResCommentActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".wxapi.WXEntryActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:launchMode="singleTop"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
+            android:theme="@android:style/Theme.Translucent" />
 
         <service android:name=".service.DownloadAppService">
             <intent-filter>
@@ -216,14 +207,18 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <!-- 避免部分机器调用摄像头时自动横竖屏切换造成Activity重建 -->
-        <activity
+        <!--
+            <activity
             android:name=".activity.LiveActivity"
             android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateHidden" />
+        -->
 
-        <!--&lt;!&ndash; EaseUI &ndash;&gt;
+
+        <!--
+        &lt;!&ndash; EaseUI &ndash;&gt;
         &lt;!&ndash; 显示下载大图页面 android:theme="@style/horizontal_slide" &ndash;&gt;
         <activity
             android:name=".zzeaseui.ui.EaseShowBigImageActivity"
@@ -236,9 +231,11 @@
         <activity
             android:name=".zzeaseui.ui.EaseShowVideoActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden" />-->
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        -->
 
-        <!--ImageSelector-->
+
+        <!-- ImageSelector -->
         <activity
             android:name=".zzimgselector.view.ImageSelectorActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
@@ -256,7 +253,6 @@
         <meta-data
             android:name="design_height"
             android:value="1920" />
-
         <meta-data
             android:name="UMENG_APPKEY"
             android:value="587cc53a766613734e00164b" />
@@ -267,7 +263,7 @@
         <meta-data
             android:name="UMENG_CHANNEL"
             android:value="${UMENG_CHANNEL_VALUE}" />
-        <!--pushsdk-->
+        <!-- pushsdk -->
         <service
             android:name="com.taobao.accs.ChannelService"
             android:exported="true"
@@ -279,7 +275,6 @@
                 <action android:name="com.taobao.accs.intent.action.ELECTION" />
             </intent-filter>
         </service>
-
         <service
             android:name="com.taobao.accs.data.MsgDistributeService"
             android:exported="true">
@@ -299,13 +294,13 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_REMOVED" />
+
                 <data android:scheme="package" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.USER_PRESENT" />
             </intent-filter>
         </receiver>
-
         <receiver
             android:name="com.taobao.accs.ServiceReceiver"
             android:process=":channel">
@@ -320,7 +315,6 @@
         <service
             android:name="com.taobao.accs.ChannelService$KernelService"
             android:process=":channel" />
-
         <service
             android:name="org.android.agoo.accs.AgooService"
             android:exported="true">
@@ -328,7 +322,6 @@
                 <action android:name="com.taobao.accs.intent.action.RECEIVE" />
             </intent-filter>
         </service>
-
         <service
             android:name="com.umeng.message.UmengIntentService"
             android:exported="true"
@@ -337,7 +330,6 @@
                 <action android:name="org.agoo.android.intent.action.RECEIVE" />
             </intent-filter>
         </service>
-
         <service
             android:name="com.umeng.message.XiaomiIntentService"
             android:exported="true"
@@ -356,6 +348,7 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_REMOVED" />
+
                 <data android:scheme="package" />
             </intent-filter>
         </receiver>
@@ -389,7 +382,6 @@
                 <action android:name="com.umeng.message.message.handler.action" />
             </intent-filter>
         </service>
-
         <service
             android:name="com.umeng.message.UmengDownloadResourceService"
             android:exported="false" />
@@ -401,6 +393,68 @@
             <grant-uri-permission android:pathPattern=".*" />
         </provider>
 
+        <activity
+            android:name=".community.details.view.ArticleDetailActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".community.publish.view.PublishActivity"
+            android:configChanges="keyboardHidden|orientation|locale"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+        <!--
+            <activity android:name=".find.publish.view.PublishActivity"
+            android:configChanges="keyboardHidden|orientation|locale|navigation"
+            android:windowSoftInputMode="stateHidden|adjustResize"
+            android:screenOrientation="portrait"></activity>
+        -->
+        <activity
+            android:name=".prize.view.PrizeActivity"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".activity.CourseAllActivity"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".group.list.view.GroupAllActivity"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".group.detail.view.GroupDetailActivity"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".login.view.LoginSelectActivity"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".course.view.CourseDetailActivity2"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".course.fragment.discuss.comment.DiscussCommentActivity"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".course.fragment.discuss.publish.DiscussPublishActivity"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".activity.ZhuantiActivity"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".school.list.view.SchoolAllActivity"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".school.detail.view.SchoolDetailActivity"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".master.view.MasterAllActivity"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".videoplayer.view.PlayerActivity"
+            android:configChanges="orientation|keyboard|locale|screenSize|layoutDirection"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".group.detail.fragment.task.DiscussTaskActivity"
+            android:launchMode="singleTop" />
+        <activity android:name=".answer.view.AnswerHomeActivity" />
+        <activity android:name=".answer.view.AnswerActivity" />
+        <activity android:name=".answer.view.ExamResultActivity"></activity>
     </application>
 
 </manifest>

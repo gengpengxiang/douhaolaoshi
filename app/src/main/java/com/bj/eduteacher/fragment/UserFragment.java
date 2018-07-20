@@ -25,37 +25,52 @@ import android.widget.TextView;
 import com.andview.refreshview.utils.LogUtils;
 import com.bj.eduteacher.BaseFragment;
 import com.bj.eduteacher.R;
-import com.bj.eduteacher.activity.LiveAllActivity;
 import com.bj.eduteacher.activity.SettingActivity;
 import com.bj.eduteacher.api.LmsDataService;
 import com.bj.eduteacher.api.MLConfig;
 import com.bj.eduteacher.api.MLProperties;
+import com.bj.eduteacher.dialog.BindPhoneDialog;
 import com.bj.eduteacher.dialog.CancelConfirmAlertDialog;
 import com.bj.eduteacher.dialog.CancelConfirmAlertDialog4;
 import com.bj.eduteacher.dialog.InviteOthersAlertDialog;
 import com.bj.eduteacher.dialog.UpdateAPPAlertDialog;
 import com.bj.eduteacher.dialog.UpdateNicknameDialog;
 import com.bj.eduteacher.entity.AppVersionInfo;
-import com.bj.eduteacher.entity.TeacherInfo;
+import com.bj.eduteacher.entity.MsgEvent;
+import com.bj.eduteacher.integral.model.Doubi;
+import com.bj.eduteacher.integral.presenter.IntegralPresenter;
+import com.bj.eduteacher.integral.view.IViewintegral;
+import com.bj.eduteacher.login.model.UserInfo;
+import com.bj.eduteacher.login.view.LoginActivity;
 import com.bj.eduteacher.manager.UMPushManager;
 import com.bj.eduteacher.model.MySelfInfo;
-import com.bj.eduteacher.presenter.LoginHelper;
 import com.bj.eduteacher.presenter.viewinface.LogoutView;
+import com.bj.eduteacher.prize.view.PrizeActivity;
 import com.bj.eduteacher.service.DownloadAppService;
-import com.bj.eduteacher.tool.Constants;
+import com.bj.eduteacher.userinfo.model.BinderInfo;
+import com.bj.eduteacher.userinfo.presenter.UserinfoPresenter;
+import com.bj.eduteacher.userinfo.view.IViewUserinfo;
 import com.bj.eduteacher.utils.AppUtils;
 import com.bj.eduteacher.utils.KeyBoardUtils;
 import com.bj.eduteacher.utils.LL;
 import com.bj.eduteacher.utils.PreferencesUtils;
 import com.bj.eduteacher.utils.StringUtils;
 import com.bj.eduteacher.utils.T;
+import com.bj.eduteacher.utils.TelNumMatch;
+import com.bj.eduteacher.wxapi.IViewWXShare;
+import com.bj.eduteacher.wxapi.WXSharePresenter;
 import com.bj.eduteacher.zzimgselector.view.ImageSelectorActivity;
 import com.bj.eduteacher.zzokhttp.OkHttpUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.hpplay.callback.HpplayWindowPlayCallBack;
-import com.hpplay.link.HpplayLinkControl;
 import com.tbruyelle.rxpermissions2.RxPermissions;
+import com.tencent.mm.opensdk.modelmsg.SendAuth;
+import com.tencent.mm.opensdk.openapi.IWXAPI;
+import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.umeng.analytics.MobclickAgent;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.io.InterruptedIOException;
@@ -65,6 +80,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -83,7 +99,7 @@ import static com.bj.eduteacher.utils.BitmapUtils.changeFileSize;
  * Created by zz379 on 2017/4/7.
  */
 
-public class UserFragment extends BaseFragment implements LogoutView {
+public class UserFragment extends BaseFragment implements IViewintegral, IViewWXShare, IViewUserinfo {
 
     @BindView(R.id.header_tv_title)
     TextView tvTitle;
@@ -105,12 +121,19 @@ public class UserFragment extends BaseFragment implements LogoutView {
     TextView tvNickname;
     @BindView(R.id.sv_content)
     ScrollView mScrollView;
+    @BindView(R.id.rl_jifen)
+    RelativeLayout rlJifen;
+    @BindView(R.id.tv_doubisum)
+    TextView tvDoubisum;
+    @BindView(R.id.rl_inviteFriends)
+    RelativeLayout rlInviteFriends;
+    @BindView(R.id.tv_user_weixin)
+    TextView tvUserWeixin;
 
+    private IntegralPresenter integralPresenter;
     private String userPhotoPath;
-    private String userName, userPhoneNumber, userSchoolName, userClassName;
-    private String classCode;
+    private String userPhoneNumber;
     private String schoolID;
-    private String schoolImg;
     private String userNickname;
 
     private long currMillis = 0;
@@ -118,7 +141,10 @@ public class UserFragment extends BaseFragment implements LogoutView {
     private final CompositeDisposable disposables = new CompositeDisposable();
     // 是否已经绑定班级：1-已绑定、0-未绑定
     private String classLinked;
-    private LoginHelper logoutHelper;
+
+    private WXSharePresenter wxSharePresenter;
+    private UserinfoPresenter userinfoPresenter;
+    private Unbinder unbinder;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -129,11 +155,17 @@ public class UserFragment extends BaseFragment implements LogoutView {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_user_info, container, false);
-        ButterKnife.bind(this, view);
-        logoutHelper = new LoginHelper(getActivity(), this);
+        unbinder = ButterKnife.bind(this, view);
+        EventBus.getDefault().register(this);
 
+        integralPresenter = new IntegralPresenter(getActivity(), this);
+        wxSharePresenter = new WXSharePresenter(getActivity(), this);
+        userinfoPresenter = new UserinfoPresenter(getActivity(), this);
         initToolbar();
         initView();
+        String unionid = PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_WECHAT_UNIONID, "0");
+        userinfoPresenter.getUserInfo(userPhoneNumber,unionid);
+
         return view;
     }
 
@@ -172,44 +204,45 @@ public class UserFragment extends BaseFragment implements LogoutView {
     }
 
     private void initView() {
+
+
         userPhotoPath = PreferencesUtils.getString(getActivity(), MLProperties.BUNDLE_KEY_TEACHER_IMG);
-        userName = PreferencesUtils.getString(getActivity(), MLProperties.BUNDLE_KEY_CLASS_NAME);
-        userSchoolName = PreferencesUtils.getString(getActivity(), MLProperties.BUNDLE_KEY_SCHOOL_NAME, "");
-        classCode = PreferencesUtils.getString(getActivity(), MLProperties.BUNDLE_KEY_KID_ID, "");
         schoolID = PreferencesUtils.getString(getActivity(), MLProperties.BUNDLE_KEY_SCHOOL_CODE, "");
-        schoolImg = PreferencesUtils.getString(getActivity(), MLProperties.BUNDLE_KEY_SCHOOL_IMG, "");
+
         // 是否绑定班级
         classLinked = PreferencesUtils.getString(getActivity(), MLProperties.BUNDLE_KEY_CLASS_LINKED, "0");
         userPhoneNumber = PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_USER_ID, "");
         userNickname = PreferencesUtils.getString(getActivity(), MLProperties.BUNDLE_KEY_TEACHER_NICK, "");
-        if (!StringUtils.isEmpty(userNickname)) {
-            tvNickname.setText(userNickname);
-        }
-        // 用户头像
-        if (!StringUtils.isEmpty(userPhotoPath)) {
-            imgUserPhoto.setImageURI(Uri.parse(userPhotoPath));
-        }
-        //  用户名称
-        if (StringUtils.isEmpty(userName)) {
-            tvUserName.setText("暂无");
-        } else {
-            tvUserName.setText(userName);
-        }
-        // 用户手机号
-        tvUserPhoneNumber.setText(userPhoneNumber);
+//        if (!StringUtils.isEmpty(userNickname)) {
+//            tvNickname.setText(userNickname);
+//        }
+//        // 用户头像
+//        if (!StringUtils.isEmpty(userPhotoPath)) {
+//            Log.e("头像地址", userPhotoPath);
+//            imgUserPhoto.setImageURI(Uri.parse(userPhotoPath));
+//        }
+//        // 用户手机号
+//        if ((PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_USER_ID) == null)) {
+//            tvUserPhoneNumber.setText("未绑定");
+//        } else {
+//            tvUserPhoneNumber.setText(PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_USER_ID));
+//        }
+//
+//        if ("1".equals(classLinked)) {
+//            rlClearClass.setVisibility(View.VISIBLE);
+//        } else {
+//            rlClearClass.setVisibility(View.GONE);
+//        }
 
-        // 学校名称
-        if (StringUtils.isEmpty(userSchoolName)) {
-            tvSchoolName.setText("未绑定学校");
-        } else {
-            tvSchoolName.setText(userSchoolName);
-        }
-
-        if ("1".equals(classLinked)) {
-            rlClearClass.setVisibility(View.VISIBLE);
-        } else {
-            rlClearClass.setVisibility(View.GONE);
-        }
+        String unionid = PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_WECHAT_UNIONID, "0");
+        integralPresenter.getDouBi("chaxun", userPhoneNumber, "chaxun", unionid);
+//        if (!PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_WECHAT_UNIONID,"0").equals("0")) {
+//            //add
+//            String nicheng = PreferencesUtils.getString(getActivity(),MLProperties.PREFER_KEY_WECHAT_NICHENG,"");
+//            tvUserWeixin.setText(nicheng);
+//        } else {
+//            tvUserWeixin.setText("未绑定");
+//        }
     }
 
     @Override
@@ -293,13 +326,49 @@ public class UserFragment extends BaseFragment implements LogoutView {
         dialog.show();
     }
 
+    private void showBindPhoneDialog() {
+        BindPhoneDialog dialog = new BindPhoneDialog(getActivity());
+        dialog.setCancelClickListener(new BindPhoneDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(BindPhoneDialog sweetAlertDialog, EditText mContentEdt) {
+                KeyBoardUtils.closeKeybord(mContentEdt, getActivity());
+                sweetAlertDialog.dismiss();
+            }
+        });
+        dialog.setConfirmClickListener(new BindPhoneDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(BindPhoneDialog sweetAlertDialog, EditText mContentEdt) {
+                String phone = mContentEdt.getText().toString().trim();
+                KeyBoardUtils.closeKeybord(mContentEdt, getActivity());
+                // 绑定手机号
+                if (TelNumMatch.isValidPhoneNumber(phone)) {
+                    sweetAlertDialog.dismiss();
+                    Log.e("微信验证22", "");
+                    //updateUserNickname(nickname);
+                    if (!PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_WECHAT_UNIONID,"0").equals("0")) {
+                        String unionid = PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_WECHAT_UNIONID,"0");
+                        Log.e("微信验证", unionid + "");
+                        userinfoPresenter.getBindInfo(unionid, phone, "weixin");
+                    }
+
+                } else {
+                    T.showShort(getActivity(), "无效的手机号");
+                }
+            }
+        });
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
+    }
+
     private void updateUserNickname(final String nickname) {
+        final String phoneNumber = PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_USER_ID, "");
+        final String unionid = PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_WECHAT_UNIONID, "");
         Observable.create(new ObservableOnSubscribe<String[]>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<String[]> e) throws Exception {
                 try {
                     LmsDataService mService = new LmsDataService();
-                    String[] result = mService.updateUserNickName(userPhoneNumber, nickname);
+                    String[] result = mService.updateUserNickName(phoneNumber, unionid,nickname);
                     e.onNext(result);
                     e.onComplete();
                 } catch (InterruptedIOException ex) {
@@ -349,37 +418,6 @@ public class UserFragment extends BaseFragment implements LogoutView {
                 });
     }
 
-    @OnClick(R.id.rl_ilive)
-    void clickFindTeacherLive() {
-        Intent intent = new Intent(getActivity(), LiveAllActivity.class);
-        startActivity(intent);
-    }
-
-    @OnClick(R.id.rl_lebo)
-    void clickStartMirror() {
-        if (System.currentTimeMillis() - currMillis > 1000) {
-            // 显示lebo投屏页面
-            HpplayLinkControl control = HpplayLinkControl.getInstance();
-            control.initHpplayLink(getActivity(), MLProperties.LE_BO_KEY);
-            control.showHpplayWindow(getActivity(), new HpplayWindowPlayCallBack() {
-                @Override
-                public void onHpplayWindowDismiss() {
-
-                }
-
-                @Override
-                public void onIsConnect(boolean b) {
-
-                }
-
-                @Override
-                public void onIsPlaySuccess(boolean b) {
-
-                }
-            });
-            currMillis = System.currentTimeMillis();
-        }
-    }
 
     @OnClick(R.id.rl_question)
     void clickQuestion() {
@@ -633,6 +671,7 @@ public class UserFragment extends BaseFragment implements LogoutView {
     @OnClick(R.id.rl_about)
     void clickAbout() {
         Intent intent = new Intent(getActivity(), SettingActivity.class);
+        intent.putExtra("symbol", "UserFragment");
         startActivity(intent);
     }
 
@@ -655,35 +694,23 @@ public class UserFragment extends BaseFragment implements LogoutView {
         UMPushManager.getInstance().removeAllTag(schoolID);
         // 清空缓存
         cleanAllPreferencesData();
-        // 退出环信
-        // EMClient.getInstance().logout(true);
-        // 推出腾讯
-        logoutHelper.standardLogout("sxb" + userPhoneNumber);
-    }
 
-    @Override
-    public void logoutSucc() {
+
+        PreferencesUtils.putInt(getActivity(), "remindLoginStatus", 0);
+        Log.e("退出登录", userPhoneNumber + "==");
+        EventBus.getDefault().post(new MsgEvent("loginout"));
+
         // 跳转到首页
         bottomTabListener.onTabChange(0);
         mScrollView.scrollTo(0, 0);
-    }
 
-    @Override
-    public void logoutFail() {
-        // 跳转到首页
-        bottomTabListener.onTabChange(0);
-        mScrollView.scrollTo(0, 0);
+        // 清除所有app内的数据
+        PreferencesUtils.cleanAllData(getActivity());
     }
 
     private void cleanAllPreferencesData() {
         // 清除所有app内的数据
         PreferencesUtils.cleanAllData(getActivity());
-        // 清除直播设置数据
-        getActivity().getSharedPreferences("data", Context.MODE_PRIVATE).edit().clear().apply();
-        // 清除直播个人数据
-        getActivity().getSharedPreferences(Constants.USER_INFO, Context.MODE_PRIVATE).edit().clear().apply();
-        // 清除环信数据
-        getActivity().getSharedPreferences("EM_SP_AT_MESSAGE", Context.MODE_PRIVATE).edit().clear().apply();
     }
 
     private void actionSelectKidPhoto() {
@@ -710,6 +737,114 @@ public class UserFragment extends BaseFragment implements LogoutView {
                 }
             }
         }
+    }
+
+
+    @Override
+    public void getDouBi(Doubi doubi) {
+        tvDoubisum.setText("积分: " + doubi.getData().getUser_doubinum_sum() + "，快去抽奖");
+    }
+
+    @Override
+    public void share() {
+
+    }
+
+    @OnClick({R.id.rl_phonenumber, R.id.rl_weixin, R.id.rl_jifen, R.id.rl_inviteFriends})
+    public void onClick(View view) {
+        String unionid = PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_WECHAT_UNIONID,"");
+        switch (view.getId()) {
+            case R.id.rl_jifen:
+                Intent intent = new Intent();
+                intent.setClass(getActivity(), PrizeActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.rl_inviteFriends:
+                wxSharePresenter.invite(userPhoneNumber,unionid);
+                break;
+            case R.id.rl_phonenumber:
+                if (PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_USER_ID) == null
+                        || PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_USER_ID).equals("0")
+                        || StringUtils.isEmpty(PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_USER_ID))) {
+                    //showBindPhoneDialog();
+                    Intent intent1 = new Intent(getActivity(), LoginActivity.class);
+                    intent1.putExtra("laiyuan", "bind");
+                    startActivity(intent1);
+                } else {
+                    //T.showShort(getActivity(), "您已绑定了手机号");
+                }
+
+                break;
+            case R.id.rl_weixin:
+                if (!PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_WECHAT_UNIONID,"0").equals("0")) {
+                    //T.showShort(getActivity(), "您已绑定了微信号");
+                } else {
+                    wxBind();
+                }
+        }
+    }
+
+    private void wxBind() {
+        IWXAPI api = WXAPIFactory.createWXAPI(getActivity(), MLProperties.APP_DOUHAO_TEACHER_ID);
+        SendAuth.Req req = new SendAuth.Req();
+        req.scope = "snsapi_userinfo";
+        req.state = "bind";
+        api.sendReq(req);
+    }
+
+    @Override
+    public void getBindInfoSuccess(BinderInfo binderInfo) {
+//        tvUserPhoneNumber.setText(result);
+//
+//        String nicheng = PreferencesUtils.getString(getActivity(),MLProperties.PREFER_KEY_WECHAT_NICHENG,"");
+//        tvUserWeixin.setText(nicheng);
+//
+//        userPhotoPath = PreferencesUtils.getString(getActivity(), MLProperties.BUNDLE_KEY_TEACHER_IMG);
+//
+//        userNickname = PreferencesUtils.getString(getActivity(), MLProperties.BUNDLE_KEY_TEACHER_NICK, "");
+//        tvNickname.setText(userNickname);
+//
+//        imgUserPhoto.setImageURI(Uri.parse(userPhotoPath));
+
+        String phoneNumber = PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_USER_ID, "");
+        String unionid = PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_WECHAT_UNIONID, "");
+        userinfoPresenter.getUserInfo(binderInfo.getData().getPhone(),binderInfo.getData().getUnionid());
+    }
+
+    @Override
+    public void getBindInfoFail(String result) {
+        T.showShort(getActivity(), result);
+    }
+
+    @Override
+    public void getUserInfoSuccess(UserInfo userInfo) {
+
+
+        Log.e("用户数据",userInfo.getData().toString());
+        if(!StringUtils.isEmpty(userInfo.getData().getTeacherphone())){
+            tvUserPhoneNumber.setText(userInfo.getData().getTeacherphone());
+        }else {
+            tvUserPhoneNumber.setText("未绑定");
+        }
+        if(!userInfo.getData().getWeixin_unionid().equals("0")){
+            tvUserWeixin.setText(userInfo.getData().getWeixin_nicheng());
+        }else {
+            tvUserWeixin.setText("未绑定");
+        }
+
+        if (!StringUtils.isEmpty(userInfo.getData().getNicheng())) {
+            tvNickname.setText(userInfo.getData().getNicheng());
+        }
+        // 用户头像
+        if (!StringUtils.isEmpty(userInfo.getData().getTeacherimg_url())) {
+            imgUserPhoto.setImageURI(Uri.parse(userInfo.getData().getTeacherimg_url()));
+        }
+
+    }
+
+    @Override
+    public void getUserInfoFail() {
+
     }
 
     private class MyCheckNewVersionTask extends AsyncTask<String, Integer, AppVersionInfo> {
@@ -802,7 +937,9 @@ public class UserFragment extends BaseFragment implements LogoutView {
             LmsDataService mService = new LmsDataService();
             String[] result;
             try {
-                result = mService.uploadKidPhoto(userPhoneNumber, kidPicturePath);
+                String phoneNumber = PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_USER_ID, "");
+                String unionid = PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_WECHAT_UNIONID, "");
+                result = mService.uploadKidPhoto(phoneNumber,unionid, kidPicturePath);
             } catch (Exception e) {
                 e.printStackTrace();
                 LL.e(e);
@@ -820,7 +957,7 @@ public class UserFragment extends BaseFragment implements LogoutView {
             if (StringUtils.isEmpty(result[0]) || result[0].equals("0")) {
                 T.showShort(getActivity(), StringUtils.isEmpty(result[1]) ? "服务器开小差了，请待会重试" : result[1]);
             } else {
-                T.showShort(getActivity(), "头像更新成功");
+                //T.showShort(getActivity(), "头像更新成功");
                 userPhotoPath = result[1];
                 PreferencesUtils.putString(getActivity(), MLProperties.BUNDLE_KEY_TEACHER_IMG, userPhotoPath);
                 if (!StringUtils.isEmpty(userPhotoPath)) {
@@ -830,101 +967,37 @@ public class UserFragment extends BaseFragment implements LogoutView {
         }
     }
 
-    private class GetTeacherInfoTask extends AsyncTask<String, Integer, String[]> {
-
-        @Override
-        protected String[] doInBackground(String... params) {
-            LmsDataService mService = new LmsDataService();
-            String[] result;
-            try {
-                result = mService.getTeacherInfoFromAPI(userPhoneNumber);
-            } catch (Exception e) {
-                e.printStackTrace();
-                LL.e(e);
-                result = new String[3];
-                result[0] = "0";
-            }
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(String[] strings) {
-            if (!StringUtils.isEmpty(strings[0]) && strings[0].equals("1")) {
-                PreferencesUtils.putString(getActivity(), MLProperties.BUNDLE_KEY_CLASS_NAME, strings[1]);
-                tvUserName.setText(strings[1]);
-            }
-        }
-    }
-
-    private void getTeacherInfo(final String phoneNumber) {
-        Observable.create(new ObservableOnSubscribe<TeacherInfo>() {
-            @Override
-            public void subscribe(@NonNull ObservableEmitter<TeacherInfo> emitter) throws Exception {
-                try {
-                    if (emitter.isDisposed()) return;
-                    LmsDataService mService = new LmsDataService();
-                    TeacherInfo teacherInfo = mService.getTeacherInfoFromAPI2(phoneNumber);
-                    emitter.onNext(teacherInfo);
-                    emitter.onComplete();
-                } catch (InterruptedIOException ex) {
-                    if (!emitter.isDisposed()) {
-                        emitter.onError(ex);
-                        return;
-                    }
-                } catch (InterruptedException ex) {
-                    if (!emitter.isDisposed()) {
-                        emitter.onError(ex);
-                        return;
-                    }
-                }
-            }
-        }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<TeacherInfo>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        disposables.add(d);
-                    }
-
-                    @Override
-                    public void onNext(TeacherInfo teacherInfo) {
-                        userSchoolName = teacherInfo.getSchoolName();
-                        schoolImg = teacherInfo.getSchoolImg();
-                        PreferencesUtils.putString(getActivity(), MLProperties.BUNDLE_KEY_CLASS_NAME, teacherInfo.getTeacherName());
-                        PreferencesUtils.putString(getActivity(), MLProperties.PREFER_KEY_USER_ID, teacherInfo.getTeacherPhoneNumber());
-                        PreferencesUtils.putString(getActivity(), MLProperties.BUNDLE_KEY_TEACHER_IMG, teacherInfo.getTeacherImg());
-                        PreferencesUtils.putString(getActivity(), MLProperties.BUNDLE_KEY_SCHOOL_NAME, teacherInfo.getSchoolName());
-                        PreferencesUtils.putString(getActivity(), MLProperties.BUNDLE_KEY_SCHOOL_CODE, teacherInfo.getSchoolCode());
-                        PreferencesUtils.putString(getActivity(), MLProperties.BUNDLE_KEY_SCHOOL_IMG, schoolImg);
-                        if (!StringUtils.isEmpty(userSchoolName)) {
-                            tvSchoolName.setText(userSchoolName);
-                        }
-//                        if (!StringUtils.isEmpty(schoolImg)) {
-//                            imgSchoolBg.setImageURI(Uri.parse(schoolImg));
-//                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        T.showShort(getActivity(), "服务器开小差了，请待会重试");
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
     @Override
     public void onDestroy() {
-        logoutHelper.onDestory();
+
+        integralPresenter.onDestory();
+        wxSharePresenter.onDestory();
+        userinfoPresenter.onDestory();
+        EventBus.getDefault().unregister(this);
+        unbinder.unbind();
         super.onDestroy();
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        String phoneNumber = PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_USER_ID, "");
+        String unionid = PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_WECHAT_UNIONID, "");
+        userinfoPresenter.getUserInfo(phoneNumber,unionid);
+
+        integralPresenter.getDouBi("chaxun", userPhoneNumber, "chaxun", unionid);
+
+//        if (!PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_WECHAT_UNIONID,"0").equals("0")) {
+//            String nicheng = PreferencesUtils.getString(getActivity(),MLProperties.PREFER_KEY_WECHAT_NICHENG,"");
+//            tvUserWeixin.setText(nicheng);
+//        }
+//        if (PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_USER_ID) != null) {
+//            tvUserPhoneNumber.setText(PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_USER_ID));
+//        }
+
+
+
     }
 
     @Override
@@ -944,6 +1017,51 @@ public class UserFragment extends BaseFragment implements LogoutView {
     @Override
     public void onPause() {
         super.onPause();
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void updateUI(MsgEvent event) {
+        if (event.getAction().equals("getdoubisuccess")) {
+            tvDoubisum.setText("积分: " + event.getDoubisum() + "，快去抽奖");
+        }
+        if (event.getAction().equals("wxloginsuccess")) {
+
+            if (!PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_WECHAT_UNIONID,"0").equals("0")) {
+                String nicheng = PreferencesUtils.getString(getActivity(),MLProperties.PREFER_KEY_WECHAT_NICHENG,"");
+                tvUserWeixin.setText(nicheng);
+            } else {
+                tvUserWeixin.setText("未绑定");
+            }
+            tvUserPhoneNumber.setText(PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_USER_ID));
+        }
+        if (event.getAction().equals("phoneloginsuccess")) {
+            Log.e("手机登录成功后的昵称", PreferencesUtils.getString(getActivity(), MLProperties.BUNDLE_KEY_TEACHER_NICK, ""));
+            tvNickname.setText(PreferencesUtils.getString(getActivity(), MLProperties.BUNDLE_KEY_TEACHER_NICK, ""));
+            userPhotoPath = PreferencesUtils.getString(getActivity(), MLProperties.BUNDLE_KEY_TEACHER_IMG);
+            imgUserPhoto.setImageURI(userPhotoPath);
+        }
+        if (event.getAction().equals("wxbindsuccess")) {
+            String unionid = PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_WECHAT_UNIONID, "0");
+            String phone = PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_USER_ID, "");
+
+            Log.e("微信绑定成功", unionid + "");
+            String nicheng = PreferencesUtils.getString(getActivity(),MLProperties.PREFER_KEY_WECHAT_NICHENG,"");
+            tvUserWeixin.setText(nicheng);
+            tvNickname.setText(PreferencesUtils.getString(getActivity(), MLProperties.BUNDLE_KEY_TEACHER_NICK, ""));
+            userPhotoPath = PreferencesUtils.getString(getActivity(), MLProperties.BUNDLE_KEY_TEACHER_IMG);
+            imgUserPhoto.setImageURI(userPhotoPath);
+
+        }
+        if (event.getAction().equals("phonebindsuccess")) {
+
+            String phone = event.getDoubisum();
+            String unionid = PreferencesUtils.getString(getActivity(), MLProperties.PREFER_KEY_WECHAT_UNIONID, "0");
+
+            Log.e("手机号绑定验证成功", "phone=" + phone + "unionid=" + unionid);
+            //微信绑定手机号
+            userinfoPresenter.getBindInfo(unionid, phone, "weixin");
+        }
     }
 
     /********* 在fragment中切换tab *********/

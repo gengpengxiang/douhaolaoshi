@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
+    android:orientation="horizontal"
+    android:background="#ffffff">
+
+    <ImageView
+        android:id="@+id/iv_video"
+        android:layout_centerVertical="true"
+        android:background="@mipmap/ic_play_gray"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:textColor="@color/colorTextBlack"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="20dp"
+        android:text="这里是标题"
+        android:layout_toRightOf="@+id/iv_video"
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <LinearLayout
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="12dp"
+        android:layout_marginLeft="20dp"
+        android:layout_toRightOf="@+id/iv_video"
+        android:layout_below="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_gravity="center_vertical"
+            android:id="@+id/tv_duration"
+            android:text="时间"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="17dp"
+            android:id="@+id/tv_num"
+            android:text="次学习"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="22dp"
+            android:id="@+id/tv_progress"
+            android:text="已学"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+      <!--  <ImageView
+
+            android:id="@+id/iv_lock"
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@mipmap/icon_locked"/>-->
+    </LinearLayout>
+
+    <ImageView
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="12dp"
+        android:layout_below="@+id/tv_title"
+        android:layout_alignParentRight="true"
+        android:id="@+id/iv_lock"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@mipmap/icon_locked"/>
+
+</RelativeLayout>

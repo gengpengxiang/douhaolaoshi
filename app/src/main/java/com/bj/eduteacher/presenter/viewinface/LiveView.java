@@ -4,7 +4,7 @@ package com.bj.eduteacher.presenter.viewinface;
 import com.bj.eduteacher.entity.TeacherInfo;
 import com.bj.eduteacher.model.LiveInfoJson;
 import com.bj.eduteacher.model.MemberID;
-import com.tencent.ilivesdk.data.ILivePushRes;
+//import com.tencent.ilivesdk.data.ILivePushRes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +36,7 @@ public interface LiveView extends MvpView {
 
     void hideInviteDialog();
 
-    void pushStreamSucc(ILivePushRes streamRes);
+    //void pushStreamSucc(ILivePushRes streamRes);
 
     void stopStreamSucc();
 

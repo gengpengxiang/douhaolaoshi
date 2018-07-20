@@ -81,7 +81,7 @@ public class DoukeNewSearchActivity extends BaseActivity {
     protected void initToolBar() {
         super.initToolBar();
         edtSearch.setSingleLine();
-        edtSearch.setHint("输入逗课的标题");
+        edtSearch.setHint("输入优课的标题");
         edtSearch.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
         edtSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override

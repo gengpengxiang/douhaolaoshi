@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.bj.eduteacher.zzautolayout.AutoFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.bj.eduteacher.zzautolayout.AutoLinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <include layout="@layout/layout_header_toolbar" />
+
+
+        <com.andview.refreshview.XRefreshView
+            android:id="@+id/mXRefreshView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/bg_gray">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/mRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:scrollbarSize="1dp"
+                android:scrollbars="vertical"
+                />
+        </com.andview.refreshview.XRefreshView>
+    </com.bj.eduteacher.zzautolayout.AutoLinearLayout>
+
+    <Button
+        android:id="@+id/bt_find_edit"
+        android:layout_width="156px"
+        android:layout_height="156px"
+        android:layout_gravity="right|bottom"
+        android:layout_marginBottom="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@drawable/ic_edit" />
+
+
+</com.bj.eduteacher.zzautolayout.AutoFrameLayout>

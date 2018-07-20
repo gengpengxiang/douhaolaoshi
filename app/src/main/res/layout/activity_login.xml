@@ -28,12 +28,19 @@
                 android:orientation="vertical">
 
                 <ImageView
+                    android:id="@+id/iv_logo"
                     android:layout_width="150dp"
                     android:layout_height="150dp"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="40dp"
                     android:scaleType="centerCrop"
                     android:src="@mipmap/ic_launcher_login" />
+
+                <View
+                    android:id="@+id/spaceView"
+                    android:visibility="gone"
+                    android:layout_width="150dp"
+                    android:layout_height="20dp"/>
 
                 <RelativeLayout
                     android:layout_width="240dp"
@@ -71,7 +78,7 @@
                         android:layout_toLeftOf="@+id/tv_getCode"
                         android:background="@null"
                         android:gravity="center_vertical"
-                        android:hint="短信登录码"
+                        android:hint="短信验证码"
                         android:inputType="number"
                         android:maxLength="6"
                         android:paddingLeft="15dp"
@@ -87,12 +94,12 @@
                         android:gravity="center"
                         android:paddingLeft="15dp"
                         android:paddingRight="15dp"
-                        android:text="获取短信登录码"
+                        android:text="获取短信验证码"
                         android:textColor="@color/colorPrimary"
                         android:textSize="@dimen/text_size_standard" />
                 </RelativeLayout>
 
-                <com.facebook.drawee.view.SimpleDraweeView
+               <!-- <com.facebook.drawee.view.SimpleDraweeView
                     android:id="@+id/btn_login"
                     android:layout_width="240dp"
                     android:layout_height="wrap_content"
@@ -100,7 +107,20 @@
                     android:layout_marginTop="45dp"
                     fresco:placeholderImage="@mipmap/btn_login"
                     fresco:placeholderImageScaleType="focusCrop"
-                    fresco:viewAspectRatio="5.69" />
+                    fresco:viewAspectRatio="5.69" />-->
+                <TextView
+                    android:id="@+id/bt_login"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:textSize="20sp"
+                    android:gravity="center"
+                    android:text="进入"
+                    android:textColor="@color/colorTextWhite"
+                    android:layout_width="240dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/btn_shape_corner_orange"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="45dp"/>
 
                 <TextView
                     android:id="@+id/tv_withProblem"

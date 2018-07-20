@@ -5,7 +5,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.tencent.imsdk.MyLinkedBlockingDeque;
+//import com.tencent.imsdk.MyLinkedBlockingDeque;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -23,7 +23,7 @@ public class SxbLogImpl {
 
     private static String packageName = "";
 
-    static MyLinkedBlockingDeque<String> logDeque = new MyLinkedBlockingDeque<String>(15000);
+    //static MyLinkedBlockingDeque<String> logDeque = new MyLinkedBlockingDeque<String>(15000);
 
     private static final int[] INTERVAL_RETRY_INIT = new int[]{1, 2, 4, 8, 16, 29}; //重试时间
 
@@ -124,20 +124,20 @@ public class SxbLogImpl {
     /**
      * 写日志线程
      */
-    static Thread takeThread = new Thread() {
-        public void run() {
-            while (true) {
-                try {
-                    String log = logDeque.take();
-                    if (null != log) {
-                        writeLogToFile(log);
-                    }
-                } catch (InterruptedException e) {
-                    System.out.println("write log file error: " + e.toString());
-                }
-            }
-        }
-    };
+//    static Thread takeThread = new Thread() {
+//        public void run() {
+//            while (true) {
+//                try {
+//                    String log = logDeque.take();
+//                    if (null != log) {
+//                        writeLogToFile(log);
+//                    }
+//                } catch (InterruptedException e) {
+//                    System.out.println("write log file error: " + e.toString());
+//                }
+//            }
+//        }
+//    };
 
     private static String getThisHour(long nowCurrentMillis) {
         Calendar calendar = Calendar.getInstance();
@@ -231,8 +231,8 @@ public class SxbLogImpl {
                             packageName = "unknown";
                         }
                         initLogFile(System.currentTimeMillis());
-                        takeThread.setName("logWriteThread");
-                        takeThread.start();
+//                        takeThread.setName("logWriteThread");
+//                        takeThread.start();
                         retryInitHandler.removeCallbacks(initRunnable);
                     } catch (Exception e) {
                         int times = retryInitTimes.get();
@@ -272,7 +272,7 @@ public class SxbLogImpl {
      */
     private static boolean addLogToCache(String log) {
         try {
-            logDeque.add(log);
+            //logDeque.add(log);
             return true;
         } catch (Exception e) {
             return false;
@@ -287,7 +287,7 @@ public class SxbLogImpl {
      */
     private static boolean insertLogToCacheHead(String log) {
         try {
-            logDeque.addFirst(log);
+            //logDeque.addFirst(log);
             return true;
         } catch (Exception e) {
             return false;

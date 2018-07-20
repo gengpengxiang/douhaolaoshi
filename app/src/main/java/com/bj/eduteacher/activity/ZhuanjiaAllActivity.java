@@ -146,7 +146,7 @@ public class ZhuanjiaAllActivity extends BaseActivity {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<ArticleInfo>> e) throws Exception {
                 LmsDataService mService = new LmsDataService();
-                List<ArticleInfo> dataList = mService.getMasterCardsFromAPI(currentPage, 10);
+                List<ArticleInfo> dataList = mService.getMasterCardsFromAPI2(currentPage, 10);
                 e.onNext(dataList);
                 e.onComplete();
             }

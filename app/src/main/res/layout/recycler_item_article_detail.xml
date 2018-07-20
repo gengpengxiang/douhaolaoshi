@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.bj.eduteacher.zzautolayout.AutoLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:background="#ffffff"
+    android:orientation="vertical">
+    <TextView
+        android:textSize="50px"
+        android:lineSpacingExtra="22px"
+        android:id="@+id/tv_content"
+        android:text="..."
+        android:textColor="#4A4A4A"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <ImageView
+        android:layout_marginTop="10dp"
+        android:id="@+id/iv_pic2"
+        android:background="@drawable/bg_live_default_picture"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="fitCenter"
+        android:layout_marginBottom="10dp"/>
+
+   <!-- <com.facebook.drawee.view.SimpleDraweeView
+        android:visibility="gone"
+        android:layout_marginTop="5dp"
+        android:id="@+id/iv_pic"
+        fresco:actualImageScaleType="focusCrop"
+        fresco:placeholderImage="@drawable/bg_live_default_picture"
+        fresco:placeholderImageScaleType="focusCrop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />-->
+
+</com.bj.eduteacher.zzautolayout.AutoLinearLayout>

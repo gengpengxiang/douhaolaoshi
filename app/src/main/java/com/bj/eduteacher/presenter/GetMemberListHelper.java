@@ -2,12 +2,12 @@ package com.bj.eduteacher.presenter;
 
 import android.content.Context;
 
-import com.tencent.TIMGroupManager;
-import com.tencent.TIMGroupMemberInfo;
-import com.tencent.TIMValueCallBack;
-import com.tencent.av.sdk.AVView;
-import com.tencent.ilivesdk.core.ILiveRoomManager;
-import com.tencent.ilivesdk.view.AVVideoView;
+//import com.tencent.TIMGroupManager;
+//import com.tencent.TIMGroupMemberInfo;
+//import com.tencent.TIMValueCallBack;
+//import com.tencent.av.sdk.AVView;
+//import com.tencent.ilivesdk.core.ILiveRoomManager;
+//import com.tencent.ilivesdk.view.AVVideoView;
 import com.bj.eduteacher.model.MemberInfo;
 import com.bj.eduteacher.model.MySelfInfo;
 import com.bj.eduteacher.presenter.viewinface.MembersDialogView;
@@ -31,47 +31,47 @@ public class GetMemberListHelper extends Presenter {
     }
 
     public void getMemberList() {
-        TIMGroupManager.getInstance().getGroupMembers("" + MySelfInfo.getInstance().getMyRoomNum(), new TIMValueCallBack<List<TIMGroupMemberInfo>>() {
-            @Override
-            public void onError(int i, String s) {
-                SxbLog.i(TAG, "get MemberList ");
-            }
-
-            @Override
-            public void onSuccess(List<TIMGroupMemberInfo> timGroupMemberInfos) {
-                SxbLog.i(TAG, "get MemberList ");
-                getMemberListInfo(timGroupMemberInfos);
-
-            }
-        });
+//        TIMGroupManager.getInstance().getGroupMembers("" + MySelfInfo.getInstance().getMyRoomNum(), new TIMValueCallBack<List<TIMGroupMemberInfo>>() {
+//            @Override
+//            public void onError(int i, String s) {
+//                SxbLog.i(TAG, "get MemberList ");
+//            }
+//
+//            @Override
+//            public void onSuccess(List<TIMGroupMemberInfo> timGroupMemberInfos) {
+//                SxbLog.i(TAG, "get MemberList ");
+//                getMemberListInfo(timGroupMemberInfos);
+//
+//            }
+//        });
     }
 
 
     /**
      * 拉取成员列表信息
      *
-     * @param timGroupMemberInfos
+     * @param
      */
-    private void getMemberListInfo(List<TIMGroupMemberInfo> timGroupMemberInfos) {
-        mDialogMembers.clear();
-        for (TIMGroupMemberInfo item : timGroupMemberInfos) {
-            if (item.getUser().equals(MySelfInfo.getInstance().getId())) {
-                continue;
-            }
-            MemberInfo member = new MemberInfo();
-            member.setUserId(item.getUser());
-            //if (QavsdkControl.getInstance().containIdView(item.getUser())) {
-            AVVideoView avVideoView = ILiveRoomManager.getInstance().getRoomView().getUserAvVideoView(item.getUser(), AVView.VIDEO_SRC_TYPE_CAMERA);
-            if (null != avVideoView && avVideoView.isRendering()) {
-                member.setIsOnVideoChat(true);
-            }
-            mDialogMembers.add(member);
-
-        }
-
-        if (null != mMembersDialogView)
-            mMembersDialogView.showMembersList(mDialogMembers);
-    }
+//    private void getMemberListInfo(List<TIMGroupMemberInfo> timGroupMemberInfos) {
+//        mDialogMembers.clear();
+//        for (TIMGroupMemberInfo item : timGroupMemberInfos) {
+//            if (item.getUser().equals(MySelfInfo.getInstance().getId())) {
+//                continue;
+//            }
+//            MemberInfo member = new MemberInfo();
+//            member.setUserId(item.getUser());
+//            //if (QavsdkControl.getInstance().containIdView(item.getUser())) {
+//            AVVideoView avVideoView = ILiveRoomManager.getInstance().getRoomView().getUserAvVideoView(item.getUser(), AVView.VIDEO_SRC_TYPE_CAMERA);
+//            if (null != avVideoView && avVideoView.isRendering()) {
+//                member.setIsOnVideoChat(true);
+//            }
+//            mDialogMembers.add(member);
+//
+//        }
+//
+//        if (null != mMembersDialogView)
+//            mMembersDialogView.showMembersList(mDialogMembers);
+//    }
 
 
     @Override

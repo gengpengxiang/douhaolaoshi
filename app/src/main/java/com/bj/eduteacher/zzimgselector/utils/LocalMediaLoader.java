@@ -105,6 +105,7 @@ public class LocalMediaLoader {
                         public boolean accept(File dir, String filename) {
                             if (filename.endsWith(".jpg")
                                     || filename.endsWith(".png")
+                                    || filename.endsWith(".JPEG")
                                     || filename.endsWith(".jpeg"))
                                 return true;
                             return false;

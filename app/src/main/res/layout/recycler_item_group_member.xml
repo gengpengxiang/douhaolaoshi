@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="180px"
+    android:orientation="horizontal"
+    android:background="#ffffff"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto">
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:layout_marginLeft="20dp"
+        android:layout_gravity="center_vertical"
+        android:layout_centerVertical="true"
+        android:id="@+id/iv_authorPhoto"
+        android:layout_width="114px"
+        android:layout_height="114px"
+        fresco:actualImageScaleType="focusCrop"
+        fresco:placeholderImage="@mipmap/icon_default_photo_teacher"
+        fresco:placeholderImageScaleType="focusCrop"
+        fresco:roundAsCircle="true" />
+    <TextView
+        android:textSize="45px"
+        android:id="@+id/tv_name"
+        android:text="名字"
+        android:textColor="#333333"
+        android:layout_marginLeft="15dp"
+        android:layout_gravity="center_vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

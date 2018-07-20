@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+   <ImageView
+       android:id="@+id/iv"
+       android:background="@mipmap/bg_win_prize"
+       android:layout_width="match_parent"
+       android:layout_height="120dp" />
+
+    <TextView
+        android:textSize="18sp"
+        android:layout_marginTop="65dp"
+        android:layout_centerHorizontal="true"
+        android:textColor="#f9ff94"
+        android:text="恭喜您中奖了"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    
+    <TextView
+        android:gravity="center"
+        android:text="恭喜啦"
+        android:textColor="@color/colorRed"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/iv"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:background="@drawable/btn_shape_corner_yellow"
+        android:id="@+id/tv_prizeInfo"
+        android:layout_width="match_parent"
+        android:layout_height="40dp" />
+    
+    <Button
+        android:id="@+id/bt_know"
+        android:paddingRight="15dp"
+        android:paddingLeft="15dp"
+        android:background="@drawable/btn_shape_corner_orange"
+        android:gravity="center"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/tv_prizeInfo"
+        android:text="知道了"
+        android:textColor="#ffffff"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp" />
+
+
+
+</RelativeLayout>

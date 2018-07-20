@@ -1,3 +1,4 @@
+/*
 package com.bj.eduteacher.view;
 
 import android.content.Context;
@@ -15,9 +16,11 @@ import com.hpplay.link.HpplayLinkControl;
 
 import cn.jzvd.JZVideoPlayerStandard;
 
+*/
 /**
  * Created by zz379 on 2017/8/31.
- */
+ *//*
+
 
 public class MyJZView extends JZVideoPlayerStandard implements HpplayWindowPlayCallBack {
 
@@ -142,9 +145,11 @@ public class MyJZView extends JZVideoPlayerStandard implements HpplayWindowPlayC
         tvPlayTVState.setText("正在投屏中");
     }
 
-    /**
+    */
+/**
      * 释放整个SDK资源
-     */
+     *//*
+
     public void releaseLeboSDK() {
         if (mControl != null) {
             mControl.stopPlay(new ExecuteResultCallBack() {
@@ -158,3 +163,4 @@ public class MyJZView extends JZVideoPlayerStandard implements HpplayWindowPlayC
         }
     }
 }
+*/

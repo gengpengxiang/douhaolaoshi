@@ -38,14 +38,17 @@ import com.bj.eduteacher.dialog.TipsAlertDialog3;
 import com.bj.eduteacher.entity.ArticleInfo;
 import com.bj.eduteacher.entity.OrderInfo;
 import com.bj.eduteacher.entity.TradeInfo;
+import com.bj.eduteacher.login.view.LoginActivity;
 import com.bj.eduteacher.manager.IntentManager;
 import com.bj.eduteacher.utils.LL;
+import com.bj.eduteacher.utils.LoginStatusUtil;
 import com.bj.eduteacher.utils.NetUtils;
 import com.bj.eduteacher.utils.PreferencesUtils;
 import com.bj.eduteacher.utils.ScreenUtils;
 import com.bj.eduteacher.utils.StringUtils;
 import com.bj.eduteacher.utils.T;
 import com.bj.eduteacher.utils.Util;
+import com.bj.eduteacher.videoplayer.view.PlayerActivity;
 import com.bj.eduteacher.view.FullyLinearLayoutManager;
 import com.bj.eduteacher.widget.PullZoomView;
 import com.bj.eduteacher.widget.RoundProgressBar;
@@ -123,6 +126,7 @@ public class ZhuanjiaDetailActivity extends BaseActivity {
     private View headerView;
     private int headerHeight = 0;
     private Disposable shareDisposable;
+    private String unionid;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -159,7 +163,7 @@ public class ZhuanjiaDetailActivity extends BaseActivity {
         FullyLinearLayoutManager layoutManager = new FullyLinearLayoutManager(ZhuanjiaDetailActivity.this);
         mRecyclerView.setLayoutManager(layoutManager);
         // set Adatper
-        mAdapter = new ZhuanjiaDetailAdapter(mDataList);
+        mAdapter = new ZhuanjiaDetailAdapter(mDataList,this);
         mAdapter.setOnMyItemClickListener(new ZhuanjiaDetailAdapter.OnMyItemClickListener() {
             @Override
             public void onClick(View view, int position) {
@@ -182,8 +186,14 @@ public class ZhuanjiaDetailActivity extends BaseActivity {
                 String buyType = item.getCommentNumber();
                 if (!"0".equals(price) && "0".equals(buyType)) {
                     // 购买资源前需要登录
-                    if (StringUtils.isEmpty(teacherPhoneNumber)) {
-                        IntentManager.toLoginActivity(ZhuanjiaDetailActivity.this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
+                    if (LoginStatusUtil.noLogin(ZhuanjiaDetailActivity.this)) {
+                        IntentManager.toLoginSelectActivity(ZhuanjiaDetailActivity.this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
+                        return;
+                    }
+                    if(PreferencesUtils.getString(getApplicationContext(), MLProperties.PREFER_KEY_USER_ID) == null){
+                        Intent intent = new Intent(ZhuanjiaDetailActivity.this, LoginActivity.class);
+                        intent.putExtra("laiyuan","bind");
+                        startActivity(intent);
                         return;
                     }
 
@@ -197,10 +207,11 @@ public class ZhuanjiaDetailActivity extends BaseActivity {
                     String downloadUrl = mDataList.get(position).getArticlePicture();
                     String resType = item.getPreviewType();  // 目前先根据这个类型来判断是否是视频
                     if ("2".equals(resType)) {
-                        Intent intent = new Intent(ZhuanjiaDetailActivity.this, ResPlayActivity.class);
+                        Intent intent = new Intent(ZhuanjiaDetailActivity.this, PlayerActivity.class);
                         intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_ID, resID);
                         intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_NAME, resName);
                         intent.putExtra(MLProperties.BUNDLE_KEY_MASTER_RES_PREVIEW_URL, previewUrl);
+                        intent.putExtra("type","ZhuanjiaDetailActivity");
                         startActivity(intent);
                     } else {
                         Intent intent = new Intent(ZhuanjiaDetailActivity.this, ResReviewActivity.class);
@@ -226,8 +237,8 @@ public class ZhuanjiaDetailActivity extends BaseActivity {
                     startActivity(intent);
                 } else if ("Invite".equals(tag)) {
                     // 购买资源前需要登录
-                    if (StringUtils.isEmpty(teacherPhoneNumber)) {
-                        IntentManager.toLoginActivity(ZhuanjiaDetailActivity.this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
+                    if (LoginStatusUtil.noLogin(ZhuanjiaDetailActivity.this)) {
+                        IntentManager.toLoginSelectActivity(ZhuanjiaDetailActivity.this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
                         return;
                     }
 
@@ -486,14 +497,15 @@ public class ZhuanjiaDetailActivity extends BaseActivity {
             stopRefreshChildView();
             return;
         }
-
+        unionid = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_WECHAT_UNIONID, "");
+        teacherPhoneNumber = PreferencesUtils.getString(ZhuanjiaDetailActivity.this, MLProperties.PREFER_KEY_USER_ID, "");
         // 获取专家资源
         Observable observable1 = Observable.create(new ObservableOnSubscribe<List<ArticleInfo>>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<ArticleInfo>> e) throws Exception {
                 LmsDataService mService = new LmsDataService();
                 // SystemClock.sleep(1000);
-                List<ArticleInfo> dataList = mService.getMasterResFromAPI(masterID, teacherPhoneNumber, currentPage);
+                List<ArticleInfo> dataList = mService.getMasterResFromAPI(masterID, teacherPhoneNumber,unionid, currentPage);
                 e.onNext(dataList);
                 e.onComplete();
             }
@@ -568,7 +580,7 @@ public class ZhuanjiaDetailActivity extends BaseActivity {
                         LL.e(e);
                         hideLoadingDialog();
                         stopRefreshChildView();
-                        T.showShort(ZhuanjiaDetailActivity.this, "服务器开小差了，请重试");
+                        //T.showShort(ZhuanjiaDetailActivity.this, "服务器开小差了，请重试");
                     }
 
                     @Override
@@ -641,7 +653,7 @@ public class ZhuanjiaDetailActivity extends BaseActivity {
             if (shareBmp != null && !shareBmp.isRecycled()) {
                 Bitmap thumbBmp = Bitmap.createScaledBitmap(shareBmp, shareBmp.getWidth() / 10,
                         shareBmp.getHeight() / 10, true);
-                // msg.thumbData = Util.bmpToByteArray(thumbBmp, true);
+                // msg.thumbData = WXUtil.bmpToByteArray(thumbBmp, true);
                 msg.thumbData = Util.bmpToByteArray(thumbBmp, true);
                 shareBmp.recycle();
             }
@@ -792,8 +804,9 @@ public class ZhuanjiaDetailActivity extends BaseActivity {
         Observable.create(new ObservableOnSubscribe<OrderInfo>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<OrderInfo> e) throws Exception {
+                String unionid = PreferencesUtils.getString(getApplicationContext(), MLProperties.PREFER_KEY_WECHAT_UNIONID, "");
                 LmsDataService mService = new LmsDataService();
-                OrderInfo info = mService.getTheOrderInfoFromAPI(masterresid, price, teacherPhoneNumber, payType);
+                OrderInfo info = mService.getTheOrderInfoFromAPI(masterresid, price, teacherPhoneNumber,unionid, payType);
                 e.onNext(info);
             }
         }).subscribeOn(Schedulers.io())
@@ -858,6 +871,7 @@ public class ZhuanjiaDetailActivity extends BaseActivity {
         super.onResume();
         MobclickAgent.onPageStart("zhuanjia_detail");
         MobclickAgent.onResume(this);
+        unionid = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_WECHAT_UNIONID, "");
         teacherPhoneNumber = PreferencesUtils.getString(ZhuanjiaDetailActivity.this, MLProperties.PREFER_KEY_USER_ID, "");
         userPhotoPath = PreferencesUtils.getString(ZhuanjiaDetailActivity.this, MLProperties.BUNDLE_KEY_TEACHER_IMG);
 

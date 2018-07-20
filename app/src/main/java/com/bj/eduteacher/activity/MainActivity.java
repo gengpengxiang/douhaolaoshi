@@ -1,14 +1,12 @@
 package com.bj.eduteacher.activity;
 
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,34 +22,33 @@ import com.bj.eduteacher.R;
 import com.bj.eduteacher.api.LmsDataService;
 import com.bj.eduteacher.api.MLConfig;
 import com.bj.eduteacher.api.MLProperties;
+import com.bj.eduteacher.entity.MsgEvent;
+import com.bj.eduteacher.community.main.view.CustomPopDialog;
+import com.bj.eduteacher.community.main.view.FindFragment;
 import com.bj.eduteacher.fragment.ChangeBottomTabListener;
 import com.bj.eduteacher.fragment.DoukeFragment;
 import com.bj.eduteacher.fragment.DoukeNewFragment;
+import com.bj.eduteacher.fragment.StudyFragment;
 import com.bj.eduteacher.fragment.UserFragment;
+import com.bj.eduteacher.integral.model.Doubi;
+import com.bj.eduteacher.integral.presenter.IntegralPresenter;
+import com.bj.eduteacher.integral.view.IViewintegral;
 import com.bj.eduteacher.manager.IntentManager;
 import com.bj.eduteacher.manager.UMPushManager;
-import com.bj.eduteacher.model.CurLiveInfo;
-import com.bj.eduteacher.model.MySelfInfo;
-import com.bj.eduteacher.presenter.UserServerHelper;
-import com.bj.eduteacher.tool.Constants;
-import com.bj.eduteacher.tool.ShowNameUtil;
 import com.bj.eduteacher.utils.DensityUtils;
 import com.bj.eduteacher.utils.IMMLeaks;
 import com.bj.eduteacher.utils.KeyBoardUtils;
 import com.bj.eduteacher.utils.LL;
 import com.bj.eduteacher.utils.LeakedUtils;
+import com.bj.eduteacher.utils.LoginStatusUtil;
 import com.bj.eduteacher.utils.PreferencesUtils;
-import com.bj.eduteacher.utils.ScreenUtils;
 import com.bj.eduteacher.utils.StringUtils;
 import com.bj.eduteacher.widget.CustomViewPager;
-import com.bj.eduteacher.widget.dialog.NotifyDialog;
-import com.hpplay.callback.ExecuteResultCallBack;
-import com.hpplay.link.HpplayLinkControl;
-import com.tencent.TIMCallBack;
-import com.tencent.TIMFriendshipManager;
-import com.tencent.ilivesdk.ILiveSDK;
-import com.tencent.livesdk.ILVLiveManager;
 import com.umeng.analytics.MobclickAgent;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 import butterknife.BindViews;
@@ -67,23 +64,30 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
+//import com.tencent.TIMCallBack;
+//import com.tencent.TIMFriendshipManager;
+//import com.tencent.ilivesdk.ILiveSDK;
+//import com.tencent.livesdk.ILVLiveManager;
+
 /**
  * 首页
  */
-public class MainActivity extends BaseActivity implements ChangeBottomTabListener {
+public class MainActivity extends BaseActivity implements ChangeBottomTabListener, IViewintegral {
 
-    private static final int TAB_NUMBER = 3;
+    private static final int TAB_NUMBER = 5;
 
     @BindView(R.id.mViewPager)
     CustomViewPager mViewPager;
     @BindView(R.id.ll_bottomBar)
     LinearLayout llBottomBar;
-    @BindViews({R.id.iv_tab1, R.id.iv_tab2, R.id.iv_tab5})
+    @BindViews({R.id.iv_tab1, R.id.iv_tab2, R.id.iv_tab3, R.id.iv_tab4, R.id.iv_tab5})
     ImageView[] ivTabs;
-    @BindViews({R.id.tv_tab1, R.id.tv_tab2, R.id.tv_tab5})
+    @BindViews({R.id.tv_tab1, R.id.tv_tab2, R.id.tv_tab3, R.id.tv_tab4, R.id.tv_tab5})
     TextView[] tvTabs;
-    int[] resTabImageSelect = {R.mipmap.ic_tab_home_selected, R.mipmap.ic_tab_read_selected, R.mipmap.ic_tab_person_selected};
-    int[] resTabImageUnSelect = {R.mipmap.ic_tab_home, R.mipmap.ic_tab_read, R.mipmap.ic_tab_person};
+    int[] resTabImageSelect = {R.mipmap.ic_tab_faxian_selected, R.mipmap.ic_tab_study_selected, R.mipmap.ic_tab_youke_selected, R.mipmap.ic_tab_shequ_selected, R.mipmap.ic_tab_wode_selected};
+    int[] resTabImageUnSelect = {R.mipmap.ic_tab_faxian, R.mipmap.ic_tab_study, R.mipmap.ic_tab_youke, R.mipmap.ic_tab_shequ, R.mipmap.ic_tab_wode};
+    @BindView(R.id.ll_tab4)
+    LinearLayout llTab4;
     private Fragment[] mTabFragments;
     private long exitTime = 0;
 
@@ -99,11 +103,16 @@ public class MainActivity extends BaseActivity implements ChangeBottomTabListene
     private DoukeFragment doukeFragment;
     private DoukeNewFragment doukeNewFragment;
     private UserFragment userFragment;
+    private FindFragment findFragment;
+    private StudyFragment studyFragment;
 
     private CompositeDisposable mDisposables = new CompositeDisposable();
 
+    private IntegralPresenter presenter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         if (savedInstanceState != null) {
             String FRAGMENTS_TAG = "android:support:fragments";
             savedInstanceState.remove(FRAGMENTS_TAG);
@@ -111,20 +120,45 @@ public class MainActivity extends BaseActivity implements ChangeBottomTabListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        EventBus.getDefault().register(this);
         instance = this;
         // 恢复数据
         if (savedInstanceState != null && 0 != savedInstanceState.getInt("CurrPageIndex")) {
             currentPageIndex = savedInstanceState.getInt("CurrPageIndex");
         }
-        SharedPreferences pref = getSharedPreferences("data", MODE_PRIVATE);
-        living = pref.getBoolean("living", false);
 
         initToolBar();
         initView();
-        initDonation();
 
-        // 检查上次是否是异常推出直播
-        checkLiveException();
+        loginRemindDialog();
+    }
+
+    private void loginRemindDialog() {
+        Log.e("登陆提醒", teacherPhoneNumber + "xxx");
+        if (PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID) == null
+                && PreferencesUtils.getString(this, MLProperties.PREFER_KEY_WECHAT_UNIONID) == null
+                && PreferencesUtils.getInt(this, "remindLoginStatus", 1) == 0) {
+            PreferencesUtils.putInt(this, "remindLoginStatus", 1);
+            CustomPopDialog.Builder dialogBuild = new CustomPopDialog.Builder(MainActivity.this);
+            final CustomPopDialog dialog = dialogBuild.create2(R.layout.dialog_login_remind);
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.findViewById(R.id.bt_close).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (dialog.isShowing())
+                        dialog.dismiss();
+                }
+            });
+            dialog.findViewById(R.id.bt_choujiang).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (dialog.isShowing())
+                        dialog.dismiss();
+                    IntentManager.toLoginSelectActivity(MainActivity.this, IntentManager.LOGIN_SUCC_ACTION_MAINACTIVITY);
+                }
+            });
+            dialog.show();
+        }
     }
 
     @Override
@@ -140,19 +174,33 @@ public class MainActivity extends BaseActivity implements ChangeBottomTabListene
 
         doukeFragment = new DoukeFragment();
         doukeFragment.setBottomTabListener(this);
+        //add by gpx
+        findFragment = new FindFragment();
+        studyFragment = new StudyFragment();
+        //findFragment.setBottomTabListener(this);
         doukeNewFragment = new DoukeNewFragment();
         userFragment = new UserFragment();
         userFragment.setBottomTabListener(this);
 
+
         mTabFragments[0] = doukeFragment;
-        mTabFragments[1] = doukeNewFragment;
-        mTabFragments[2] = userFragment;
+        mTabFragments[1] = studyFragment;
+        mTabFragments[2] = doukeNewFragment;
+        mTabFragments[3] = findFragment;
+        mTabFragments[4] = userFragment;
+
 
         mAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(mAdapter);
+//        mViewPager.setCurrentItem(currentPageIndex);
+        mViewPager.setOffscreenPageLimit(5);
 
+        if(LoginStatusUtil.noLogin(this)){
+            currentPageIndex = 0;
+        }else {
+            currentPageIndex = 1;
+        }
         mViewPager.setCurrentItem(currentPageIndex);
-        mViewPager.setOffscreenPageLimit(2);
         actionTabItemSelect(currentPageIndex);
     }
 
@@ -161,14 +209,12 @@ public class MainActivity extends BaseActivity implements ChangeBottomTabListene
         super.onResume();
         MobclickAgent.onResume(this);
         initData();
-
-        LL.i("是否是PAD：" + ScreenUtils.isPadDevice(this) + " -- 是否包含虚拟键：" + ScreenUtils.isNavigationBarShow(this));
     }
 
     @Override
     protected void initData() {
         // 绑定别名
-        teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
+        teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID);
         if (!StringUtils.isEmpty(teacherPhoneNumber)) {
             UMPushManager.getInstance().setPushAlias(teacherPhoneNumber);
         }
@@ -189,23 +235,29 @@ public class MainActivity extends BaseActivity implements ChangeBottomTabListene
         getDonationStatus();
     }
 
-    @OnClick(R.id.ll_tab1)
-    void clickTab1() {
-        actionTabItemSelect(0);
-    }
-
-    @OnClick(R.id.ll_tab2)
-    void clickTab2() {
-        actionTabItemSelect(1);
-    }
-
-    @OnClick(R.id.ll_tab5)
-    void clickTab5() {
-        if (StringUtils.isEmpty(teacherPhoneNumber)) {
-            IntentManager.toLoginActivity(this, IntentManager.LOGIN_SUCC_ACTION_MAINACTIVITY);
-            return;
+    @OnClick({R.id.ll_tab1, R.id.ll_tab2, R.id.ll_tab3, R.id.ll_tab4, R.id.ll_tab5})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.ll_tab1:
+                actionTabItemSelect(0);
+                break;
+            case R.id.ll_tab2:
+                actionTabItemSelect(1);
+                break;
+            case R.id.ll_tab3:
+                actionTabItemSelect(2);
+                break;
+            case R.id.ll_tab4:
+                actionTabItemSelect(3);
+                break;
+            case R.id.ll_tab5:
+                if (LoginStatusUtil.noLogin(this)) {
+                    IntentManager.toLoginSelectActivity(this, IntentManager.LOGIN_SUCC_ACTION_MAINACTIVITY);
+                    return;
+                }
+                actionTabItemSelect(4);
+                break;
         }
-        actionTabItemSelect(2);
     }
 
     private void actionTabItemSelect(int position) {
@@ -226,41 +278,6 @@ public class MainActivity extends BaseActivity implements ChangeBottomTabListene
         }
     }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if ((System.currentTimeMillis() - exitTime) <= 2000) {
-                // 退出APP
-                if (HpplayLinkControl.getInstance().isConnect()) {
-                    HpplayLinkControl.getInstance().stopPlay(new ExecuteResultCallBack() {
-                        @Override
-                        public void onResultDate(Object o, int i) {
-                            boolean b = (boolean) o;
-                            // b 发送到电视端指令是否成功，true为成功，false为失败
-                            if (b) {
-                                LL.i("stopPlay()..." + "停止播放成功");
-                            } else {
-                                LL.i("stopPlay()..." + "停止播放失败");
-                            }
-                        }
-                    }, 0);
-                }
-                if (HpplayLinkControl.getInstance().getMirrorState()) {
-                    HpplayLinkControl.getInstance().castStopMirror();
-                }
-                finishSelf();
-            } else {
-                if (HpplayLinkControl.getInstance().getMirrorState()) {
-                    Toast.makeText(this, getString(R.string.toast_home_exit_system_mirror), Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(this, getString(R.string.toast_home_exit_system), Toast.LENGTH_SHORT).show();
-                }
-                exitTime = System.currentTimeMillis();
-            }
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
 
     public static MainActivity getInstance() {
         return instance;
@@ -278,9 +295,14 @@ public class MainActivity extends BaseActivity implements ChangeBottomTabListene
         LeakedUtils.fixTextLineCacheLeak();
         IMMLeaks.fixFocusedViewLeak(getApplication());
         // 退出的时候，释放Lebo占用的资源
-        HpplayLinkControl.getInstance().castDisconnectDevice();
+        //HpplayLinkControl.getInstance().castDisconnectDevice();
         if (instance != null) instance = null;
+        //改动
+        EventBus.getDefault().post(new MsgEvent("quit"));
+
+        EventBus.getDefault().unregister(this);
         super.onDestroy();
+
     }
 
     @Override
@@ -318,8 +340,8 @@ public class MainActivity extends BaseActivity implements ChangeBottomTabListene
         popView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (StringUtils.isEmpty(teacherPhoneNumber)) {
-                    IntentManager.toLoginActivity(MainActivity.this, IntentManager.LOGIN_SUCC_ACTION_MAINACTIVITY);
+                if (LoginStatusUtil.noLogin(getApplicationContext())) {
+                    IntentManager.toLoginSelectActivity(MainActivity.this, IntentManager.LOGIN_SUCC_ACTION_MAINACTIVITY);
                     return;
                 }
                 Intent intent = new Intent(MainActivity.this, DonationActivity.class);
@@ -369,7 +391,7 @@ public class MainActivity extends BaseActivity implements ChangeBottomTabListene
                     public void onNext(String[] strings) {
                         if (!StringUtils.isEmpty(strings[0]) && strings[0].equals("1")
                                 && "open".equals(strings[2])) {
-                            showDonationEntry();
+                            //showDonationEntry();
                         } else {
                             hideDonationEntry();
                         }
@@ -393,51 +415,6 @@ public class MainActivity extends BaseActivity implements ChangeBottomTabListene
         actionTabItemSelect(position);
     }
 
-    private void checkLiveException() {
-        if (living) {
-            NotifyDialog dialog = new NotifyDialog();
-            dialog.show(getString(R.string.title_living), getSupportFragmentManager(), new DialogInterface.OnClickListener() {
-
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Intent intent = new Intent(MainActivity.this, LiveActivity.class);
-                    MySelfInfo.getInstance().setIdStatus(Constants.HOST);
-                    MySelfInfo.getInstance().setJoinRoomWay(true);
-                    CurLiveInfo.setHostID(MySelfInfo.getInstance().getId());
-                    CurLiveInfo.setRoomNum(MySelfInfo.getInstance().getMyRoomNum());
-                    String sxbTitle = PreferencesUtils.getString(MainActivity.this, MLProperties.PREFER_KEY_USER_SXB_Title, "");
-                    String sxbPic = PreferencesUtils.getString(MainActivity.this, MLProperties.PREFER_KEY_USER_SXB_Picture, "");
-                    CurLiveInfo.setTitle(sxbTitle);
-                    if (!StringUtils.isEmpty(sxbPic)) {
-                        CurLiveInfo.setCoverurl(sxbPic.substring(sxbPic.lastIndexOf("/") + 1));
-                    }
-                    intent.putExtra("HostComeBack", true);
-                    startActivity(intent);
-                }
-            }, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    SharedPreferences.Editor editor = getSharedPreferences("data", Context.MODE_PRIVATE).edit();
-                    editor.putBoolean("living", false);
-                    editor.apply();
-                    // 需要把直播关掉, 通知server 我不开了
-                    exitRoom();
-                }
-            });
-        }
-    }
-
-    private void exitRoom() {
-        ILiveSDK.getInstance().getAvVideoCtrl().setLocalVideoPreProcessCallback(null);
-        ILVLiveManager.getInstance().quitRoom(null);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                UserServerHelper.getInstance().notifyCloseLive();
-                UserServerHelper.getInstance().reportMe(MySelfInfo.getInstance().getIdStatus(), 1);//通知server 我下线了
-            }
-        }).start();
-    }
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -449,17 +426,40 @@ public class MainActivity extends BaseActivity implements ChangeBottomTabListene
         if (!StringUtils.isEmpty(phone) && phone.length() > 10) {
             phone = phone.replaceAll("(\\d{3})\\d{4}(\\d{4})", "$1****$2");
         }
-        TIMFriendshipManager.getInstance().setNickName(ShowNameUtil.getFirstNotNullParams(nickname, userName, phone), new TIMCallBack() {
-            @Override
-            public void onError(int i, String s) {
-            }
-
-            @Override
-            public void onSuccess() {
-
-            }
-        });
         super.onNewIntent(intent);
+    }
+
+    @Override
+    public void getDouBi(Doubi doubi) {
+        EventBus.getDefault().post(new MsgEvent("getdoubisuccess", doubi.getData().getUser_doubinum_sum()));
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void updateUI(MsgEvent event) {
+        if (event.getAction().equals("phoneloginsuccess")) {
+            teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
+
+            presenter = new IntegralPresenter(this, this);
+            String unionid = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_WECHAT_UNIONID, "");
+            presenter.getDouBi("login", teacherPhoneNumber, "getdoubi", unionid);
+
+            //add
+            currentPageIndex = 1;
+            mViewPager.setCurrentItem(currentPageIndex);
+            actionTabItemSelect(currentPageIndex);
+        }
+        if (event.getAction().equals("wxloginsuccess")) {
+            teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
+
+            presenter = new IntegralPresenter(this, this);
+            String unionid = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_WECHAT_UNIONID, "");
+            presenter.getDouBi("login", teacherPhoneNumber, "getdoubi", unionid);
+
+            //add
+            currentPageIndex = 1;
+            mViewPager.setCurrentItem(currentPageIndex);
+            actionTabItemSelect(currentPageIndex);
+        }
     }
 
     class MyFragmentPagerAdapter extends FragmentPagerAdapter {
@@ -484,5 +484,21 @@ public class MainActivity extends BaseActivity implements ChangeBottomTabListene
             int hashCode = mTabFragments[position].hashCode();
             return hashCode;
         }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if ((System.currentTimeMillis() - exitTime) <= 2000) {
+                // 退出APP
+                finishSelf();
+                // getActivity().exitApp();
+            } else {
+                Toast.makeText(this, getString(R.string.toast_home_exit_system), Toast.LENGTH_SHORT).show();
+                exitTime = System.currentTimeMillis();
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

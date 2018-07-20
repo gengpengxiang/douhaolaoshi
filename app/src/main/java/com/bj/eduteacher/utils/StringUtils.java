@@ -101,4 +101,14 @@ public class StringUtils {
         Matcher m = p.matcher(url);
         return m.matches();
     }
+    /**
+     *去除字符串首位字符
+     */
+    public static String trimFirstAndLastChar(String source){
+        Pattern pattern = Pattern.compile("^\\D+|\\D+$");
+        Matcher matcher = pattern.matcher(source);
+        String str = matcher.replaceAll("");
+        return  str;
+    }
+
 }

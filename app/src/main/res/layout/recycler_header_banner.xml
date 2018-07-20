@@ -1,16 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <com.youth.banner.Banner
         android:id="@+id/banner"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="420px"
         app:indicator_drawable_selected="@drawable/shape_banner_indicator_selected"
         app:indicator_drawable_unselected="@drawable/shape_banner_indicator_unselected"
         app:indicator_height="6dp"
         app:indicator_width="6dp"/>
-</RelativeLayout>
+    <LinearLayout
+        android:paddingTop="12dp"
+        android:paddingBottom="10dp"
+        android:id="@+id/layout_tab"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="240px">
+        <TextView
+            android:textColor="#5f5f5f"
+            android:id="@+id/bt_course"
+            android:gravity="center"
+            android:drawablePadding="5dp"
+            android:text="课程"
+            android:drawableTop="@mipmap/ic_course"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent" />
+        <TextView
+            android:textColor="#5f5f5f"
+            android:id="@+id/bt_expert"
+            android:gravity="center_horizontal"
+            android:drawablePadding="5dp"
+            android:text="专家"
+            android:drawableTop="@mipmap/ic_expert"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent" />
+        <TextView
+            android:textColor="#5f5f5f"
+            android:id="@+id/bt_famous_teacher"
+            android:gravity="center_horizontal"
+            android:drawablePadding="5dp"
+            android:text="名师"
+            android:drawableTop="@mipmap/ic_famous_teacher"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent" />
+        <TextView
+            android:visibility="visible"
+            android:textColor="#5f5f5f"
+            android:id="@+id/bt_school"
+            android:gravity="center_horizontal"
+            android:drawablePadding="5dp"
+            android:text="学校"
+            android:drawableTop="@mipmap/ic_school"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent" />
+        <TextView
+            android:textColor="#5f5f5f"
+            android:id="@+id/bt_group"
+            android:gravity="center_horizontal"
+            android:drawablePadding="5dp"
+            android:text="小组"
+            android:drawableTop="@mipmap/ic_group"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+</LinearLayout>

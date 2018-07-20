@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="216px"
+    android:background="#ffffff"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto">
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:layout_marginLeft="20dp"
+        android:layout_centerVertical="true"
+        android:id="@+id/iv_groupPhoto"
+        android:layout_width="144px"
+        android:layout_height="144px"
+        fresco:actualImageScaleType="focusCrop"
+        fresco:placeholderImage="@drawable/shape_bg_zhuanjia"
+        fresco:placeholderImageScaleType="focusCrop"
+        fresco:roundedCornerRadius="5dp"/>
+    <ImageView
+        android:layout_marginTop="27px"
+        android:layout_marginLeft="-5dp"
+        android:id="@+id/iv_remind"
+        android:layout_toRightOf="@+id/iv_groupPhoto"
+        android:background="@drawable/shape_banner_indicator_selected"
+        android:layout_width="24px"
+        android:layout_height="24px" />
+
+    <LinearLayout
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="20dp"
+        android:layout_toRightOf="@+id/iv_groupPhoto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:text="名字"
+            android:textSize="51px"
+            android:gravity="center_vertical"
+            android:textColor="@color/colorTextBlack"
+            android:id="@+id/tv_group_name"
+            android:layout_width="wrap_content"
+            android:layout_height="71px" />
+        <TextView
+            android:textSize="45px"
+            android:text="内容"
+            android:layout_marginTop="13px"
+            android:gravity="center_vertical"
+            android:id="@+id/tv_group_content"
+            android:layout_width="wrap_content"
+            android:layout_height="63px" />
+    </LinearLayout>
+
+
+</RelativeLayout>

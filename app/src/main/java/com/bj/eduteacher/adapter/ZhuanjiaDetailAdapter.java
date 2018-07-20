@@ -1,6 +1,7 @@
 package com.bj.eduteacher.adapter;
 
 
+import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import com.bj.eduteacher.entity.ArticleInfo;
 import com.bj.eduteacher.tool.ShowNameUtil;
 import com.bj.eduteacher.utils.StringUtils;
 import com.bj.eduteacher.zzautolayout.utils.AutoUtils;
+import com.bumptech.glide.Glide;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.jakewharton.rxbinding2.view.RxView;
 
@@ -34,9 +36,11 @@ import io.reactivex.functions.Consumer;
 public class ZhuanjiaDetailAdapter extends BaseRecyclerAdapter<RecyclerView.ViewHolder> {
 
     private List<ArticleInfo> mDataList;
+    private Context context;
 
-    public ZhuanjiaDetailAdapter(List<ArticleInfo> mDataList) {
+    public ZhuanjiaDetailAdapter(List<ArticleInfo> mDataList,Context context) {
         this.mDataList = mDataList;
+        this.context = context;
     }
 
     private enum ShowType {ITEM_TYPE_DECORATION, ITEM_TYPE_ZHUANJIA_RES, ITEM_TYPE_ZHUANJIA_BLACKBOARD_TOP, ITEM_TYPE_ZHUANJIA_BLACKBOARD_MORE, ITEM_TYPE_DOUKE}
@@ -92,6 +96,9 @@ public class ZhuanjiaDetailAdapter extends BaseRecyclerAdapter<RecyclerView.View
         } else if (fholder instanceof ViewHolderZhuanjia) {
             ViewHolderZhuanjia holder = (ViewHolderZhuanjia) fholder;
             holder.ivPicture.setImageURI(itemInfo.getAuthImg());
+            //add
+            //Glide.with(context).load(itemInfo.getAuthImg()).crossFade().centerCrop().into(holder.ivPicture);
+
             holder.tvName.setText(itemInfo.getTitle());
             holder.tvDesc.setText(itemInfo.getAuthor());
             holder.tvPreviewNum.setText("浏览" + (StringUtils.isEmpty(itemInfo.getReplyCount()) ? "0" : itemInfo.getReplyCount()));
@@ -118,7 +125,8 @@ public class ZhuanjiaDetailAdapter extends BaseRecyclerAdapter<RecyclerView.View
             ViewHolderDouke holder = (ViewHolderDouke) fholder;
             holder.tvTitle.setText(itemInfo.getTitle());
             if (!StringUtils.isEmpty(itemInfo.getArticlePicture())) {
-                holder.ivPicture.setImageURI(itemInfo.getArticlePicture());
+                //holder.ivPicture.setImageURI(itemInfo.getArticlePicture());
+                Glide.with(context).load(itemInfo.getArticlePicture()).crossFade().centerCrop().into(holder.ivPicture);
             }
             String desc = itemInfo.getContent();
             holder.tvAuthorDesc.setText(StringUtils.isEmpty(desc) ? "暂无" : desc);

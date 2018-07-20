@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.bj.eduteacher.answer.view.AnswerHomeActivity">
+
+    <include
+        android:id="@+id/layout_title"
+        layout="@layout/layout_header_toolbar_2" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/mViewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/layout_bottom"
+        android:layout_below="@+id/layout_title">
+
+    </android.support.v4.view.ViewPager>
+
+    <RelativeLayout
+        android:id="@+id/layout_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/bg_gray">
+        <TextView
+            android:gravity="center"
+            android:id="@+id/bt_nextfirst"
+            android:layout_centerInParent="true"
+            android:text="下一题"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:visibility="visible"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent">
+                <TextView
+                    android:gravity="center"
+                    android:id="@+id/bt_last"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true"
+                    android:text="上一题"
+                    android:visibility="gone" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent">
+                <TextView
+                    android:gravity="center"
+                    android:id="@+id/bt_next"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true"
+                    android:text="下一题"
+                    android:visibility="gone" />
+            </RelativeLayout>
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Build;
 import android.support.multidex.MultiDexApplication;
 
+import com.bj.eduteacher.answer.dbhelper.GreenDaoHelper;
 import com.bj.eduteacher.manager.UMPushManager;
 import com.bj.eduteacher.presenter.InitBusinessHelper;
 import com.bj.eduteacher.tool.SxbLogImpl;
@@ -13,6 +14,7 @@ import com.bj.eduteacher.utils.FrescoUtils;
 import com.bj.eduteacher.utils.LL;
 import com.bj.eduteacher.zzautolayout.config.AutoLayoutConifg;
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.lzy.okgo.OkGo;
 import com.umeng.message.PushAgent;
 
 import java.io.InterruptedIOException;
@@ -29,7 +31,7 @@ import io.reactivex.plugins.RxJavaPlugins;
 public class MyApplication extends MultiDexApplication {
 
     private static MyApplication app;
-    private static Context context;
+    public static Context context;
 
     @Override
     public void onCreate() {
@@ -49,6 +51,9 @@ public class MyApplication extends MultiDexApplication {
             InitBusinessHelper.initApp(context);
         }
         setRxJavaErrorHandler();
+        //初始化数据库
+        GreenDaoHelper.initDatabase();
+
     }
 
     /**
@@ -91,7 +96,8 @@ public class MyApplication extends MultiDexApplication {
      * 初始化FaceBook的Fresco框架
      */
     private void initFresco() {
-        Fresco.initialize(this, FrescoImagePipelineConfigFactory.getOkHttpImagePipelineConfig(this));
+        Fresco.initialize(this);//初始化框架
+        //Fresco.initialize(this, FrescoImagePipelineConfigFactory.getOkHttpImagePipelineConfig(this));
     }
 
     private boolean shouldInit() {

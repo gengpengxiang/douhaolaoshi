@@ -7,7 +7,53 @@
 
     <include layout="@layout/layout_header_toolbar" />
 
+    <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/layout_inviteCode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <EditText
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:id="@+id/edit"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:background="@drawable/shape_login_edt"
+            android:hint="请输入邀请码"
+            android:inputType="number"
+            android:maxLength="11"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:textColorHint="@color/text_gray"
+            android:textSize="@dimen/text_size_menu" />
+
+        <Button
+            android:id="@+id/bt_confirm"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:text="确定"
+            android:textSize="16sp"
+            android:background="@drawable/btn_shape_corner_orange"
+            android:textColor="@color/colorTextWhite"
+            android:layout_width="match_parent"
+            android:layout_height="45dp" />
+
+        <TextView
+            android:textSize="16sp"
+            android:layout_marginTop="15dp"
+            android:layout_gravity="center_horizontal"
+            android:text="输入邀请码加入对应小组"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
     <ScrollView
+        android:visibility="gone"
         android:id="@+id/scrollview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -37,7 +83,7 @@
                 android:layout_marginTop="10dp"
                 android:gravity="center"
                 android:lines="1"
-                android:text="@string/str_setting_slogan"
+                android:text="一起创造美好教育"
                 android:textColor="@color/colorPrimary"
                 android:textSize="@dimen/text_size_menu" />
 
@@ -76,6 +122,13 @@
                 android:text="客服电话：15201635868"
                 android:textColor="@color/text_gray"
                 android:textSize="@dimen/text_size_standard" />
+
+            <Button
+                android:visibility="gone"
+                android:text="微信登录"
+                android:id="@+id/bttest"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

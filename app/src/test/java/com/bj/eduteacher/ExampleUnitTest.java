@@ -251,7 +251,7 @@ public class ExampleUnitTest {
                             dataList.addAll(data6);
                         }
                         if (data3.size() > 0) {
-                            dataList.add(new ArticleInfo("逗课精选", ArticleInfo.SHOW_TYPE_DECORATION));
+                            dataList.add(new ArticleInfo("优课精选", ArticleInfo.SHOW_TYPE_DECORATION));
                             dataList.addAll(data3);
                             dataList.add(new ArticleInfo("查看全部", ArticleInfo.SHOW_TYPE_ZHUANJIA_ALL));
                         }

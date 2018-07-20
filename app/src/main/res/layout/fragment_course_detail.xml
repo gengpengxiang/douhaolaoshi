@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/mNestedScrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+
+    <LinearLayout
+        android:id="@+id/layout_detail"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_jianjie"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:lineSpacingExtra="5dp"
+            android:paddingBottom="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="15dp" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#EFEFEF"
+            android:paddingBottom="10dp"
+            android:paddingTop="20dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <View
+                    android:layout_width="90px"
+                    android:layout_height="3px"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/tv1"
+                    android:background="@color/line_gray_3" />
+
+                <TextView
+                    android:textColor="@color/colorTextGray"
+                    android:id="@+id/tv1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:text="课程大纲" />
+
+                <View
+                    android:layout_width="90px"
+                    android:layout_height="3px"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/tv1"
+                    android:background="@color/line_gray_3" />
+            </RelativeLayout>
+        </LinearLayout>
+
+
+        <WebView
+            android:id="@+id/webView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#EFEFEF"
+            android:paddingBottom="10dp"
+            android:paddingTop="20dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#EFEFEF">
+
+                <View
+                    android:layout_width="90px"
+                    android:layout_height="3px"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/tv2"
+                    android:background="@color/line_gray_3" />
+
+                <TextView
+                    android:textColor="@color/colorTextGray"
+                    android:id="@+id/tv2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:text="课程说明" />
+
+                <View
+                    android:layout_width="90px"
+                    android:layout_height="3px"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/tv2"
+                    android:background="@color/line_gray_3" />
+            </RelativeLayout>
+        </LinearLayout>
+        <TextView
+            android:id="@+id/tv_shuoming"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:lineSpacingExtra="5dp"
+            android:paddingBottom="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="15dp"
+            android:text="课程说明....." />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#EFEFEF"
+            android:orientation="vertical"
+            android:paddingBottom="30dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#EFEFEF"
+                android:paddingBottom="10dp"
+                android:paddingTop="20dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#EFEFEF">
+
+                    <View
+                        android:layout_width="90px"
+                        android:layout_height="3px"
+                        android:layout_centerVertical="true"
+                        android:layout_toLeftOf="@+id/tv3"
+                        android:background="@color/line_gray_3" />
+
+                    <TextView
+                        android:textColor="@color/colorTextGray"
+                        android:id="@+id/tv3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:text="课程证书" />
+
+                    <View
+                        android:layout_width="90px"
+                        android:layout_height="3px"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@+id/tv3"
+                        android:background="@color/line_gray_3" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/iv_zhengshu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</android.support.v4.widget.NestedScrollView>

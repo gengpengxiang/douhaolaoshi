@@ -9,7 +9,6 @@ import android.widget.LinearLayout;
 
 import com.bj.eduteacher.zzautolayout.utils.AutoLayoutHelper;
 
-
 /**
  * Created by zhy on 15/6/30.
  */

@@ -1,3 +1,4 @@
+/*
 package com.bj.eduteacher.activity;
 
 import android.content.Context;
@@ -17,26 +18,42 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.VideoView;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.bj.eduteacher.BaseActivity;
 import com.bj.eduteacher.R;
 import com.bj.eduteacher.api.LmsDataService;
+import com.bj.eduteacher.api.MLConfig;
 import com.bj.eduteacher.api.MLProperties;
+import com.bj.eduteacher.course.fragment.study.NextRes;
 import com.bj.eduteacher.entity.ArticleInfo;
 import com.bj.eduteacher.entity.BaseDataInfo;
+import com.bj.eduteacher.entity.MsgEvent;
 import com.bj.eduteacher.manager.IntentManager;
 import com.bj.eduteacher.media.IjkVideoManager;
 import com.bj.eduteacher.media.controller.MediaController;
 import com.bj.eduteacher.media.videoview.IjkVideoView;
 import com.bj.eduteacher.utils.LL;
+import com.bj.eduteacher.utils.LoginStatusUtil;
 import com.bj.eduteacher.utils.NetUtils;
 import com.bj.eduteacher.utils.PreferencesUtils;
 import com.bj.eduteacher.utils.ScreenUtils;
 import com.bj.eduteacher.utils.StringUtils;
 import com.bj.eduteacher.utils.T;
-import com.hpplay.callback.ExecuteResultCallBack;
-import com.hpplay.link.HpplayLinkControl;
+
+import com.lzy.okgo.OkGo;
+import com.lzy.okgo.callback.StringCallback;
+import com.lzy.okgo.model.Response;
 import com.umeng.analytics.MobclickAgent;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -49,11 +66,16 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import tv.danmaku.ijk.media.player.IMediaPlayer;
 
+import static com.bj.eduteacher.api.HttpUtilService.BASE_URL;
+
+*/
 /**
  * Created by zz379 on 2017/8/30.
  * 资源播放页面 该页面使用的是bilibili开源播放器，目前正在使用
- */
+ *//*
+
 
 public class ResPlayActivity extends BaseActivity implements MediaController.OnTopBackButtonClickListener, MediaController.OnFullScreenChangeListener {
 
@@ -71,22 +93,25 @@ public class ResPlayActivity extends BaseActivity implements MediaController.OnT
     ImageView ivAgree;
     @BindView(R.id.ll_bottomBar)
     LinearLayout llBottomBar;
-
     private String resID;
     private String resUrl;
     private String resName;
     private LmsDataService service;
     private String teacherPhoneNumber;
-
     private IjkVideoView mIjkVideoView;
     private MediaController mediaController;
     private static final int LEBO_CONTROLLER_VOLUME_UP_PORT = 43;
     private static final int LEBO_CONTROLLER_VOLUME_DOWN_PORT = 44;
     private static final int LEBO_CONTROLLER_VOLUME_MUTE_PORT = 45;
     private static final int LEBO_STOP_PLAY_PORT = 50;
-
-    // AutoFullScreenListener mSensorEventListener;
-    // SensorManager mSensorManager;
+    private String unionid;
+    private String kechengid, currentTime;
+    private String type;
+    private String jiakestatus = "";
+    private String jindu = "";
+    private boolean isPlayComplete = false;
+    private boolean isNext = false;
+    private int agreeStatus = 0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -97,9 +122,16 @@ public class ResPlayActivity extends BaseActivity implements MediaController.OnT
         }
         setContentView(R.layout.activity_res_play_bilibili);
         ButterKnife.bind(this);
+        EventBus.getDefault().register(this);
         service = new LmsDataService();
         initStatus();
         initView();
+
+        teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID);
+        unionid = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_WECHAT_UNIONID);
+        //查询点赞状态
+        chaxunAgreeStatus("status");
+
         initData();
     }
 
@@ -116,12 +148,21 @@ public class ResPlayActivity extends BaseActivity implements MediaController.OnT
 
     @Override
     protected void initView() {
+        //add
+        type = getIntent().getStringExtra("type");
+
         resID = getIntent().getStringExtra(MLProperties.BUNDLE_KEY_MASTER_RES_ID);
         resName = getIntent().getStringExtra(MLProperties.BUNDLE_KEY_MASTER_RES_NAME);
         resUrl = getIntent().getStringExtra(MLProperties.BUNDLE_KEY_MASTER_RES_PREVIEW_URL);
 
-        // mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        // mSensorEventListener = new AutoFullScreenListener();
+        Log.e("resid111", resID);
+
+        if (type!=null&&!type.equals("free")) {
+            kechengid = getIntent().getStringExtra("kechengid");
+            currentTime = getIntent().getStringExtra("currentTime");
+            jiakestatus = getIntent().getStringExtra("jiakestatus");
+            jindu = getIntent().getStringExtra("jindu");
+        }
 
         mIjkVideoView = (IjkVideoView) findViewById(R.id.video_view);
         mediaController = new MediaController(this);
@@ -133,6 +174,12 @@ public class ResPlayActivity extends BaseActivity implements MediaController.OnT
         mIjkVideoView.setMediaController(mediaController);
 
         mIjkVideoView.setVideoPath(resUrl);
+
+        if (!type.equals("free")) {
+            if (jiakestatus.equals("1")) {
+                IjkVideoManager.getInstance().seekTo(Integer.valueOf(currentTime) * 1000);
+            }
+        }
         // 自动播放
         mediaController.mBtnPlay.post(new Runnable() {
             @Override
@@ -153,30 +200,40 @@ public class ResPlayActivity extends BaseActivity implements MediaController.OnT
         getResPreviewNumber();
     }
 
+
     @Override
     protected void onResume() {
         super.onResume();
-        teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID, "");
-        if (!StringUtils.isEmpty(teacherPhoneNumber)) {
-            // 查询是否点赞
-            getArticleAgreeNumber(ARTICLE_AGREE_TYPE_SEARCH);
-        }
-        // 注册重力监听
-        // Sensor accelerometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        // mSensorManager.registerListener(mSensorEventListener, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        Log.e("resume", ",mmk");
+        teacherPhoneNumber = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_USER_ID);
+        unionid = PreferencesUtils.getString(this, MLProperties.PREFER_KEY_WECHAT_UNIONID);
+        //查询点赞状态
+        chaxunAgreeStatus("status");
     }
 
     @OnClick(R.id.ll_commentNumber)
     void clickComment() {
-        // 点赞评论需要登录
-        if (StringUtils.isEmpty(teacherPhoneNumber)) {
-            IntentManager.toLoginActivity(this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
-            return;
-        }
-
         Intent intent = new Intent(this, ResCommentActivity.class);
         intent.putExtra(MLProperties.BUNDLE_KEY_DOUKE_ID, resID);
-        startActivity(intent);
+        startActivityForResult(intent, 1);
+    }
+
+
+    @OnClick(R.id.ll_agreeNumber)
+    void clickAgree() {
+
+        MobclickAgent.onEvent(this, "article_like");
+        // 点赞评论需要登录
+        if (LoginStatusUtil.noLogin(this)) {
+            IntentManager.toLoginSelectActivity(this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
+            return;
+        }
+        if (agreeStatus == 1) {
+            chaxunAgreeStatus("del");
+        }
+        if (agreeStatus == 0) {
+            chaxunAgreeStatus("add");
+        }
     }
 
     @Override
@@ -184,12 +241,6 @@ public class ResPlayActivity extends BaseActivity implements MediaController.OnT
         super.onBackPressed();
         if (mediaController.isPlayingOnTV) {
             mediaController.isPlayingOnTV = false;
-            HpplayLinkControl.getInstance().stopPlay(new ExecuteResultCallBack() {
-                @Override
-                public void onResultDate(Object o, int i) {
-                    Log.i("way", "结束播放：" + (Boolean) o + "...端口号：" + i);
-                }
-            }, LEBO_STOP_PLAY_PORT);
         }
     }
 
@@ -197,15 +248,198 @@ public class ResPlayActivity extends BaseActivity implements MediaController.OnT
     protected void onPause() {
         super.onPause();
         IjkVideoManager.getInstance().pause();
-        // mSensorManager.unregisterListener(mSensorEventListener);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        long duration = IjkVideoManager.getInstance().getDuration();
+        long progress = IjkVideoManager.getInstance().getCurrentPlayPosition();
+
+        long time = System.currentTimeMillis();//获取系统时间的10位的时间戳
+
+        String endtime = String.valueOf(time);
+
+        Log.e("进度上传", progress / 1000 + "=====" + "总时长==" + duration / 1000);
+
+        if (!type.equals("free")) {
+            if (jindu != null && !jindu.equals("已学完") && jiakestatus.equals("1")) {
+
+//                if (jindu.equals("test")) {
+//                    shanghcuanjindu(progress, duration, endtime);
+//                }
+                if (Integer.valueOf(currentTime) < (progress / 1000)){
+                    shanghcuanjindu(progress, duration, endtime);
+                }
+                if (Integer.valueOf(currentTime) > (progress / 1000)){
+                    Log.e("测试的currentTime",currentTime);
+                    shanghcuanjindu(Long.valueOf(currentTime)*1000, duration, endtime);
+                    Log.e("测试的currentTime2",Long.valueOf(currentTime)+"");
+                }
+//                if (Integer.valueOf(currentTime) < (progress / 1000))
+//                    if (!isPlayComplete) {
+//                        shanghcuanjindu(progress, duration, endtime);
+//                    }
+            }
+            if (jindu != null && jindu.equals("已学完") && jiakestatus.equals("1")) {
+                shanghcuanjindu(duration, duration, endtime);
+            }
+//            if (jindu != null && jindu.equals("未学完") && jiakestatus.equals("1")) {
+//                if (Integer.valueOf(currentTime) < (progress / 1000))
+//                    if (!isPlayComplete) {
+//                        shanghcuanjindu(progress, duration, endtime);
+//                    }
+//            }
+        }
+        EventBus.getDefault().post(new MsgEvent("playfinish"));
+
         IjkVideoManager.getInstance().release();
-        // 释放整个SDK
-        HpplayLinkControl.getInstance().castDisconnectDevice();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void udateUI(MsgEvent event) {
+        if (event.getAction().equals("playComplete")) {
+            if (!type.equals("free")) {
+                isPlayComplete = true;
+                long duration = event.getDuration();
+                if (jiakestatus.equals("1")) {
+                    String endtime = String.valueOf(System.currentTimeMillis());
+                    shanghcuanjindu(duration, duration, endtime);
+                    playNext(resID, kechengid);
+                }
+//                playNext(resID, kechengid);
+            }
+
+        }
+    }
+
+    private void playNext(final String resid, final String kechengid) {
+        Observable.create(new ObservableOnSubscribe<NextRes>() {
+            @Override
+            public void subscribe(final ObservableEmitter<NextRes> e) throws Exception {
+                OkGo.<String>post(BASE_URL + "index.php/kecheng/getnextres")
+                        .params("appkey", MLConfig.HTTP_APP_KEY)
+                        .params("resid", resid)
+                        .params("kechengid", kechengid)
+                        .params("unionid", unionid)
+                        .params("phone", teacherPhoneNumber)
+                        .execute(new StringCallback() {
+                            @Override
+                            public void onSuccess(Response<String> response) {
+                                String str = response.body().toString();
+                                Log.e("结果", str);
+                                NextRes nextRes = JSON.parseObject(str, new TypeReference<NextRes>() {
+                                });
+                                e.onNext(nextRes);
+                                e.onComplete();
+                            }
+                        });
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<NextRes>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(NextRes nextRes) {
+                        if (nextRes.getRet().equals("1")) {
+                            resID = nextRes.getData().getNext_resid();
+
+                            chaxunAgreeStatus("status");
+                            isNext = true;
+
+                            getResPreviewNumber();
+
+                            mIjkVideoView.setVideoPath(nextRes.getData().getNext_previewurl());
+                            if (!type.equals("free")) {
+                                if (jiakestatus.equals("1")) {
+                                    jindu = "test";
+                                    currentTime = nextRes.getData().getNext_currentTime();
+                                    IjkVideoManager.getInstance().seekTo(Integer.valueOf(nextRes.getData().getNext_currentTime()) * 1000);
+                                }
+                            }
+                            // 自动播放
+//                            mediaController.mBtnPlay.post(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    mediaController.mBtnPlay.performClick();
+//                                }
+//                            });
+
+                            //T.showShort(ResPlayActivity.this,"下一个视频id="+nextRes.getData().getNext_resid());
+                        }
+                        if (nextRes.getRet().equals("2")) {
+                            T.showShort(ResPlayActivity.this, "已是最后一个视频");
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    private void shanghcuanjindu(final long progress, final long duration, final String endTime) {
+        Observable.create(new ObservableOnSubscribe<BaseDataInfo>() {
+            @Override
+            public void subscribe(final ObservableEmitter<BaseDataInfo> e) throws Exception {
+                OkGo.<String>post(BASE_URL + "index.php/kecheng/setkcresjindu")
+                        .params("appkey", MLConfig.HTTP_APP_KEY)
+                        .params("resid", resID)
+                        .params("kechengid", kechengid)
+                        .params("restype", "2")
+                        .params("endtime", endTime)
+                        .params("currentTime", String.valueOf(progress / 1000))
+                        .params("duration", String.valueOf(duration / 1000))
+                        .params("unionid", unionid)
+                        .params("phone", teacherPhoneNumber)
+                        .execute(new StringCallback() {
+                            @Override
+                            public void onSuccess(Response<String> response) {
+                                String str = response.body().toString();
+                                BaseDataInfo baseDataInfo = JSON.parseObject(str, new TypeReference<BaseDataInfo>() {
+                                });
+                                Log.e("上传进度结果", str);
+
+                                e.onNext(baseDataInfo);
+                                e.onComplete();
+                            }
+                        });
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<BaseDataInfo>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(BaseDataInfo dataInfo) {
+                        Log.e("上传进度发送", "true");
+                        EventBus.getDefault().post(new MsgEvent("progressuploadsuccess"));
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     private void getResPreviewNumber() {
@@ -228,9 +462,7 @@ public class ResPlayActivity extends BaseActivity implements MediaController.OnT
                     public void onNext(@NonNull String[] result) {
                         // 获取点赞数量和评论数量
                         getResNumbers();
-                        if ("1".equals(result[0])) {
 
-                        }
                     }
 
                     @Override
@@ -266,7 +498,16 @@ public class ResPlayActivity extends BaseActivity implements MediaController.OnT
                         llBottomBar.setVisibility(View.VISIBLE);
                         tvAgreeNumber.setText(articleInfo.getAgreeNumber());
                         tvCommentNumber.setText(articleInfo.getCommentNumber());
-                        tvReadNumber.setText(articleInfo.getReadNumber() + "次阅读");
+                        tvReadNumber.setText(articleInfo.getReadNumber() + "次播放");
+
+                        //add
+//                        if (isNext) {
+//                            Log.e("Title", articleInfo.getTitle());
+//                            mediaController.changeTitle(articleInfo.getTitle());
+//                        }
+                        mediaController.changeTitle(articleInfo.getTitle());
+
+
                     }
 
                     @Override
@@ -282,79 +523,76 @@ public class ResPlayActivity extends BaseActivity implements MediaController.OnT
                 });
     }
 
-    boolean isAgree = false;
-
-    @OnClick(R.id.ll_agreeNumber)
-    void clickAgree() {
-        MobclickAgent.onEvent(this, "article_like");
-        // 点赞评论需要登录
-        if (StringUtils.isEmpty(teacherPhoneNumber)) {
-            IntentManager.toLoginActivity(this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
-            return;
-        }
-
-        if (isAgree) {
-            getArticleAgreeNumber(ARTICLE_AGREE_TYPE_NO);
-        } else {
-            getArticleAgreeNumber(ARTICLE_AGREE_TYPE_YES);
-        }
-    }
-
-    private void getArticleAgreeNumber(final String type) {
+    private void chaxunAgreeStatus(final String type) {
         Observable.create(new ObservableOnSubscribe<BaseDataInfo>() {
             @Override
-            public void subscribe(@NonNull ObservableEmitter<BaseDataInfo> e) throws Exception {
-                LmsDataService mService = new LmsDataService();
-                BaseDataInfo dataInfo = mService.getResourceAgreeStatus(resID, teacherPhoneNumber, type);
-                e.onNext(dataInfo);
-                e.onComplete();
+            public void subscribe(final ObservableEmitter<BaseDataInfo> e) throws Exception {
+                OkGo.<String>post(BASE_URL + "ziyuan/dianzan")
+                        .params("appkey", MLConfig.HTTP_APP_KEY)
+                        .params("ziyuanid", resID)
+                        .params("caozuo", type)
+                        .params("userphone", teacherPhoneNumber)
+                        .params("unionid", unionid)
+                        .execute(new StringCallback() {
+                            @Override
+                            public void onSuccess(Response<String> response) {
+                                String str = response.body().toString();
+                                BaseDataInfo info = JSON.parseObject(str, new TypeReference<BaseDataInfo>() {
+                                });
+
+                                e.onNext(info);
+                                e.onComplete();
+                            }
+                        });
             }
-        }).subscribeOn(Schedulers.io())
+        })
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<BaseDataInfo>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-
                     }
 
                     @Override
                     public void onNext(BaseDataInfo info) {
-                        if (info == null || StringUtils.isEmpty(info.getRet())) {
-                            return;
-                        }
+                        if (type.equals("status")) {
+                            if (info.getRet().equals("3")) {
+                                if (info.getData().equals("1")) {
+                                    ivAgree.setImageResource(R.mipmap.ic_liked);
 
-                        if (info.getRet().equals("3")) {
-                            if (info.getData().equals("1")) {
-                                ivAgree.setImageResource(R.mipmap.ic_liked);
-                                isAgree = true;
-                            } else {
-                                ivAgree.setImageResource(R.mipmap.ic_like);
-                                isAgree = false;
+                                    agreeStatus = 1;
+                                } else {
+                                    ivAgree.setImageResource(R.mipmap.ic_like);
+                                    agreeStatus = 0;
+                                }
                             }
-                        } else if (info.getRet().equals("2")) {
-                            ivAgree.setImageResource(R.mipmap.ic_like);
-                            isAgree = false;
-                        } else if (info.getRet().equals("1")) {
-                            ivAgree.setImageResource(R.mipmap.ic_liked);
-                            isAgree = true;
-                        } else {
+                        }
+                        if (type.equals("add")) {
+                            if (info.getRet().equals("1")) {
+                                agreeStatus = 1;
+                                chaxunAgreeStatus("status");
+                            }
 
                         }
-                        // 获取res 各种数据
+                        if (type.equals("del")) {
+                            if (info.getRet().equals("2")) {
+                                //ivAgree.setImageResource(R.mipmap.ic_liked);
+                                agreeStatus = 0;
+                                chaxunAgreeStatus("status");
+                            }
+
+                        }
                         getResNumbers();
                     }
 
                     @Override
                     public void onError(Throwable e) {
-
                     }
 
                     @Override
                     public void onComplete() {
-
                     }
                 });
-
     }
 
     @Override
@@ -372,7 +610,7 @@ public class ResPlayActivity extends BaseActivity implements MediaController.OnT
 
     @Override
     public void onFullScreenChange(boolean fullscreen) {
-        
+
     }
 
     @Override
@@ -399,92 +637,15 @@ public class ResPlayActivity extends BaseActivity implements MediaController.OnT
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        Log.i("way", "Activity...onKeyDown()...按键监听：" + keyCode);
-        // 处理电视音量
-        if (mediaController.isPlayingOnTV && keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-            HpplayLinkControl.getInstance().castDeviceVolume(new ExecuteResultCallBack() {
-                @Override
-                public void onResultDate(Object o, int i) {
-                    Log.i("way", "增加音量：" + (Boolean) o + "...端口号：" + i);
-                }
-            }, LEBO_CONTROLLER_VOLUME_UP_PORT, true);
-            return true;
-        } else if (mediaController.isPlayingOnTV && keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-            HpplayLinkControl.getInstance().castDeviceVolume(new ExecuteResultCallBack() {
-                @Override
-                public void onResultDate(Object o, int i) {
-                    Log.i("way", "减少音量：" + (Boolean) o + "...端口号：" + i);
-                }
-            }, LEBO_CONTROLLER_VOLUME_DOWN_PORT, false);
-            return true;
-        } else if (mediaController.isPlayingOnTV && keyCode == KeyEvent.KEYCODE_VOLUME_MUTE) {
-            HpplayLinkControl.getInstance().castDeviceVolume(new ExecuteResultCallBack() {
-                @Override
-                public void onResultDate(Object o, int i) {
-                    Log.i("way", "静音：" + (Boolean) o + "...端口号：" + i);
-                }
-            }, LEBO_CONTROLLER_VOLUME_MUTE_PORT, 0);
-        }
-
-        return super.onKeyDown(keyCode, event);
-    }
-
-    public class AutoFullScreenListener implements SensorEventListener {
-        private static final int _DATA_X = 0;
-        private static final int _DATA_Y = 1;
-        private static final int _DATA_Z = 2;
-
-        public static final int ORIENTATION_UNKNOWN = -1;
-
-        public AutoFullScreenListener() {
-        }
-
-        @Override
-        public void onSensorChanged(SensorEvent event) {
-            float[] values = event.values;
-            int orientation = ORIENTATION_UNKNOWN;
-            float X = -values[_DATA_X];
-            float Y = -values[_DATA_Y];
-            float Z = -values[_DATA_Z];
-            float magnitude = X * X + Y * Y;
-            // Don't trust the angle if the magnitude is small compared to the y
-            // value
-            if (magnitude * 4 >= Z * Z) {
-                // 屏幕旋转时
-                float OneEightyOverPi = 57.29577957855f;
-                float angle = (float) Math.atan2(-Y, X) * OneEightyOverPi;
-                orientation = 90 - Math.round(angle);
-                // normalize to 0 - 359 range
-                while (orientation >= 360) {
-                    orientation -= 360;
-                }
-                while (orientation < 0) {
-                    orientation += 360;
-                }
-            }
-
-            /**
-             * 根据手机屏幕的朝向角度，来设置内容的横竖屏，并且记录状态
-             */
-            if (orientation > 45 && orientation < 135) {
-                LL.i("··········反向横屏··········");
-                return;
-            } else if (orientation > 135 && orientation < 225) {
-                LL.i("··········反向竖屏··········");
-                return;
-            } else if (orientation > 225 && orientation < 315) {
-                LL.i("··········横屏··········");
-                mediaController.startFullScreen();
-            } else if ((orientation > 315 && orientation < 360) || (orientation > 0 && orientation < 45)) {
-                LL.i("··········竖屏··········");
-                mediaController.quitFullScreen();
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == 300) {
+            if (requestCode == 1) {
+                Log.e("评论返回", "true");
+                getResNumbers();
             }
         }
-
-        @Override
-        public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-        }
     }
+
 }
+*/

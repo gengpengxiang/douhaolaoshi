@@ -20,8 +20,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/img_splash"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="106dp"
-        android:text="一切为了提升老师的生活质量"
+        android:layout_marginTop="90dp"
+        android:text="一起创造美好教育"
         android:textColor="@color/white_fff"
         android:textSize="20sp" />
 </RelativeLayout>

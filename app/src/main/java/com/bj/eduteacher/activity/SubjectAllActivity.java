@@ -27,6 +27,7 @@ import com.bj.eduteacher.api.MLProperties;
 import com.bj.eduteacher.entity.ArticleInfo;
 import com.bj.eduteacher.manager.IntentManager;
 import com.bj.eduteacher.utils.LL;
+import com.bj.eduteacher.utils.LoginStatusUtil;
 import com.bj.eduteacher.utils.PreferencesUtils;
 import com.bj.eduteacher.utils.ScreenUtils;
 import com.bj.eduteacher.utils.StringUtils;
@@ -124,8 +125,8 @@ public class SubjectAllActivity extends BaseActivity {
                     startActivity(intent);
                 } else if ("Invite".equals(tag)) {
                     // 购买资源前需要登录
-                    if (StringUtils.isEmpty(teacherPhoneNumber)) {
-                        IntentManager.toLoginActivity(SubjectAllActivity.this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
+                    if (LoginStatusUtil.noLogin(getApplicationContext())) {
+                        IntentManager.toLoginSelectActivity(SubjectAllActivity.this, IntentManager.LOGIN_SUCC_ACTION_FINISHSELF);
                         return;
                     }
 
@@ -321,7 +322,7 @@ public class SubjectAllActivity extends BaseActivity {
             if (shareBmp != null && !shareBmp.isRecycled()) {
                 Bitmap thumbBmp = Bitmap.createScaledBitmap(shareBmp, shareBmp.getWidth() / 10,
                         shareBmp.getHeight() / 10, true);
-                // msg.thumbData = Util.bmpToByteArray(thumbBmp, true);
+                // msg.thumbData = WXUtil.bmpToByteArray(thumbBmp, true);
                 msg.thumbData = Util.bmpToByteArray(thumbBmp, true);
                 shareBmp.recycle();
             }

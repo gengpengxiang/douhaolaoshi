@@ -45,6 +45,54 @@ public class ArticleInfo {
     private String previewType;
     private String playUrl;
 
+    //add
+    private String jiakeStatus;
+    private String zhuanti;
+    private String zhuanti_name;
+
+    private String getmore;
+    private int cardnum;
+
+    public int getCardnum() {
+        return cardnum;
+    }
+
+    public void setCardnum(int cardnum) {
+        this.cardnum = cardnum;
+    }
+
+    public String getGetmore() {
+        return getmore;
+    }
+
+    public void setGetmore(String getmore) {
+        this.getmore = getmore;
+    }
+
+    public String getZhuanti() {
+        return zhuanti;
+    }
+
+    public void setZhuanti(String zhuanti) {
+        this.zhuanti = zhuanti;
+    }
+
+    public String getZhuanti_name() {
+        return zhuanti_name;
+    }
+
+    public void setZhuanti_name(String zhuanti_name) {
+        this.zhuanti_name = zhuanti_name;
+    }
+
+    public String getJiakeStatus() {
+        return jiakeStatus;
+    }
+
+    public void setJiakeStatus(String jiakeStatus) {
+        this.jiakeStatus = jiakeStatus;
+    }
+
     public String getPlayUrl() {
         return playUrl;
     }

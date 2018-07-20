@@ -1,8 +1,10 @@
 package com.bj.eduteacher.activity;
 
 import android.net.http.SslError;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
@@ -22,6 +24,7 @@ import com.bj.eduteacher.R;
 import com.bj.eduteacher.api.MLProperties;
 import com.bj.eduteacher.utils.LL;
 import com.bj.eduteacher.utils.NetUtils;
+import com.bj.eduteacher.utils.StringUtils;
 import com.bj.eduteacher.utils.T;
 import com.umeng.analytics.MobclickAgent;
 
@@ -47,7 +50,7 @@ public class WebviewActivity extends BaseActivity {
     LinearLayout llErrorContent;
 
     private WebSettings setting;
-    private String title, contentUrl;
+    private String webTitle, contentUrl;
     private long clickMillis = 0;
 
     @Override
@@ -59,17 +62,28 @@ public class WebviewActivity extends BaseActivity {
         initToolBar();
         initView();
         loadContent();
+        Log.e("网址",contentUrl);
+
+        //因为加载的这个网页由大量的JS文件构成，因此此处需要设置与JS交互为TRUE，否则不能正常显示网页
+//        web_content.getSettings().setJavaScriptEnabled(true);
+//        //设置网页可视
+//        web_content.setVisibility(View.VISIBLE);
+//        web_content.loadUrl(contentUrl);
+
     }
 
     @Override
     protected void initToolBar() {
         super.initToolBar();
-        title = getIntent().getExtras().getString(MLProperties.BUNDLE_KEY_MASTER_RES_NAME, "");
+        webTitle = getIntent().getExtras().getString(MLProperties.BUNDLE_KEY_MASTER_RES_NAME, "");
         contentUrl = getIntent().getExtras().getString(MLProperties.BUNDLE_KEY_MASTER_RES_PREVIEW_URL, "");
 
         imgBack.setVisibility(View.VISIBLE);
         tvTitle.setVisibility(View.VISIBLE);
-        tvTitle.setText(title);
+
+        //tvTitle.setText("逗号老师");
+
+
     }
 
     @OnClick(R.id.header_ll_left)
@@ -84,7 +98,7 @@ public class WebviewActivity extends BaseActivity {
     protected void initView() {
         // 覆盖WebView默认使用第三方或系统默认浏览器打开网页的行为，使网页用WebView打开
         // 主要处理解析，渲染网页等浏览器做的事情 WebViewClient就是帮助WebView处理各种通知、请求事件的。
-        web_content.setWebViewClient(new WebViewClient() {
+       /* web_content.setWebViewClient(new WebViewClient() {
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -94,13 +108,14 @@ public class WebviewActivity extends BaseActivity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                LL.i("webView ---->>>> onPageFinished ---->>>> title:" + view.getTitle());
+                Log.e("WebView","webView ---->>>> onPageFinished");
                 // tvTitle.setText(String.valueOf(view.getTitle()));
+                //view.loadUrl(url);
             }
 
             @Override
             public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-                LL.i("webView ---->>>> onReceivedError");
+                Log.e("WebView","webView ---->>>> onReceivedError");
                 llErrorContent.setVisibility(View.VISIBLE);
                 web_content.setVisibility(View.GONE);
             }
@@ -108,19 +123,33 @@ public class WebviewActivity extends BaseActivity {
             @Override
             public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
                 super.onReceivedHttpError(view, request, errorResponse);
-                LL.i("webView ---->>>> onReceivedHttpError");
+                Log.e("WebView","webView ---->>>> onReceivedHttpError");
                 // llErrorContent.setVisibility(View.VISIBLE);
                 // web_content.setVisibility(View.GONE);
             }
 
             @Override
             public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+                handler.proceed();
                 super.onReceivedSslError(view, handler, error);
-                LL.i("webView ---->>>> onReceivedSslError");
+                Log.e("WebView","webView ---->>>> onReceivedSslError");
                 // llErrorContent.setVisibility(View.VISIBLE);
                 // web_content.setVisibility(View.GONE);
+
+            }
+        });*/
+        web_content.getSettings().setJavaScriptEnabled(true);//启用js
+        web_content.getSettings().setBlockNetworkImage(false);//解决图片不显示
+        web_content.setWebViewClient(new WebViewClient() {
+            public boolean shouldOverrideUrlLoading(WebView view, String url)
+            { //  重写此方法表明点击网页里面的链接还是在当前的webview里跳转，不跳到浏览器那边
+                view.loadUrl(url);
+                return true;
             }
         });
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+            web_content.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
         // setWebChromeClient：辅助WebView处理Javascript的对话框，网站图标，网站title，加载进度等
         web_content.setWebChromeClient(new WebChromeClient() {
             // 网页加载进度条
@@ -139,6 +168,24 @@ public class WebviewActivity extends BaseActivity {
                 }
             }
 
+            @Override
+            public void onReceivedTitle(WebView view, String title) {
+                if(!StringUtils.isEmpty(webTitle.trim())){
+                    tvTitle.setText(webTitle);
+                }else {
+                    if (title != null) {
+                        Log.e("title",title);
+                        tvTitle.setText(title);
+                    }else {
+                        tvTitle.setText("逗号老师");
+                    }
+                }
+//                if (title != null) {
+//                    tvTitle.setText(title);
+//                }else {
+//                    tvTitle.setText("逗号老师");
+//                }
+            }
         });
 
         // 启用支持JavaScript
@@ -179,6 +226,7 @@ public class WebviewActivity extends BaseActivity {
         MobclickAgent.onPageStart("user_protocol");
         MobclickAgent.onResume(this);
         web_content.onResume();
+
     }
 
     @Override
@@ -200,4 +248,6 @@ public class WebviewActivity extends BaseActivity {
         // 重新加载页面
         loadContent();
     }
+
+
 }

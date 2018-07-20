@@ -55,4 +55,10 @@ public class MLProperties {
     public static final String BUNDLE_KEY_MASTER_RES_NAME = "MasterResName";
     public static final String BUNDLE_KEY_MASTER_RES_PREVIEW_URL = "MasterResPreviewUrl";
     public static final String BUNDLE_KEY_MASTER_RES_DOWNLOAD_URL = "MasterResDownloadUrl";
+    public static final String BUNDLE_KEY_MASTER_RES_PREVIEW_VID = "MasterResPreviewVid";
+
+    //微信登录成功状态
+    public static final String PREFER_KEY_WECHAT_UNIONID = "weixinunionid";
+    public static final String PREFER_KEY_WECHAT_NICHENG = "weixinnicheng";
+    public static final String PREFER_KEY_TEACHER_GROUPID = "teachergroupid";
 }

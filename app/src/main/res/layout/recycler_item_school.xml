@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@drawable/dialog_background"
+    android:paddingBottom="10dp"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:layout_marginTop="20dp"
+    >
+    <!--<com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/iv_picture"
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        fresco:actualImageScaleType="fitCenter"
+        fresco:placeholderImage="@drawable/bg_live_default_picture"
+        fresco:placeholderImageScaleType="fitXY"
+        fresco:roundAsCircle="false"
+        fresco:roundedCornerRadius="8dp"
+        fresco:roundBottomRight="false"
+        fresco:roundBottomLeft="false"/>-->
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/iv_picture"
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        fresco:actualImageScaleType="fitCenter"
+        fresco:placeholderImage="@drawable/bg_live_default_picture"
+        fresco:placeholderImageScaleType="fitXY"
+        fresco:roundAsCircle="false"
+        fresco:roundedCornerRadius="8dp"
+        fresco:roundBottomRight="false"
+        fresco:roundBottomLeft="false"/>
+    <TextView
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:lines="2"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:textColor="@color/colorTextBlack"
+        android:layout_marginTop="5dp"
+        android:id="@+id/tv_name"
+        android:text="学校名字"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:drawablePadding="10dp"
+        android:drawableLeft="@mipmap/ic_location_orange"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_marginTop="3dp"
+        android:id="@+id/tv_quyu"
+        android:text="地区"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+</LinearLayout>

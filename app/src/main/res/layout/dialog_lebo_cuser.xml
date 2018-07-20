@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:background="@android:color/transparent">
 
-    <View
+   <!-- <View
         android:id="@+id/hpplay_cusre_view_back"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
@@ -71,6 +71,6 @@
         </LinearLayout>
 
     </ScrollView>
-    </LinearLayout>
+    </LinearLayout>-->
 
 </RelativeLayout>

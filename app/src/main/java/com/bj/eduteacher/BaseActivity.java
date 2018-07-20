@@ -7,11 +7,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 
@@ -24,9 +26,9 @@ import com.bj.eduteacher.utils.ScreenUtils;
 import com.bj.eduteacher.widget.LoadingDialog;
 import com.bj.eduteacher.zzautolayout.AutoLayoutActivity;
 import com.jaeger.library.StatusBarUtil;
-import com.tencent.TIMFriendshipManager;
-import com.tencent.ilivesdk.ILiveConstants;
-import com.tencent.ilivesdk.core.ILiveLoginManager;
+//import com.tencent.TIMFriendshipManager;
+//import com.tencent.ilivesdk.ILiveConstants;
+//import com.tencent.ilivesdk.core.ILiveLoginManager;
 import com.umeng.message.PushAgent;
 
 /**
@@ -48,6 +50,9 @@ public class BaseActivity extends AutoLayoutActivity {
         PushAgent.getInstance(this).onAppStart();
         loadingDialog = new LoadingDialog(this);
         initLive();
+
+        Log.e("当前Activity==", getClass().getSimpleName());
+
     }
 
     protected void initToolBar() {
@@ -73,26 +78,26 @@ public class BaseActivity extends AutoLayoutActivity {
     }
 
     private void initLive() {
-        TIMFriendshipManager manager = TIMFriendshipManager.getInstance();
-        manager.setNickName("", null);
-        ILiveLoginManager.getInstance().setUserStatusListener(new ILiveLoginManager.TILVBStatusListener() {
-            @Override
-            public void onForceOffline(int error, String message) {
-                switch (error) {
-                    case ILiveConstants.ERR_KICK_OUT:
-                        processOffline(getString(R.string.str_offline_msg));
-                        break;
-                    case ILiveConstants.ERR_EXPIRE:
-                        processOffline("onUserSigExpired|" + message);
-                        break;
-                }
-            }
-        });
+//        TIMFriendshipManager manager = TIMFriendshipManager.getInstance();
+//        manager.setNickName("", null);
+//        ILiveLoginManager.getInstance().setUserStatusListener(new ILiveLoginManager.TILVBStatusListener() {
+//            @Override
+//            public void onForceOffline(int error, String message) {
+//                switch (error) {
+//                    case ILiveConstants.ERR_KICK_OUT:
+//                        processOffline(getString(R.string.str_offline_msg));
+//                        break;
+//                    case ILiveConstants.ERR_EXPIRE:
+//                        processOffline("onUserSigExpired|" + message);
+//                        break;
+//                }
+//            }
+//        });
         recv = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (intent.getAction().equals(Constants.BD_EXIT_APP)) {
-                    IntentManager.toLoginActivity(context, IntentManager.LOGIN_SUCC_ACTION_MAINACTIVITY);
+                    IntentManager.toLoginSelectActivity(context, IntentManager.LOGIN_SUCC_ACTION_MAINACTIVITY);
                     finish();
                 }
             }
@@ -179,6 +184,12 @@ public class BaseActivity extends AutoLayoutActivity {
         } catch (Exception e) {
         }
         super.onDestroy();
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     private void processOffline(String message) {

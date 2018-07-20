@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.andview.refreshview.XRefreshView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/mXRefreshView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFF">
+
+    <android.support.v7.widget.RecyclerView
+        android:background="@color/bg_gray"
+        android:id="@+id/mRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="10dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:scrollbarSize="1dp"
+        android:scrollbars="none" />
+</com.andview.refreshview.XRefreshView>

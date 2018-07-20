@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'org.greenrobot.greendao'
 
 android {
     useLibrary 'org.apache.http.legacy'
@@ -7,10 +8,11 @@ android {
     buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "com.bj.eduteacher"
-        minSdkVersion 17
+        minSdkVersion 19
         targetSdkVersion 25
-        versionCode 31
-        versionName "3.9.1"
+        versionCode 42//更新次数41
+//        versionName "3.9.1"
+        versionName "4.5"//4.4.3
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
@@ -23,7 +25,7 @@ android {
         ndk {
             abiFilters 'armeabi', 'armeabi-v7a'
         }
-        multiDexEnabled true;
+        multiDexEnabled true
     }
     signingConfigs {
         release {
@@ -58,6 +60,12 @@ android {
             flavor.manifestPlaceholders = [UMENG_CHANNEL_VALUE: name]
         }
     }
+
+    greendao{
+        schemaVersion 2
+        targetGenDir 'src/main/java'
+        daoPackage 'com.bj.eduteacher.answer.dbhelper'
+    }
 }
 repositories {
     flatDir { dirs 'libs' }
@@ -80,12 +88,12 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp:3.2.0'
     compile 'com.squareup.okio:okio:1.13.0'
     // 直播业务功能
-    compile 'com.tencent.livesdk:livesdk:1.1.4'
+    //compile 'com.tencent.livesdk:livesdk:1.1.4'
     // 核心功能
-    compile 'com.tencent.ilivesdk:ilivesdk:1.6.2'
-    compile 'com.tencent.rtmpsdk:rtmpsdk:1.0.1'
-    compile 'com.tencent.ilivefilter:ilivefilter:1.1.14'
-    compile 'com.tencent.iliveptufilter:iliveptufilter:1.0.3'
+    //compile 'com.tencent.ilivesdk:ilivesdk:1.6.2'
+    //compile 'com.tencent.rtmpsdk:rtmpsdk:1.0.1'
+    //compile 'com.tencent.ilivefilter:ilivefilter:1.1.14'
+    //compile 'com.tencent.iliveptufilter:iliveptufilter:1.0.3'
     // rxpermissions
     compile 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.4@aar'
     // RxJava
@@ -125,11 +133,33 @@ dependencies {
     // 友盟统计 com.umeng.analytics:analytics:latest.integration
     compile 'com.umeng.analytics:analytics:6.1.2'
     // 乐播投屏SDK
-    compile(name: 'hpplay-link-2415', ext: 'aar')
+    //compile(name: 'hpplay-link-2415', ext: 'aar')
     // required, enough for most devices. bilibili
-    compile 'tv.danmaku.ijk.media:ijkplayer-java:0.8.4'
-    compile 'tv.danmaku.ijk.media:ijkplayer-armv7a:0.8.4'
-    compile 'tv.danmaku.ijk.media:ijkplayer-exo:0.8.4'
+//    compile 'tv.danmaku.ijk.media:ijkplayer-java:0.8.4'
+//    compile 'tv.danmaku.ijk.media:ijkplayer-armv7a:0.8.4'
+//    compile 'tv.danmaku.ijk.media:ijkplayer-exo:0.8.4'
     // 视频URL缓存
     compile 'com.danikula:videocache:2.7.0'
+    //自定义适配器
+    compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.30'
+    //Retrofit相关
+    compile 'com.squareup.retrofit2:retrofit:2.3.0'
+    //compile 'com.squareup.retrofit2:converter-gson:2.3.0'
+    compile 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
+    compile 'org.ligboy.retrofit2:converter-fastjson-android:2.1.0'
+    compile 'com.lzy.net:okgo:3.0.4'
+//    compile 'com.lzy.net:okrx2:2.0.2'
+//    compile 'com.lzy.net:okserver:2.0.5'
+
+    compile 'com.alibaba:fastjson:1.2.46'
+    compile 'top.zibin:Luban:1.1.7'
+    compile 'com.scwang.smartrefresh:SmartRefreshLayout:1.0.4'
+
+//    compile 'com.lzy.net:okrx2:2.0.2'
+//    compile 'com.lzy.net:okserver:2.0.5'
+    //阿里云播放器
+    compile project(path: ':AVMP_SkinLibrary')
+    //数据库
+    implementation 'org.greenrobot:greendao:3.2.2'
+
 }

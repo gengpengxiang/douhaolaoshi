@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fe5433"
+    tools:context="com.bj.eduteacher.prize.view.PrizeActivity">
+
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ImageView
+                android:id="@+id/iv_prize_title"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:background="@mipmap/bg_prize_title"/>
+            <!--<ImageView
+                android:id="@+id/bt_back"
+                android:background="@null"
+                android:layout_marginTop="30dp"
+                android:layout_marginLeft="20dp"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:src="@mipmap/ic_prize_back"/>-->
+            <LinearLayout
+                android:layout_marginTop="160dp"
+                android:id="@+id/layout_choujiangnum"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
+                android:gravity="center_horizontal"
+                android:layout_marginLeft="50dp"
+                android:layout_marginRight="50dp"
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_shape_corner_yellow">
+                <TextView
+                    android:textColor="@color/colorRed"
+                    android:drawableLeft="@mipmap/ic_gift"
+                    android:drawablePadding="10dp"
+                    android:id="@+id/tv_choujiangnum"
+                    android:text="今天还剩0次抽奖机会"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_mydooubi"
+                android:layout_marginTop="15dp"
+                android:layout_below="@+id/layout_choujiangnum"
+                android:layout_centerHorizontal="true"
+                android:text="我的积分："
+                android:textColor="#f9ff94"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <FrameLayout
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="15dp"
+                android:id="@+id/layout_prize"
+                android:layout_below="@+id/tv_mydooubi"
+                android:layout_width="320dp"
+                android:layout_height="320dp"
+                >
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="24dp"
+                    android:orientation="vertical"
+                    android:padding="4dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/iv1"
+                            style="@style/ImageButtonTurnTable"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1" />
+
+                        <ImageView
+                            android:id="@+id/iv2"
+                            style="@style/ImageButtonTurnTable"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1" />
+
+                        <ImageView
+                            android:id="@+id/iv3"
+                            style="@style/ImageButtonTurnTable"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/iv8"
+                            style="@style/ImageButtonTurnTable"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1" />
+
+                        <LinearLayout
+                            android:id="@+id/bt_start"
+                            android:layout_margin="4dp"
+                            android:padding="4dp"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@mipmap/bg_prize_yellow"
+                            android:orientation="vertical">
+                            <TextView
+                                android:textSize="18sp"
+                                android:layout_gravity="center_horizontal"
+                                android:text="立即"
+                                android:textColor="@color/colorRed"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+                            <TextView
+                                android:textSize="18sp"
+                                android:text="抽奖"
+                                android:layout_gravity="center_horizontal"
+                                android:textColor="@color/colorRed"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+                            <TextView
+                                android:textSize="14sp"
+                                android:text="1积分/次"
+                                android:layout_gravity="center_horizontal"
+                                android:textColor="@color/colorRed"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+                        </LinearLayout>
+
+                        <!-- <ImageView
+                             android:id="@+id/iv_start"
+                             android:layout_width="0dp"
+                             android:layout_height="match_parent"
+                             android:layout_margin="4dp"
+                             android:layout_weight="1"
+                             android:background="@mipmap/bg_prize_yellow"
+                             android:padding="4dp"
+                             android:scaleType="centerInside" />-->
+
+                        <ImageView
+                            android:id="@+id/iv4"
+                            style="@style/ImageButtonTurnTable"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/iv7"
+                            style="@style/ImageButtonTurnTable"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1" />
+
+                        <ImageView
+                            android:id="@+id/iv6"
+                            style="@style/ImageButtonTurnTable"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1" />
+
+                        <ImageView
+                            android:id="@+id/iv5"
+                            style="@style/ImageButtonTurnTable"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1" />
+                    </LinearLayout>
+                </LinearLayout>
+            </FrameLayout>
+
+            <Button
+                android:gravity="center"
+                android:text="活动规则 >>"
+                android:textColor="@color/colorRed"
+                android:background="@drawable/btn_shape_corner_yellow"
+                android:layout_marginTop="15dp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/layout_prize"
+                android:id="@+id/bt_rule"
+                android:layout_width="180dp"
+                android:layout_height="40dp"
+                android:layout_marginBottom="15dp"/>
+        </RelativeLayout>
+    </ScrollView>
+
+    <ImageView
+        android:id="@+id/bt_back"
+        android:background="@null"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="20dp"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:src="@mipmap/ic_prize_back"/>
+
+</RelativeLayout>

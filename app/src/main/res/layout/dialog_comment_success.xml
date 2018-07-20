@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <RelativeLayout
+        android:id="@+id/layout1"
+        android:paddingBottom="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#fe5433">
+        <TextView
+            android:id="@+id/tv_success"
+            android:layout_marginTop="30dp"
+            android:textSize="20sp"
+            android:textColor="#ffffff"
+            android:text="评论成功"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tv_doubi"
+            android:layout_marginLeft="50dp"
+            android:layout_below="@+id/tv_success"
+            android:layout_marginTop="30dp"
+            android:textSize="22sp"
+            android:textColor="#ffffff"
+            android:text="+0"
+            android:layout_alignParentLeft="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/tv_doubizongshu"
+            android:layout_marginRight="80dp"
+            android:layout_below="@+id/tv_success"
+            android:layout_marginTop="30dp"
+            android:textSize="22sp"
+            android:textColor="#ffffff"
+            android:text="0"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:drawablePadding="5dp"
+            android:drawableLeft="@mipmap/ic_coin"
+            android:id="@+id/tv_doubi2"
+            android:layout_marginLeft="40dp"
+            android:layout_below="@+id/tv_doubi"
+            android:layout_marginTop="30dp"
+            android:textSize="18sp"
+            android:textColor="#ffffff"
+            android:text="积分"
+            android:layout_alignParentLeft="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:drawablePadding="5dp"
+            android:drawableLeft="@mipmap/ic_coin"
+            android:id="@+id/tv_doubizongshu2"
+            android:layout_marginRight="40dp"
+            android:layout_below="@+id/tv_doubizongshu"
+            android:layout_marginTop="30dp"
+            android:textSize="18sp"
+            android:textColor="#ffffff"
+            android:text="积分总数"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/layout_choujiang"
+        android:layout_below="@+id/layout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:background="#ffffff">
+        <Button
+            android:id="@+id/bt_choujiang"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
+            android:textColor="#ffffff"
+            android:layout_centerInParent="true"
+            android:background="@drawable/btn_shape_corner_orange"
+            android:text="试试手气，去抽奖"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+
+
+    <ImageView
+        android:layout_below="@id/layout_choujiang"
+        android:id="@+id/bt_close"
+        android:layout_marginTop="30dp"
+        android:layout_centerHorizontal="true"
+        android:src="@mipmap/ic_closepopup"
+        android:layout_width="38dp"
+        android:layout_height="38dp" />
+
+
+
+</RelativeLayout>

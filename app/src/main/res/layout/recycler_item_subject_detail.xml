@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#FFFFFF"
     android:padding="14dp">
 
     <com.facebook.drawee.view.SimpleDraweeView
@@ -49,4 +48,5 @@
         android:text="我们在课堂上的办法就是能够将这里添加尽力啊，能够将孩子们的积极性跳动起来，保持纪律，维持规则，分享一个最鲜活的例子。"
         android:textColor="#5F5F5F"
         android:textSize="14sp" />
+
 </RelativeLayout>

@@ -64,6 +64,7 @@ public class DoukeCommentAdapter extends BaseRecyclerAdapter<RecyclerView.ViewHo
         ShowNameUtil.showNameLogic(holder.tvCommentName, nick, name, phone);
 
         holder.tvCommentTime.setText(itemInfo.getCommCreateTime());
+//        holder.ivUserPhoto.setImageURI(itemInfo.getCommCreaterPhoto());
         holder.ivUserPhoto.setImageURI(itemInfo.getCommCreaterPhoto());
         holder.tvCommentContent.setText(itemInfo.getCommContent());
     }

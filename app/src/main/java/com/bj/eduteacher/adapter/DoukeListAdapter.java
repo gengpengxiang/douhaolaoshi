@@ -98,7 +98,9 @@ public class DoukeListAdapter extends BaseRecyclerAdapter<RecyclerView.ViewHolde
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_latest_res, parent, false);
             vh = new ViewHolderLatestRes(v, true);
         } else if (viewType == ShowType.ITEM_TYPE_COURSE.ordinal()) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_course, parent, false);
+            //主页的课程布局
+//            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_course, parent, false);
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_find_course, parent, false);
             vh = new ViewHolderCourse(v, true);
         } else {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_douke, parent, false);
@@ -239,12 +241,16 @@ public class DoukeListAdapter extends BaseRecyclerAdapter<RecyclerView.ViewHolde
             ViewHolderCourse holder = (ViewHolderCourse) fholder;
             // 图片
             holder.ivPicture.setImageURI(itemInfo.getArticlePicture());
+
+            holder.ivPicture.setAspectRatio(1.536f);
+
             // 标题、老师、资源数量、学习人数
             holder.tvCourseName.setText(itemInfo.getTitle());
+            //holder.tvCourseName.setText("我是666");
             holder.tvTeachers.setText("主讲人：" + itemInfo.getAuthor());
-            holder.tvResNumber.setText("共" + itemInfo.getReadNumber() + "课时");
+            holder.tvResNumber.setText(itemInfo.getReadNumber() + "课时");
 
-            holder.tvLearnNumber.setText(itemInfo.getReplyCount() + "人已学习");
+            holder.tvLearnNumber.setText(itemInfo.getReplyCount() + "人参加");
             // 价格
             String price = itemInfo.getAgreeNumber();
             String buyType = itemInfo.getCommentNumber();
@@ -257,6 +263,16 @@ public class DoukeListAdapter extends BaseRecyclerAdapter<RecyclerView.ViewHolde
                     holder.tvPrice.setText("已购");
                 }
             }
+
+            //add
+            if(itemInfo.getJiakeStatus().equals("1")){
+                holder.ivLock.setVisibility(View.GONE);
+                holder.ivLockBg.setVisibility(View.GONE);
+            }else {
+                holder.ivLock.setVisibility(View.VISIBLE);
+                holder.ivLockBg.setVisibility(View.VISIBLE);
+            }
+
         } else {
             ViewHolderDouke holder = (ViewHolderDouke) fholder;
             holder.tvTitle.setText(itemInfo.getTitle());
@@ -466,6 +482,9 @@ public class DoukeListAdapter extends BaseRecyclerAdapter<RecyclerView.ViewHolde
         public TextView tvLearnNumber;
         public TextView tvPrice;
 
+        public ImageView ivLock;
+        public SimpleDraweeView ivLockBg;
+
         public ViewHolderCourse(View itemView, boolean isItem) {
             super(itemView);
             if (isItem) {
@@ -476,6 +495,9 @@ public class DoukeListAdapter extends BaseRecyclerAdapter<RecyclerView.ViewHolde
                 tvResNumber = (TextView) itemView.findViewById(R.id.tv_resNum);
                 tvLearnNumber = (TextView) itemView.findViewById(R.id.tv_learnNum);
                 tvPrice = (TextView) itemView.findViewById(R.id.tv_price);
+
+                ivLock = (ImageView)itemView.findViewById(R.id.iv_lock);
+                ivLockBg = (SimpleDraweeView) itemView.findViewById(R.id.iv_lock_bg);
             }
         }
     }
